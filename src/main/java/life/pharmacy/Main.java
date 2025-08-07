@@ -1,23 +1,22 @@
 package life.pharmacy;
 
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.stage.Stage;
+import life.pharmacy.views.DashboardView;
+import life.pharmacy.views.LoginView;
 
-import java.io.IOException;
-
-public class HelloApplication extends Application {
+public class Main extends Application {
     @Override
-    public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("hello-view.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 320, 240);
-        stage.setTitle("Hello!");
-        stage.setScene(scene);
-        stage.show();
+    public void start(Stage primaryStage) {
+        // Affiche la fenêtre de connexion
+        LoginView loginView = new LoginView(utilisateur -> {
+            DashboardView dashboard = new DashboardView(utilisateur);
+            dashboard.show(); // Affiche le stage
+        });
+        loginView.show();
     }
 
     public static void main(String[] args) {
-        launch();
+        launch(args);
     }
 }
