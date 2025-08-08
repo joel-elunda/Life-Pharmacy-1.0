@@ -1,0 +1,29 @@
+/* HEADER */
+.header {
+    -fx-background-color: linear-gradient(to right, #2c3e50, #3498db);
+    -fx-padding: 15;
+}
+
+.header-title {
+    -fx-text-fill: white;
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+}
+
+/* BOUTONS PRINCIPAUX */
+.main-btn {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-padding: 15 25;
+    -fx-background-radius: 8;
+}
+
+.main-btn:hover {
+    -fx-background-color: #2980b9;
+}
+
+/* SCÈNE */
+.root {
+    -fx-font-family: "Segoe UI", sans-serif;
+}
