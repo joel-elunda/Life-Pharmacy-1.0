@@ -105,11 +105,11 @@ public class DashboardView extends Stage {
                     protected Void call() {
                         try {
                             switch (type) {
-                                case "Produits" -> ProduitService.importFromExcel(file);
-                                case "Clients" -> ClientService.importFromExcel(file);
-                                case "Utilisateurs" -> UtilisateurService.importFromExcel(file);
-                                case "Recettes" -> RecetteService.importFromExcel(file);
-                                case "Factures" -> FactureService.importFromExcel(file);
+                                case "Produits" -> ProduitService.importCSV(file);
+                                case "Clients" -> ClientService.importCSV(file);
+                                case "Utilisateurs" -> UtilisateurService.importCSV(file);
+                                case "Recettes" -> RecetteService.importCSV(file);
+                                case "Factures" -> FactureService.importCSV(file);
                             }
                         } catch (Exception ex) {
                             ex.printStackTrace();

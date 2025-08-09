@@ -2,18 +2,26 @@ package life.pharmacy;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
-import life.pharmacy.views.DashboardView;
+import life.pharmacy.models.Utilisateur;
+import life.pharmacy.utils.Session;
+import life.pharmacy.views.FacturationView;
 import life.pharmacy.views.LoginView;
 
 public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
-        // Affiche la fenêtre de connexion
-        LoginView loginView = new LoginView(utilisateur -> {
-            DashboardView dashboard = new DashboardView(utilisateur);
-            dashboard.show(); // Affiche le stage
+        // Ouvre d'abord la fenêtre de login
+        LoginView login = new LoginView((Utilisateur user) -> {
+            // Quand login OK : save session et ouvrir la caisse
+            Session.setCurrentUser(user);
+
+            // Ouvrir la vue de facturation sur le même primaryStage
+            FacturationView fv = new FacturationView();
+            fv.show(primaryStage);
         });
-        loginView.show();
+
+        // Montrer la fenêtre de login
+        login.show();
     }
 
     public static void main(String[] args) {

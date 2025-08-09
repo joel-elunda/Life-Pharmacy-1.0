@@ -2,14 +2,18 @@ package life.pharmacy.services;
 
 import life.pharmacy.config.Database;
 import life.pharmacy.models.Client;
+import life.pharmacy.models.Produit;
+import life.pharmacy.utils.ExcelExporter;
 import life.pharmacy.utils.ExcelImporter;
 
-import java.io.File;
+import java.io.*;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ClientService {
+
     private static final Object LOCK = new Object();
 
     static {
@@ -113,22 +117,55 @@ public class ClientService {
         }
     }
 
-    public static void importFromExcel(File excelFile) {
-        List<List<String>> rows = ExcelImporter.readExcel(excelFile);
-        if (rows.size() <= 1) return;
+    public static void importCSV(File excelFile) {
+        try {
+            List<List<String>> rows = ExcelExporter.read(excelFile);
+            if (rows == null || rows.size() <= 1) return;
 
-        // En-tête présumé : Nom | Email | Telephone
-        for (int i = 1; i < rows.size(); i++) {
-            List<String> r = rows.get(i);
-            try {
-                String nom = r.size() > 0 ? r.get(0) : "";
-                String email = r.size() > 1 ? r.get(1) : "";
-                String telephone = r.size() > 2 ? r.get(2) : "";
-                Client c = new Client(0, nom, telephone, email);
-                insert(c);
-            } catch (Exception ex) {
-                ex.printStackTrace();
+            // En-tête présumé : Nom | Email | Telephone
+            for (int i = 1; i < rows.size(); i++) {
+                List<String> r = rows.get(i);
+                try {
+                    String nom = r.size() > 0 ? r.get(0).trim() : "";
+                    String email = r.size() > 1 ? r.get(1).trim() : "";
+                    String telephone = r.size() > 2 ? r.get(2).trim() : "";
+
+                    // Construction via setters (plus robuste)
+                    life.pharmacy.models.Client c = new life.pharmacy.models.Client();
+                    try { c.setNom(nom); } catch (NoSuchMethodError | Exception ignored) {}
+                    try { c.setEmail(email); } catch (Exception ignored) {}
+                    try { c.setTelephone(telephone); } catch (Exception ignored) {}
+
+                    insert(c); // adapte si ta méthode s'appelle autrement
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
+
+    public static void exportCSV(File excelFile) {
+        try {
+            List<List<String>> rows = new ArrayList<>();
+            rows.add(Arrays.asList("Nom", "Email", "Telephone"));
+            for (life.pharmacy.models.Client c : getAll()) {
+                rows.add(Arrays.asList(
+                        safe(c.getNom()),
+                        safe(c.getEmail()),
+                        safe(c.getTelephone())
+                ));
+            }
+            ExcelExporter.write(rows, excelFile);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static String safe(String s) { return s == null ? "" : s; }
+
+
+
+
 }

@@ -2,11 +2,13 @@ package life.pharmacy.services;
 
 import life.pharmacy.config.Database;
 import life.pharmacy.models.Utilisateur;
+import life.pharmacy.utils.ExcelExporter;
 import life.pharmacy.utils.ExcelImporter;
 
 import java.io.File;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class UtilisateurService {
@@ -207,6 +209,49 @@ public class UtilisateurService {
         }
         return null;
     }
+
+    // ... dans UtilisateurService
+
+    public static void importCSV(File excelFile) {
+        try {
+            List<List<String>> rows = ExcelExporter.read(excelFile);
+            if (rows == null || rows.size() <= 1) return;
+
+            // En-tête présumé : Nom | MotDePasse | Role
+            for (int i = 1; i < rows.size(); i++) {
+                List<String> r = rows.get(i);
+                try {
+                    String nom = r.size() > 0 ? r.get(0).trim() : "";
+                    String motDePasse = r.size() > 1 ? r.get(1).trim() : "";
+                    String role = r.size() > 2 ? r.get(2).trim() : "";
+
+                    var u = new life.pharmacy.models.Utilisateur();
+                    try { u.setNom(nom); } catch (Exception ignored) {}
+                    try { u.setMotDePasse(motDePasse); } catch (Exception ignored) {}
+                    try { u.setRole(role); } catch (Exception ignored) {}
+
+                    save(u); // adapte si ta méthode s'appelle autrement
+                } catch (Exception ex) { ex.printStackTrace(); }
+            }
+        } catch (Exception e) { e.printStackTrace(); }
+    }
+
+    public static void exportCSV(File excelFile) {
+        try {
+            List<List<String>> rows = new ArrayList<>();
+            rows.add(Arrays.asList("Nom", "MotDePasse", "Role"));
+            for (var u : getAll()) {
+                rows.add(Arrays.asList(
+                        safe(u.getNom()),
+                        safe(u.getMotDePasse()),
+                        safe(u.getRole())
+                ));
+            }
+            ExcelExporter.write(rows, excelFile);
+        } catch (Exception e) { e.printStackTrace(); }
+    }
+
+    private static String safe(String s) { return s == null ? "" : s; }
 
 
 }

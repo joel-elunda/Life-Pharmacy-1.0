@@ -16,6 +16,8 @@ public class Client {
         this.email = email;
     }
 
+
+
     public int getId() {
         return id;
     }

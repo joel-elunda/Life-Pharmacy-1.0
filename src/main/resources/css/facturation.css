@@ -1,29 +1,36 @@
-/* HEADER */
-.header {
-    -fx-background-color: linear-gradient(to right, #2c3e50, #3498db);
-    -fx-padding: 15;
+/* General */
+.root {
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+    -fx-base: #ffffff;
 }
 
-.header-title {
+/* Header */
+.header {
+    -fx-background-color: linear-gradient(to right, #0D47A1, #1976D2);
+    -fx-padding: 12;
+    -fx-alignment: center-left;
+}
+.title-large {
     -fx-text-fill: white;
-    -fx-font-size: 22px;
+    -fx-font-size: 18px;
     -fx-font-weight: bold;
 }
 
-/* BOUTONS PRINCIPAUX */
-.main-btn {
-    -fx-background-color: #3498db;
-    -fx-text-fill: white;
-    -fx-font-size: 16px;
-    -fx-padding: 15 25;
-    -fx-background-radius: 8;
+/* Panels */
+.panel {
+    -fx-background-color: white;
+    -fx-border-color: #e0e0e0;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 6, 0, 0, 2);
 }
 
-.main-btn:hover {
-    -fx-background-color: #2980b9;
+/* Buttons */
+.button {
+    -fx-background-radius: 6;
+    -fx-padding: 8 12;
 }
-
-/* SCÈNE */
-.root {
-    -fx-font-family: "Segoe UI", sans-serif;
+.button:focused {
+    -fx-effect: none;
 }

@@ -2,11 +2,13 @@ package life.pharmacy.services;
 
 import life.pharmacy.config.Database;
 import life.pharmacy.models.Produit;
+import life.pharmacy.utils.ExcelExporter;
 import life.pharmacy.utils.ExcelImporter;
 
 import java.io.File;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ProduitService {
@@ -78,7 +80,6 @@ public class ProduitService {
         }
     }
 
-
     public static List<Produit> getAll() {
         synchronized (LOCK) {
             List<Produit> produits = new ArrayList<>();
@@ -131,7 +132,6 @@ public class ProduitService {
         }
     }
 
-
     public static void importFromExcel(File excelFile) {
         List<List<String>> rows = ExcelImporter.readExcel(excelFile);
         if (rows.size() <= 1) return; // pas de données
@@ -157,7 +157,6 @@ public class ProduitService {
             }
         }
     }
-
 
     // life.pharmacy.services.ProduitService (extraits)
     public static boolean isReferencedInDetails(int produitId) {
@@ -189,6 +188,64 @@ public class ProduitService {
                 return false;
             }
         }
+    }
+
+    // ... dans ProduitService
+
+    public static void importCSV(File excelFile) {
+        try {
+            List<List<String>> rows = ExcelExporter.read(excelFile);
+            if (rows == null || rows.size() <= 1) return;
+
+            // En-tête présumé : Nom | Prix | CodeBarre | Stock
+            for (int i = 1; i < rows.size(); i++) {
+                List<String> r = rows.get(i);
+                try {
+                    String nom = r.size() > 0 ? r.get(0).trim() : "";
+                    String prixS = r.size() > 1 ? r.get(1).trim() : "0";
+                    String codeBarre = r.size() > 2 ? r.get(2).trim() : "";
+                    String stockS = r.size() > 3 ? r.get(3).trim() : "0";
+
+                    double prix = 0;
+                    int stock = 0;
+                    try { prix = Double.parseDouble(prixS.replace(",", ".")); } catch (Exception ignored) {}
+                    try { stock = Integer.parseInt(stockS); } catch (Exception ignored) {}
+
+                    var p = new life.pharmacy.models.Produit();
+                    try { p.setNom(nom); } catch (Exception ignored) {}
+                    try { p.getClass().getMethod("setPrix", double.class).invoke(p, prix); } catch (Exception ignored) {}
+                    try { p.getClass().getMethod("setCodeBarre", String.class).invoke(p, codeBarre); } catch (Exception ignored) {}
+                    try { p.getClass().getMethod("setStock", int.class).invoke(p, stock); } catch (Exception ignored) {}
+
+                    insert(p);
+                } catch (Exception ex) { ex.printStackTrace(); }
+            }
+        } catch (Exception e) { e.printStackTrace(); }
+    }
+
+    public static void exportCSV(File excelFile) {
+        try {
+            List<List<String>> rows = new ArrayList<>();
+            rows.add(Arrays.asList("Nom", "Prix", "CodeBarre", "Stock"));
+            for (life.pharmacy.models.Produit p : getAll()) {
+                String prixS = "0";
+                String stockS = "";
+                try { prixS = String.valueOf(p.getClass().getMethod("getPrix").invoke(p)); } catch (Exception ignored) {}
+                try { stockS = String.valueOf(p.getClass().getMethod("getStock").invoke(p)); } catch (Exception ignored) {}
+                rows.add(Arrays.asList(
+                        safe(p.getNom()),
+                        prixS,
+                        safe(getCodeBarreSafe(p)),
+                        stockS
+                ));
+            }
+            ExcelExporter.write(rows, excelFile);
+        } catch (Exception e) { e.printStackTrace(); }
+    }
+
+    private static String safe(String s) { return s == null ? "" : s; }
+    private static String getCodeBarreSafe(life.pharmacy.models.Produit p) {
+        try { var m = p.getClass().getMethod("getCodeBarre"); Object v = m.invoke(p); return v == null ? "" : String.valueOf(v); } catch (Exception ex) { return ""; }
     }
 
 

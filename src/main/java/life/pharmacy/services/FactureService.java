@@ -5,12 +5,14 @@ import life.pharmacy.models.Client;
 import life.pharmacy.models.DetailFacture;
 import life.pharmacy.models.Facture;
 import life.pharmacy.models.Produit;
+import life.pharmacy.utils.ExcelExporter;
 import life.pharmacy.utils.ExcelImporter;
 
 import java.io.File;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class FactureService {
@@ -123,7 +125,6 @@ public class FactureService {
         return list;
     }
 
-
     /**
      * Récupère les détails d'une facture par son ID.
      *
@@ -160,62 +161,61 @@ public class FactureService {
      * }
      */
 
-
-//    public static void insert(Facture facture) {
-//        try (Connection conn = Database.getConnection()) {
-//            conn.setAutoCommit(false);
-//
-//            // Insertion facture
-//            PreparedStatement pstmt = conn.prepareStatement(
-//                    "INSERT INTO factures (date, client_id, montant_ht, montant_tva, montant_ttc) VALUES (?, ?, ?, ?, ?)",
-//                    Statement.RETURN_GENERATED_KEYS
-//            );
-//            pstmt.setString(1, facture.getDate().toString());
-//            if (facture.getClient() != null) {
-//                pstmt.setInt(2, facture.getClient().getId());
-//            } else {
-//                pstmt.setNull(2, Types.INTEGER);
-//            }
-//            pstmt.setDouble(3, facture.getMontantHT());
-//            pstmt.setDouble(4, facture.getMontantTVA());
-//            pstmt.setDouble(5, facture.getMontantTTC());
-//            pstmt.executeUpdate();
-//
-//            ResultSet rs = pstmt.getGeneratedKeys();
-//            if (rs.next()) {
-//                facture.setId(rs.getInt(1));
-//            }
-//
-//            // Insertion des détails + mise à jour du stock dans la même connexion
-//            PreparedStatement pstmtDetail = conn.prepareStatement(
-//                    "INSERT INTO details_facture (facture_id, produit_id, quantite, prix_unitaire) VALUES (?, ?, ?, ?)"
-//            );
-//            PreparedStatement pstmtUpdateStock = conn.prepareStatement(
-//                    "UPDATE produits SET quantite = quantite - ? WHERE id = ?"
-//            );
-//
-//            for (DetailFacture d : facture.getDetails()) {
-//                // Détails facture
-//                pstmtDetail.setInt(1, facture.getId());
-//                pstmtDetail.setInt(2, d.getProduit().getId());
-//                pstmtDetail.setInt(3, d.getQuantite());
-//                pstmtDetail.setDouble(4, d.getPrixUnitaire());
-//                pstmtDetail.addBatch();
-//
-//                // Mise à jour stock
-//                pstmtUpdateStock.setInt(1, d.getQuantite());
-//                pstmtUpdateStock.setInt(2, d.getProduit().getId());
-//                pstmtUpdateStock.addBatch();
-//            }
-//            pstmtDetail.executeBatch();
-//            pstmtUpdateStock.executeBatch();
-//
-//            conn.commit();
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-//    }
-//
+    //    public static void insert(Facture facture) {
+    //        try (Connection conn = Database.getConnection()) {
+    //            conn.setAutoCommit(false);
+    //
+    //            // Insertion facture
+    //            PreparedStatement pstmt = conn.prepareStatement(
+    //                    "INSERT INTO factures (date, client_id, montant_ht, montant_tva, montant_ttc) VALUES (?, ?, ?, ?, ?)",
+    //                    Statement.RETURN_GENERATED_KEYS
+    //            );
+    //            pstmt.setString(1, facture.getDate().toString());
+    //            if (facture.getClient() != null) {
+    //                pstmt.setInt(2, facture.getClient().getId());
+    //            } else {
+    //                pstmt.setNull(2, Types.INTEGER);
+    //            }
+    //            pstmt.setDouble(3, facture.getMontantHT());
+    //            pstmt.setDouble(4, facture.getMontantTVA());
+    //            pstmt.setDouble(5, facture.getMontantTTC());
+    //            pstmt.executeUpdate();
+    //
+    //            ResultSet rs = pstmt.getGeneratedKeys();
+    //            if (rs.next()) {
+    //                facture.setId(rs.getInt(1));
+    //            }
+    //
+    //            // Insertion des détails + mise à jour du stock dans la même connexion
+    //            PreparedStatement pstmtDetail = conn.prepareStatement(
+    //                    "INSERT INTO details_facture (facture_id, produit_id, quantite, prix_unitaire) VALUES (?, ?, ?, ?)"
+    //            );
+    //            PreparedStatement pstmtUpdateStock = conn.prepareStatement(
+    //                    "UPDATE produits SET quantite = quantite - ? WHERE id = ?"
+    //            );
+    //
+    //            for (DetailFacture d : facture.getDetails()) {
+    //                // Détails facture
+    //                pstmtDetail.setInt(1, facture.getId());
+    //                pstmtDetail.setInt(2, d.getProduit().getId());
+    //                pstmtDetail.setInt(3, d.getQuantite());
+    //                pstmtDetail.setDouble(4, d.getPrixUnitaire());
+    //                pstmtDetail.addBatch();
+    //
+    //                // Mise à jour stock
+    //                pstmtUpdateStock.setInt(1, d.getQuantite());
+    //                pstmtUpdateStock.setInt(2, d.getProduit().getId());
+    //                pstmtUpdateStock.addBatch();
+    //            }
+    //            pstmtDetail.executeBatch();
+    //            pstmtUpdateStock.executeBatch();
+    //
+    //            conn.commit();
+    //        } catch (SQLException e) {
+    //            e.printStackTrace();
+    //        }
+    //    }
+    //
 
     // life.pharmacy.services.FactureService.insert (extrait modifié)
     public static void insert(Facture facture) {
@@ -308,29 +308,57 @@ public class FactureService {
         }
     }
 
+    // ... dans FactureService
 
-    public static void importFromExcel(File excelFile) {
-        List<List<String>> rows = ExcelImporter.readExcel(excelFile);
-        if (rows.size() <= 1) return;
+    public static void importCSV(File excelFile) {
+        try {
+            List<List<String>> rows = ExcelExporter.read(excelFile);
+            if (rows == null || rows.size() <= 1) return;
 
-        // En-tête présumé : client_id | date(ISO) | montant_ht | montant_tva | montant_ttc
-        for (int i = 1; i < rows.size(); i++) {
-            List<String> r = rows.get(i);
-            try {
-                Integer clientId = r.size() > 0 && !r.get(0).isEmpty() ? Integer.parseInt(r.get(0)) : null;
-                LocalDateTime date = r.size() > 1 && !r.get(1).isEmpty() ? LocalDateTime.parse(r.get(1)) : LocalDateTime.now();
-                double ht = r.size() > 2 && !r.get(2).isEmpty() ? Double.parseDouble(r.get(2)) : 0.0;
-                double tva = r.size() > 3 && !r.get(3).isEmpty() ? Double.parseDouble(r.get(3)) : 0.0;
-                double ttc = r.size() > 4 && !r.get(4).isEmpty() ? Double.parseDouble(r.get(4)) : ht + tva;
+            // En-tête présumé : Numéro | Date | ClientNom | MontantTTC
+            for (int i = 1; i < rows.size(); i++) {
+                List<String> r = rows.get(i);
+                try {
+                    String numero = r.size() > 0 ? r.get(0).trim() : "";
+                    String dateStr = r.size() > 1 ? r.get(1).trim() : "";
+                    String clientNom = r.size() > 2 ? r.get(2).trim() : "";
+                    String montantStr = r.size() > 3 ? r.get(3).trim() : "0";
 
-                Client client = clientId != null ? ClientService.getById(clientId) : null;
+                    double montant = 0;
+                    try { montant = Double.parseDouble(montantStr.replace(",", ".")); } catch (Exception ignored) {}
 
-                Facture facture = new Facture(0, date, client, ht, tva, ttc);
-                facture.setDetails(new ArrayList<>()); // pas de détails ici
-                insert(facture);
-            } catch (Exception ex) {
-                ex.printStackTrace();
+                    var f = new life.pharmacy.models.Facture();
+                    try { f.setId(Integer.parseInt(numero)); } catch (Exception ignored) {}
+                    try { /* parse dateStr si besoin et setDate */ } catch (Exception ignored) {}
+                    try {
+                        // try to find client by name
+                        var clients = life.pharmacy.services.ClientService.getAll();
+                        var client = clients.stream().filter(c -> clientNom.equalsIgnoreCase(c.getNom())).findFirst().orElse(null);
+                        f.setClient(client);
+                    } catch (Exception ignored) {}
+                    try { f.setMontantTTC(montant); } catch (Exception ignored) {}
+
+                    insert(f); // adapte selon ta méthode
+                } catch (Exception ex) { ex.printStackTrace(); }
             }
-        }
+        } catch (Exception e) { e.printStackTrace(); }
     }
+
+    public static void exportCSV(File excelFile) {
+        try {
+            List<List<String>> rows = new ArrayList<>();
+            rows.add(Arrays.asList("ID", "Date", "Client", "MontantTTC"));
+            for (var f : getAll()) {
+                rows.add(Arrays.asList(
+                        String.valueOf(f.getId()),
+                        f.getDate() != null ? f.getDate().toString() : "",
+                        f.getClient() != null ? f.getClient().getNom() : "",
+                        String.valueOf(f.getMontantTTC())
+                ));
+            }
+            ExcelExporter.write(rows, excelFile);
+        } catch (Exception e) { e.printStackTrace(); }
+    }
+
+
 }

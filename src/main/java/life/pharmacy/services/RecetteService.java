@@ -2,12 +2,15 @@ package life.pharmacy.services;
 
 import life.pharmacy.config.Database;
 import life.pharmacy.models.Recette;
+import life.pharmacy.utils.ExcelExporter;
 import life.pharmacy.utils.ExcelImporter;
 
-import java.io.File;
+import java.io.*;
 import java.sql.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -276,4 +279,107 @@ public class RecetteService {
             e.printStackTrace();
         }
     }
+
+    public static void importCSV(File excelFile) {
+        try {
+            List<List<String>> rows = ExcelExporter.read(excelFile);
+            if (rows == null || rows.size() <= 1) return;
+
+            // En-tête présumé : Date | MontantHT | MontantTVA | MontantTTC | ModePaiement | Source
+            for (int i = 1; i < rows.size(); i++) {
+                List<String> r = rows.get(i);
+                try {
+                    String dateStr     = r.size() > 0 ? r.get(0).trim() : "";
+                    String montantHTs  = r.size() > 1 ? r.get(1).trim() : "0";
+                    String montantTVAs = r.size() > 2 ? r.get(2).trim() : "0";
+                    String montantTTCs = r.size() > 3 ? r.get(3).trim() : "0";
+                    String mode        = r.size() > 4 ? r.get(4).trim() : "";
+                    String source      = r.size() > 5 ? r.get(5).trim() : "";
+
+                    // Création de l'entité Recette (utilise setters pour compatibilité)
+                    life.pharmacy.models.Recette rec = new life.pharmacy.models.Recette();
+                    // Date : tenter LocalDate puis LocalDateTime puis substring fallback
+                    if (!dateStr.isEmpty()) {
+                        try { rec.setDate(LocalDate.parse(dateStr)); }
+                        catch (Exception ex1) {
+                            try { rec.setDate(LocalDate.from(LocalDateTime.parse(dateStr))); }
+                            catch (Exception ex2) {
+                                try { rec.setDate(LocalDate.parse(dateStr.substring(0, 10))); }
+                                catch (Exception ignored) {}
+                            }
+                        }
+                    }
+
+                    // Montants (tolérance pour virgule)
+                    double montantHT = 0, montantTVA = 0, montantTTC = 0;
+                    try { montantHT = Double.parseDouble(montantHTs.replace(",", ".")); } catch (Exception ignored) {}
+                    try { montantTVA = Double.parseDouble(montantTVAs.replace(",", ".")); } catch (Exception ignored) {}
+                    try { montantTTC = Double.parseDouble(montantTTCs.replace(",", ".")); } catch (Exception ignored) {}
+
+                    try { rec.setMontant(montantHT); } catch (Exception ignored) {}
+//                    try { rec.setMontantTVA(montantTVA); } catch (Exception ignored) {}
+//                    try { rec.setMontantTTC(montantTTC); } catch (Exception ignored) {}
+//                    try { rec.setModePaiement(mode); } catch (Exception ignored) {}
+//                    try { rec.setSource(source); } catch (Exception ignored) {}
+
+                    // Persister (adapte si ta méthode s'appelle autrement : insert/save)
+                    insert(rec);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void exportCSV(File excelFile) {
+        try {
+            List<List<String>> rows = new ArrayList<>();
+            rows.add(Arrays.asList("Date", "MontantHT", "MontantTVA", "MontantTTC", "ModePaiement", "Source"));
+
+            for (life.pharmacy.models.Recette r : getAll()) {
+                String dateStr = "";
+                try {
+                    // getDate() peut renvoyer LocalDate / LocalDateTime / String selon ton modèle
+                    Object d = r.getDate();
+                    if (d != null) dateStr = d.toString();
+                } catch (Exception ignored) {}
+
+                String mht = "";
+                String mtva = "";
+                String mttc = "";
+                try { mht = String.valueOf(r.getMontant()); } catch (Exception ignored) {}
+//                try { mtva = String.valueOf(r.getMontantTVA()); } catch (Exception ignored) {}
+//                try { mttc = String.valueOf(r.getMontantTTC()); } catch (Exception ignored) {}
+
+                String mode = "";
+                String source = "";
+//                try { mode = r.getModePaiement(); } catch (Exception ignored) {}
+//                try { source = r.getSource(); } catch (Exception ignored) {}
+
+                rows.add(Arrays.asList(safe(dateStr), safe(mht), safe(mtva), safe(mttc), safe(mode), safe(source)));
+            }
+
+            ExcelExporter.write(rows, excelFile);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static String safe(String s) {
+        return s == null ? "" : s;
+    }
+
+    // placeholder signatures — adapte si noms différents
+//    private static void insert(life.pharmacy.models.Recette r) {
+//        // appelle ta méthode réelle d'insertion (ex : DAO ou repository)
+//        // ex : new RecetteDAO().insert(r);
+//        throw new UnsupportedOperationException("Remplace RecetteService.insert(...) par ta méthode réelle");
+//    }
+//    private static java.util.List<life.pharmacy.models.Recette> getAll() {
+//        // retourne toutes les recettes depuis la BDD
+//        throw new UnsupportedOperationException("Remplace RecetteService.getAll() par ta méthode réelle");
+//    }
+
 }

@@ -1,9 +1,7 @@
 package life.pharmacy.views;
 
-import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.*;
-import javafx.collections.transformation.FilteredList;
 import javafx.geometry.*;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -31,7 +29,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-
 /**
  * Version finale de la vue de facturation :
  * - authentification déjà assurée par Main/LoginView
@@ -41,9 +38,6 @@ import java.util.Optional;
  * - capture scanner via champ caché
  */
 public class FacturationView {
-    // produits cache + filtre
-
-    private FilteredList<Produit> filteredProducts;
 
     private final ObservableList<Ligne> lignes = FXCollections.observableArrayList();
 
@@ -63,18 +57,15 @@ public class FacturationView {
     // place ceci avec les autres champs privés de la classe FacturationView
     private boolean suppressEditorListener = false;
 
+
     // Hidden field to capture scanner input
     private TextField tfScannerHidden;
 
     // cache produits
     private ObservableList<Produit> allProducts = FXCollections.observableArrayList();
 
-
-
-
-
-
     public FacturationView() {}
+
 
     public void show(Stage stage) {
         BorderPane root = new BorderPane();
@@ -143,12 +134,16 @@ public class FacturationView {
         ImageView logo;
         try {
             logo = new ImageView(new Image(getClass().getResourceAsStream("/images/logo.png")));
-            logo.setFitHeight(44); logo.setPreserveRatio(true);
-        } catch (Exception ex) { logo = new ImageView(); }
+            logo.setFitHeight(44);
+            logo.setPreserveRatio(true);
+        } catch (Exception ex) {
+            logo = new ImageView();
+        }
 
         Label title = new Label("Life Pharmacy — Caisse");
         title.setStyle("-fx-font-size:18px; -fx-font-weight:bold;");
 
+        // Management buttons (visible according to roles)
         Button btnClients = new Button("Clients");
         btnClients.setOnAction(e -> openViewSafely("Clients", () -> new ParentWrapper(new ClientView().getView())));
 
@@ -161,27 +156,37 @@ public class FacturationView {
         Button btnFactures = new Button("Factures");
         btnFactures.setOnAction(e -> openViewSafely("Factures", () -> new ParentWrapper(new FactureView().getView())));
 
-        Button btnRecettes = new Button("Recettes");
-        btnRecettes.setOnAction(e -> openViewSafely("Recettes", () -> new ParentWrapper(new RecetteView().getView())));
+
+
+
+
+
+
 
         Button btnUtilisateurs = new Button("Utilisateurs");
         btnUtilisateurs.setOnAction(e -> {
-            if (!Session.isAdmin()) { new Alert(Alert.AlertType.WARNING, "Accès réservé aux administrateurs.").showAndWait(); return; }
-            Stage s = new Stage();
-            s.setScene(new Scene(new UtilisateurView(Session.getCurrentUser()).getView(), 800, 600));
-            s.setTitle("Utilisateurs"); s.show();
+            // Only admins allowed (UI disable if not)
+            if (!Session.isAdmin()) {
+                new Alert(Alert.AlertType.WARNING, "Accès réservé aux administrateurs.").showAndWait();
+                return;
+            }
+            try {
+                Stage s = new Stage();
+                s.setScene(new Scene(new UtilisateurView(Session.getCurrentUser()).getView(), 800, 600));
+                s.setTitle("Utilisateurs");
+                s.show();
+            } catch (Exception ex) {
+                new Alert(Alert.AlertType.ERROR, "Impossible d'ouvrir Utilisateurs : " + ex.getMessage()).showAndWait();
+            }
         });
 
-        Button btnImportExport = new Button("Import / Export");
-        btnImportExport.setOnAction(e -> {
-            ImportExportDialog dialog = new ImportExportDialog();
-            dialog.showAndWait();
-        });
+        Button btnRecettes = new Button("Recettes");
+        btnRecettes.setOnAction(e -> openViewSafely("Recettes", () -> new ParentWrapper(new RecetteView().getView())));
 
         HBox left = new HBox(10, logo, title);
         left.setAlignment(Pos.CENTER_LEFT);
 
-        HBox managers = new HBox(6, btnClients, btnProduits, btnFournisseurs, btnFactures, btnRecettes, btnUtilisateurs, btnImportExport);
+        HBox managers = new HBox(6, btnClients, btnProduits, btnFournisseurs, btnFactures, btnRecettes, btnUtilisateurs);
         managers.setAlignment(Pos.CENTER_LEFT);
 
         Region spacer = new Region();
@@ -192,8 +197,13 @@ public class FacturationView {
         header.setPadding(new Insets(8));
         header.getStyleClass().add("header");
 
-        if (!Session.isManager()) btnRecettes.setDisable(true);
-        if (!Session.isAdmin()) btnUtilisateurs.setDisable(true);
+        // Disable some management buttons for non-admins
+        if (!Session.isManager()) {
+            btnRecettes.setDisable(true);
+        }
+        if (!Session.isAdmin()) {
+            btnUtilisateurs.setDisable(true);
+        }
 
         return header;
     }
@@ -283,92 +293,72 @@ public class FacturationView {
         return box;
     }
 
-//    private void refreshClients() {
-//        try {
-//            List<Client> clients = ClientService.getAll();
-//            cbClient.setItems(FXCollections.observableArrayList(clients));
-//            // show client name in combo
-//            cbClient.setCellFactory(lv -> new ListCell<>() {
-//                @Override protected void updateItem(Client item, boolean empty) {
-//                    super.updateItem(item, empty);
-//                    setText(empty || item == null ? null : item.getNom());
-//                }
-//            });
-//            cbClient.setConverter(new StringConverter<>() {
-//                @Override public String toString(Client c) { return c == null ? "" : c.getNom(); }
-//                @Override public Client fromString(String s) { return null; }
-//            });
-//        } catch (Exception ex) {
-//            cbClient.setItems(FXCollections.observableArrayList());
-//        }
-//    }
+    private void refreshClients() {
+        try {
+            List<Client> clients = ClientService.getAll();
+            cbClient.setItems(FXCollections.observableArrayList(clients));
+            // show client name in combo
+            cbClient.setCellFactory(lv -> new ListCell<>() {
+                @Override protected void updateItem(Client item, boolean empty) {
+                    super.updateItem(item, empty);
+                    setText(empty || item == null ? null : item.getNom());
+                }
+            });
+            cbClient.setConverter(new StringConverter<>() {
+                @Override public String toString(Client c) { return c == null ? "" : c.getNom(); }
+                @Override public Client fromString(String s) { return null; }
+            });
+        } catch (Exception ex) {
+            cbClient.setItems(FXCollections.observableArrayList());
+        }
+    }
 
     private VBox buildProduitSection() {
         Label lbl = new Label("Produit (nom / code-barres)");
+        // ComboBox editable for autocompletion
         cbProduit = new ComboBox<>();
         cbProduit.setEditable(true);
         cbProduit.setPrefWidth(420);
+        refreshProduits();
 
-        // filteredProducts wraps allProducts
-        filteredProducts = new FilteredList<>(allProducts, p -> true);
-        cbProduit.setItems(filteredProducts);
+        // get editor
+        tfProduitEditor = cbProduit.getEditor();
 
-        cbProduit.setCellFactory(lv -> new ListCell<>() {
-            @Override protected void updateItem(Produit item, boolean empty) {
-                super.updateItem(item, empty);
-                setText(empty || item == null ? null : item.getNom());
+        // Filter the combo suggestions when typing
+        tfProduitEditor.textProperty().addListener((obs, oldV, newV) -> {
+            if (newV == null) return;
+            String filter = newV.trim().toLowerCase();
+            if (filter.isEmpty()) {
+                cbProduit.setItems(allProducts);
+                cbProduit.hide();
+            } else {
+                ObservableList<Produit> filtered = FXCollections.observableArrayList();
+                for (Produit p : allProducts) {
+                    if ((p.getNom() != null && p.getNom().toLowerCase().contains(filter))
+                            || (hasCodeBarre(p) && getCodeBarre(p).toLowerCase().contains(filter))) {
+                        filtered.add(p);
+                    }
+                }
+                cbProduit.setItems(filtered);
+                cbProduit.show();
             }
         });
 
-        cbProduit.setConverter(new StringConverter<>() {
-            @Override public String toString(Produit p) { return p == null ? "" : p.getNom(); }
-            @Override public Produit fromString(String s) { return null; }
-        });
-
-        tfProduitEditor = cbProduit.getEditor();
-
-        // Filter without replacing items (avoids recursion)
-        tfProduitEditor.textProperty().addListener((obs, oldV, newV) -> {
-            if (suppressEditorListener) return;
-            String filter = newV == null ? "" : newV.trim().toLowerCase();
-            if (filter.isEmpty()) filteredProducts.setPredicate(p -> true);
-            else filteredProducts.setPredicate(p -> {
-                boolean nameMatch = p.getNom() != null && p.getNom().toLowerCase().contains(filter);
-                boolean codeMatch = hasCodeBarre(p) && getCodeBarre(p).toLowerCase().contains(filter);
-                return nameMatch || codeMatch;
-            });
-            // Show suggestions next pulse to avoid re-entrancy
-            Platform.runLater(() -> { if (!cbProduit.isShowing()) cbProduit.show(); });
-        });
-
-        // ENTER: add selected or lookup by text
+        // Add on Enter: either selected item or try lookup by text
         tfProduitEditor.setOnKeyPressed(ev -> {
             if (ev.getCode() == KeyCode.ENTER) {
                 Produit selected = cbProduit.getSelectionModel().getSelectedItem();
-                if (selected == null) selected = lookupProduitByCodeOrName(tfProduitEditor.getText());
+                if (selected == null) {
+                    String txt = tfProduitEditor.getText();
+                    selected = lookupProduitByCodeOrName(txt);
+                }
                 if (selected != null) {
                     ajouterProduit(selected, 1);
-                    // clear editor safely
-                    Platform.runLater(() -> {
-                        suppressEditorListener = true;
-                        try { tfProduitEditor.clear(); } finally { suppressEditorListener = false; }
-                    });
+                    tfProduitEditor.clear();
                 } else {
                     new Alert(Alert.AlertType.WARNING, "Produit introuvable : " + tfProduitEditor.getText()).showAndWait();
                 }
-                if (tfScannerHidden != null) tfScannerHidden.requestFocus();
-            }
-        });
-
-        // selecting from dropdown
-        cbProduit.setOnAction(e -> {
-            Produit p = cbProduit.getSelectionModel().getSelectedItem();
-            if (p != null) {
-                ajouterProduit(p, 1);
-                Platform.runLater(() -> {
-                    suppressEditorListener = true;
-                    try { tfProduitEditor.clear(); } finally { suppressEditorListener = false; }
-                });
+                // re-focus scanner to continue scanning if needed
                 if (tfScannerHidden != null) tfScannerHidden.requestFocus();
             }
         });
@@ -379,29 +369,29 @@ public class FacturationView {
         return box;
     }
 
-//    private void refreshProduits() {
-//        try {
-//            List<Produit> all = ProduitService.getAll();
-//            allProducts.setAll(all);
-//            cbProduit.setItems(allProducts);
-//
-//            cbProduit.setCellFactory(lv -> new ListCell<>() {
-//                @Override protected void updateItem(Produit item, boolean empty) {
-//                    super.updateItem(item, empty);
-//                    setText(empty || item == null ? null : item.getNom());
-//                }
-//            });
-//
-//            cbProduit.setConverter(new StringConverter<>() {
-//                @Override public String toString(Produit p) { return p == null ? "" : p.getNom(); }
-//                @Override public Produit fromString(String s) { return null; }
-//            });
-//        } catch (Exception ex) {
-//            allProducts.clear();
-//            cbProduit.setItems(allProducts);
-//        }
-//    }
-//
+    private void refreshProduits() {
+        try {
+            List<Produit> all = ProduitService.getAll();
+            allProducts.setAll(all);
+            cbProduit.setItems(allProducts);
+
+            cbProduit.setCellFactory(lv -> new ListCell<>() {
+                @Override protected void updateItem(Produit item, boolean empty) {
+                    super.updateItem(item, empty);
+                    setText(empty || item == null ? null : item.getNom());
+                }
+            });
+
+            cbProduit.setConverter(new StringConverter<>() {
+                @Override public String toString(Produit p) { return p == null ? "" : p.getNom(); }
+                @Override public Produit fromString(String s) { return null; }
+            });
+        } catch (Exception ex) {
+            allProducts.clear();
+            cbProduit.setItems(allProducts);
+        }
+    }
+
     private boolean hasCodeBarre(Produit p) {
         try { return getCodeBarre(p) != null; } catch (Exception e) { return false; }
     }
@@ -650,7 +640,7 @@ public class FacturationView {
         if (cbProduit != null) cbProduit.getEditor().clear();
     }
 
-    private void refreshClients() {
+    private void refreshClientsList() {
         try {
             List<Client> clients = ClientService.getAll();
             cbClient.setItems(FXCollections.observableArrayList(clients));
@@ -659,19 +649,16 @@ public class FacturationView {
         }
     }
 
-    private void refreshProduits() {
+    private void refreshProduitsList() {
         try {
             List<Produit> all = ProduitService.getAll();
-            allProducts.setAll(all); // <-- met à jour la source, ne remplace pas l'objet FilteredList
-            if (filteredProducts == null) filteredProducts = new FilteredList<>(allProducts, p -> true);
-            if (cbProduit != null) cbProduit.setItems(filteredProducts);
+            allProducts.setAll(all);
+            if (cbProduit != null) cbProduit.setItems(allProducts);
         } catch (Exception ex) {
             allProducts.clear();
-            if (filteredProducts == null) filteredProducts = new FilteredList<>(allProducts, p -> true);
-            if (cbProduit != null) cbProduit.setItems(filteredProducts);
+            if (cbProduit != null) cbProduit.setItems(allProducts);
         }
     }
-
 
     // ---------------- DTO interne ----------------
     public static class Ligne {

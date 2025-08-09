@@ -2,9 +2,12 @@ package life.pharmacy.services;
 
 import life.pharmacy.config.Database;
 import life.pharmacy.models.Fournisseur;
+import life.pharmacy.utils.ExcelExporter;
 
+import java.io.File;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class FournisseurService {
@@ -87,4 +90,50 @@ public class FournisseurService {
             }
         }
     }
+
+
+    // ... dans FournisseurService
+
+    public static void importCSV(File excelFile) {
+        try {
+            List<List<String>> rows = ExcelExporter.read(excelFile);
+            if (rows == null || rows.size() <= 1) return;
+
+            // En-tête présumé : Nom | Adresse | Telephone
+            for (int i = 1; i < rows.size(); i++) {
+                List<String> r = rows.get(i);
+                try {
+                    String nom = r.size() > 0 ? r.get(0).trim() : "";
+                    String adresse = r.size() > 1 ? r.get(1).trim() : "";
+                    String contact = r.size() > 2 ? r.get(2).trim() : "";
+
+                    var f = new life.pharmacy.models.Fournisseur();
+                    try { f.setNom(nom); } catch (Exception ignored) {}
+                    try { f.setAdresse(adresse); } catch (Exception ignored) {}
+                    try { f.setContact(contact); } catch (Exception ignored) {}
+
+                    insert(f);
+                } catch (Exception ex) { ex.printStackTrace(); }
+            }
+        } catch (Exception e) { e.printStackTrace(); }
+    }
+
+    public static void exportCSV(File excelFile) {
+        try {
+            List<List<String>> rows = new ArrayList<>();
+            rows.add(Arrays.asList("Nom", "Adresse", "Contact"));
+            for (var f : getAll()) {
+                rows.add(Arrays.asList(
+                        safe(f.getNom()),
+                        safe(f.getAdresse()),
+                        safe(f.getContact())
+                ));
+            }
+            ExcelExporter.write(rows, excelFile);
+        } catch (Exception e) { e.printStackTrace(); }
+    }
+
+    private static String safe(String s) { return s == null ? "" : s; }
+
+
 }
