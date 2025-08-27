@@ -1,6 +1,7 @@
 package life.pharmacy.models;
 
 import javafx.beans.property.*;
+import javafx.collections.ObservableIntegerArray;
 
 /** ===================== LIGNE TRANSACTION ===================== */
 public class LigneTransaction {
@@ -11,6 +12,7 @@ public class LigneTransaction {
     private final DoubleProperty prixUnitaire = new SimpleDoubleProperty(this, "prixUnitaire");
     private final DoubleProperty sousTotal = new SimpleDoubleProperty(this, "sousTotal");
     private final StringProperty numeroOrdonnance = new SimpleStringProperty(this, "numeroOrdonnance");
+    private final ObjectProperty<Produit> produit = new SimpleObjectProperty<>(this, "produit");
 
     public LigneTransaction() {}
 
@@ -50,4 +52,9 @@ public class LigneTransaction {
     public String getNumeroOrdonnance() { return numeroOrdonnance.get(); }
     public void setNumeroOrdonnance(String value) { numeroOrdonnance.set(value); }
     public StringProperty numeroOrdonnanceProperty() { return numeroOrdonnance; }
+
+    public Produit getProduit(){ return produit.get(); }
+    public ObjectProperty<Produit> produitProperty() { return produit; }
+
+
 }
