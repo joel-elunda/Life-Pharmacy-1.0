@@ -3,15 +3,26 @@ package life.pharmacy.config;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.security.MessageDigest;
+
+import static java.sql.DriverManager.getConnection;
 
 public class DatabaseInitializer {
 
     private static final String DB_URL = "jdbc:sqlite:pharmacy.db";
 
+    public static Connection connect() {
+        try {
+            return DriverManager.getConnection(DB_URL);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public static void initializeDatabase() {
-        try (Connection conn = DriverManager.getConnection(DB_URL)) {
+        try (Connection conn = getConnection(DB_URL)) {
             if (conn != null) {
                 Statement stmt = conn.createStatement();
 

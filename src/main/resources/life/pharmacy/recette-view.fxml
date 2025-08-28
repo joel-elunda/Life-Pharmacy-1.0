@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns="http://javafx.com/javafx/23.0.1"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="life.pharmacy.controllers.RecetteController"
+            prefHeight="600" prefWidth="900">
+
+    <top>
+        <ToolBar style="-fx-background-color:#009688;">
+            <Label text="Statistiques des recettes" style="-fx-text-fill:white; -fx-font-size:16px;"/>
+            <ComboBox fx:id="periodeCombo" promptText="Sélectionner période" prefWidth="200"/>
+            <Button fx:id="refreshButton" text="Actualiser"/>
+            <Button fx:id="printButton" text="Imprimer"/>
+            <Button fx:id="exportButton" text="Exporter Excel"/>
+        </ToolBar>
+    </top>
+
+    <center>
+        <LineChart fx:id="recetteChart" prefHeight="500" prefWidth="800">
+            <xAxis>
+                <CategoryAxis label="Période"/>
+            </xAxis>
+            <yAxis>
+                <NumberAxis label="Montant"/>
+            </yAxis>
+        </LineChart>
+    </center>
+</BorderPane>

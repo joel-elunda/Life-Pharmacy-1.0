@@ -12,14 +12,19 @@
             fx:controller="life.pharmacy.controllers.DashboardController">
 
     <!-- Barre du haut -->
+    <!-- Barre du haut -->
     <top>
         <ToolBar style="-fx-background-color:#009688;">
-            <Label text="Life Pharmacy — Dashboard" style="-fx-text-fill:white; -fx-font-size:16px;"/>
-            <Pane HBox.hgrow="ALWAYS"/>
-            <Button fx:id="logoutButton" text="Déconnexion"
-                    style="-fx-background-color:#ffffff; -fx-text-fill:#009688;"/>
+            <Button fx:id="produitsButton" style="-fx-background-color:#ffffff; -fx-text-fill:#009688;" text="Produits"/>
+            <Button fx:id="facturesButton" style="-fx-background-color:#ffffff; -fx-text-fill:#009688;" text="Factures"/>
+            <Button fx:id="fournisseursButton" style="-fx-background-color:#ffffff; -fx-text-fill:#009688;" text="Fournisseurs"/>
+            <Button fx:id="clientsButton" style="-fx-background-color:#ffffff; -fx-text-fill:#009688;" text="Clients"/>
+            <Button fx:id="recettesButton" style="-fx-background-color:#ffffff; -fx-text-fill:#009688;" text="Rapports / Recettes"/>
+            <Button fx:id="logoutButton" style="-fx-background-color:#ff5252; -fx-text-fill:white;" text="Déconnexion"/>
         </ToolBar>
     </top>
+
+    <!-- Partie centrale -->
 
     <center>
         <SplitPane dividerPositions="0.35">
