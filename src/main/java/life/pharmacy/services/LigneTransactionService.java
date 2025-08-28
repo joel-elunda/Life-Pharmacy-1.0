@@ -8,7 +8,7 @@ public class LigneTransactionService {
     private static final String DB_URL = "jdbc:sqlite:pharmacy.db";
 
     public void add(LigneTransaction lt) throws SQLException {
-        String sql = "INSERT INTO ligne_transaction(transaction_id, produit_id, quantite, prix_unitaire) VALUES(?,?,?,?)";
+        String sql = "INSERT INTO ligne_transactions(transaction_id, produit_id, quantite, prix_unitaire) VALUES(?,?,?,?)";
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, lt.getTransactionId());
@@ -20,7 +20,7 @@ public class LigneTransactionService {
     }
 
     public void update(LigneTransaction lt) throws SQLException {
-        String sql = "UPDATE ligne_transaction SET transaction_id=?, produit_id=?, quantite=?, prix_unitaire=? WHERE id=?";
+        String sql = "UPDATE ligne_transactions SET transaction_id=?, produit_id=?, quantite=?, prix_unitaire=? WHERE id=?";
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, lt.getTransactionId());
@@ -34,7 +34,7 @@ public class LigneTransactionService {
 
     public void delete(int id) throws SQLException {
         try (Connection conn = DriverManager.getConnection(DB_URL);
-             PreparedStatement ps = conn.prepareStatement("DELETE FROM ligne_transaction WHERE id=?")) {
+             PreparedStatement ps = conn.prepareStatement("DELETE FROM ligne_transactions WHERE id=?")) {
             ps.setInt(1, id);
             ps.executeUpdate();
         }
@@ -44,7 +44,7 @@ public class LigneTransactionService {
         List<LigneTransaction> list = new ArrayList<>();
         try (Connection conn = DriverManager.getConnection(DB_URL);
              Statement st = conn.createStatement();
-             ResultSet rs = st.executeQuery("SELECT * FROM ligne_transaction")) {
+             ResultSet rs = st.executeQuery("SELECT * FROM ligne_transactions")) {
             while (rs.next()) {
                 list.add(new LigneTransaction(
                         rs.getInt("id"),

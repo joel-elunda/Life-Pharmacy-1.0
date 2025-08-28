@@ -10,7 +10,7 @@ public class EmployeService {
     private static final String DB_URL = "jdbc:sqlite:pharmacy.db";
 
     public void add(Employe e) throws SQLException {
-        String sql = "INSERT INTO employe(nom_complet, role, login, mot_de_passe, permissions) VALUES(?,?,?,?,?)";
+        String sql = "INSERT INTO employes (nom_complet, role, login, mot_de_passe, permissions) VALUES(?,?,?,?,?)";
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, e.getNomComplet());
@@ -23,7 +23,7 @@ public class EmployeService {
     }
 
     public void update(Employe e) throws SQLException {
-        String sql = "UPDATE employe SET nom_complet=?, role=?, login=?, mot_de_passe=?, permissions=? WHERE id=?";
+        String sql = "UPDATE employes SET nom_complet=?, role=?, login=?, mot_de_passe=?, permissions=? WHERE id=?";
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, e.getNomComplet());
@@ -37,7 +37,7 @@ public class EmployeService {
     }
 
     public void delete(int id) throws SQLException {
-        String sql = "DELETE FROM employe WHERE id=?";
+        String sql = "DELETE FROM employes WHERE id=?";
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, id);
@@ -47,7 +47,7 @@ public class EmployeService {
 
     public List<Employe> getAll() throws SQLException {
         List<Employe> list = new ArrayList<>();
-        String sql = "SELECT * FROM employe";
+        String sql = "SELECT * FROM employes";
         try (Connection conn = DriverManager.getConnection(DB_URL);
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
@@ -68,7 +68,7 @@ public class EmployeService {
 
     public List<Employe> search(String query) throws SQLException {
         List<Employe> list = new ArrayList<>();
-        String sql = "SELECT * FROM employe WHERE nom_complet LIKE ? OR role LIKE ? OR login LIKE ?";
+        String sql = "SELECT * FROM employes WHERE nom_complet LIKE ? OR role LIKE ? OR login LIKE ?";
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, "%" + query + "%");

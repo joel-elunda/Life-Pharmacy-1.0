@@ -13,7 +13,7 @@ public class TransactionService {
 
     //int id, LocalDateTime dateHeure, double total, String statutPaiement, String methodePaiement, int clientId, int employeId)
     public void add(Transaction t) throws SQLException {
-        String sql = "INSERT INTO transaction(client_id, employe_id, date_transaction, montant_total, methode_paiement) VALUES(?,?,?,?,?)";
+        String sql = "INSERT INTO table_transactions(client_id, employe_id, date_transaction, montant_total, methode_paiement) VALUES(?,?,?,?,?)";
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, t.getId());
@@ -29,7 +29,7 @@ public class TransactionService {
     }
 
     public void update(Transaction t) throws SQLException {
-        String sql = "UPDATE transaction SET client_id=?, employe_id=?, date_transaction=?, montant_total=?, methode_paiement=? WHERE id=?";
+        String sql = "UPDATE table_transactions SET client_id=?, employe_id=?, date_transaction=?, montant_total=?, methode_paiement=? WHERE id=?";
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, t.getId());
@@ -45,7 +45,7 @@ public class TransactionService {
 
     public void delete(int id) throws SQLException {
         try (Connection conn = DriverManager.getConnection(DB_URL);
-             PreparedStatement ps = conn.prepareStatement("DELETE FROM transaction WHERE id=?")) {
+             PreparedStatement ps = conn.prepareStatement("DELETE FROM table_transactions WHERE id=?")) {
             ps.setInt(1, id);
             ps.executeUpdate();
         }
@@ -55,7 +55,7 @@ public class TransactionService {
         List<Transaction> list = new ArrayList<>();
         try (Connection conn = DriverManager.getConnection(DB_URL);
              Statement st = conn.createStatement();
-             ResultSet rs = st.executeQuery("SELECT * FROM transaction")) {
+             ResultSet rs = st.executeQuery("SELECT * FROM table_transactions")) {
             while (rs.next()) {
                 list.add(new Transaction(
                         rs.getInt("id"),
@@ -72,7 +72,7 @@ public class TransactionService {
     }
 
     public int getLastInsertId() throws SQLException {
-        String sql = "SELECT IFNULL(MAX(id),0) AS id FROM transaction";
+        String sql = "SELECT IFNULL(MAX(id),0) AS id FROM table_transactions";
         try (Connection conn = DriverManager.getConnection(DB_URL);
              Statement st = conn.createStatement();
              ResultSet rs = st.executeQuery(sql)) {

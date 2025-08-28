@@ -10,7 +10,7 @@ public class ClientService {
     private static final String DB_URL = "jdbc:sqlite:pharmacy.db";
 
     public void add(Client c) throws SQLException {
-        String sql = "INSERT INTO client(nom_complet, date_naissance, adresse, telephone, email, conditions_medicales, allergies) VALUES(?,?,?,?,?,?,?)";
+        String sql = "INSERT INTO clients (nom_complet, date_naissance, adresse, telephone, email, conditions_medicales, allergies) VALUES(?,?,?,?,?,?,?)";
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
@@ -26,7 +26,7 @@ public class ClientService {
     }
 
     public void update(Client c) throws SQLException {
-        String sql = "UPDATE client SET nom_complet=?, date_naissance=?, adresse=?, telephone=?, email=?, conditions_medicales=?, allergies=? WHERE id=?";
+        String sql = "UPDATE clients SET nom_complet=?, date_naissance=?, adresse=?, telephone=?, email=?, conditions_medicales=?, allergies=? WHERE id=?";
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, c.getNomComplet());
@@ -42,7 +42,7 @@ public class ClientService {
     }
 
     public void delete(int id) throws SQLException {
-        String sql = "DELETE FROM client WHERE id=?";
+        String sql = "DELETE FROM clients WHERE id=?";
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, id);
@@ -52,7 +52,7 @@ public class ClientService {
 
     public List<Client> getAll() throws SQLException {
         List<Client> list = new ArrayList<>();
-        String sql = "SELECT * FROM client";
+        String sql = "SELECT * FROM clients";
         try (Connection conn = DriverManager.getConnection(DB_URL);
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
@@ -75,7 +75,7 @@ public class ClientService {
 
     public List<Client> search(String query) throws SQLException {
         List<Client> list = new ArrayList<>();
-        String sql = "SELECT * FROM client WHERE nom_complet LIKE ? OR telephone LIKE ? OR email LIKE ?";
+        String sql = "SELECT * FROM clients WHERE nom_complet LIKE ? OR telephone LIKE ? OR email LIKE ?";
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, "%" + query + "%");

@@ -9,7 +9,7 @@ public class ProduitService {
     private static final String DB_URL = "jdbc:sqlite:pharmacy.db";
 
     public void add(Produit p) throws SQLException {
-        String sql = "INSERT INTO produit(nom, description, prix, quantite_stock, date_expiration, fournisseur_id, categorie) VALUES(?,?,?,?,?,?,?)";
+        String sql = "INSERT INTO produits(nom, description, prix, quantite_stock, date_expiration, fournisseur_id, categorie) VALUES(?,?,?,?,?,?,?)";
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
@@ -35,7 +35,7 @@ public class ProduitService {
     }
 
     public void update(Produit p) throws SQLException {
-        String sql = "UPDATE produit SET nom=?, description=?, prix=?, quantite_stock=?, date_expiration=?, fournisseur_id=?, categorie=? WHERE id=?";
+        String sql = "UPDATE produits SET nom=?, description=?, prix=?, quantite_stock=?, date_expiration=?, fournisseur_id=?, categorie=? WHERE id=?";
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, p.getNomCommercial());
@@ -60,7 +60,7 @@ public class ProduitService {
 
     public void delete(int id) throws SQLException {
         try (Connection conn = DriverManager.getConnection(DB_URL);
-             PreparedStatement ps = conn.prepareStatement("DELETE FROM produit WHERE id=?")) {
+             PreparedStatement ps = conn.prepareStatement("DELETE FROM produits WHERE id=?")) {
             ps.setInt(1, id);
             ps.executeUpdate();
         }
@@ -71,7 +71,7 @@ public class ProduitService {
         List<Produit> list = new ArrayList<>();
         try (Connection conn = DriverManager.getConnection(DB_URL);
              Statement st = conn.createStatement();
-             ResultSet rs = st.executeQuery("SELECT * FROM produit")) {
+             ResultSet rs = st.executeQuery("SELECT * FROM produits")) {
             while (rs.next()) {
                 list.add(new Produit(
                         rs.getInt("id"),
@@ -99,7 +99,7 @@ public class ProduitService {
 
     public List<Produit> search(String query) throws SQLException {
         List<Produit> list = new ArrayList<>();
-        String sql = "SELECT * FROM produit WHERE nom LIKE ? OR categorie LIKE ?";
+        String sql = "SELECT * FROM produits WHERE nom LIKE ? OR categorie LIKE ?";
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, "%" + query + "%");

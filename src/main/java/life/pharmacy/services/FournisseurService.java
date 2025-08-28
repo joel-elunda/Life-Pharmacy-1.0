@@ -8,7 +8,7 @@ public class FournisseurService {
     private static final String DB_URL = "jdbc:sqlite:pharmacy.db";
 
     public void add(Fournisseur f) throws SQLException {
-        String sql = "INSERT INTO fournisseur(nom, contact, adresse, email) VALUES(?,?,?,?)";
+        String sql = "INSERT INTO fournisseurs (nom, contact, adresse, email) VALUES(?,?,?,?)";
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, f.getNom());
@@ -20,7 +20,7 @@ public class FournisseurService {
     }
 
     public void update(Fournisseur f) throws SQLException {
-        String sql = "UPDATE fournisseur SET nom=?, contact=?, adresse=?, email=? WHERE id=?";
+        String sql = "UPDATE fournisseurs SET nom=?, contact=?, adresse=?, email=? WHERE id=?";
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, f.getNom());
@@ -34,7 +34,7 @@ public class FournisseurService {
 
     public void delete(int id) throws SQLException {
         try (Connection conn = DriverManager.getConnection(DB_URL);
-             PreparedStatement ps = conn.prepareStatement("DELETE FROM fournisseur WHERE id=?")) {
+             PreparedStatement ps = conn.prepareStatement("DELETE FROM fournisseurs WHERE id=?")) {
             ps.setInt(1, id);
             ps.executeUpdate();
         }
@@ -45,7 +45,7 @@ public class FournisseurService {
         List<Fournisseur> list = new ArrayList<>();
         try (Connection conn = DriverManager.getConnection(DB_URL);
              Statement st = conn.createStatement();
-             ResultSet rs = st.executeQuery("SELECT * FROM fournisseur")) {
+             ResultSet rs = st.executeQuery("SELECT * FROM fournisseurs")) {
             while (rs.next()) {
                 list.add(new Fournisseur(
                         rs.getInt("id"),
@@ -63,7 +63,7 @@ public class FournisseurService {
 
     public List<Fournisseur> search(String query) throws SQLException {
         List<Fournisseur> list = new ArrayList<>();
-        String sql = "SELECT * FROM fournisseur WHERE nom LIKE ? OR contact LIKE ? OR email LIKE ?";
+        String sql = "SELECT * FROM fournisseurs WHERE nom LIKE ? OR contact LIKE ? OR email LIKE ?";
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, "%" + query + "%");

@@ -15,9 +15,9 @@ public class FactureService {
         String sql = """
             SELECT t.id, t.client_id, t.employe_id, t.date_transaction, t.montant_total, t.methode_paiement,
                    c.nom_complet AS client_nom, e.nom_complet AS employe_nom
-            FROM transaction t
-            LEFT JOIN client c ON c.id=t.client_id
-            LEFT JOIN employe e ON e.id=t.employe_id
+            FROM table_transactions t
+            LEFT JOIN clients c ON c.id=t.client_id
+            LEFT JOIN employes e ON e.id=t.employe_id
             ORDER BY t.id DESC
         """;
         try (Connection conn = DriverManager.getConnection(DB_URL);
@@ -46,9 +46,9 @@ public class FactureService {
         String sql = """
             SELECT t.id, t.client_id, t.employe_id, t.date_transaction, t.montant_total, t.methode_paiement,
                    c.nom_complet AS client_nom, e.nom_complet AS employe_nom
-            FROM transaction t
-            LEFT JOIN client c ON c.id=t.client_id
-            LEFT JOIN employe e ON e.id=t.employe_id
+            FROM table_transactions t
+            LEFT JOIN clients c ON c.id=t.client_id
+            LEFT JOIN employes e ON e.id=t.employe_id
             WHERE CAST(t.id AS TEXT) LIKE ? OR c.nom_complet LIKE ?
             ORDER BY t.id DESC
         """;
@@ -77,7 +77,7 @@ public class FactureService {
 
     // Enregistrement d'une facture (via table transaction)
     public int saveAsTransaction(Facture facture) throws SQLException {
-        String sql = "INSERT INTO transaction(client_id, employe_id, date_transaction, montant_total, methode_paiement) VALUES(?,?,?,?,?)";
+        String sql = "INSERT INTO table_transactions(client_id, employe_id, date_transaction, montant_total, methode_paiement) VALUES(?,?,?,?,?)";
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setInt(1, facture.getClient() != null ? facture.getClient().getId() : 0);

@@ -21,14 +21,6 @@ public class ClientController implements Initializable {
 
     private final ClientService service = new ClientService();
 
-    @FXML public void initialize() {
-        colId.setCellValueFactory(c -> c.getValue().idProperty());
-        colNom.setCellValueFactory(c -> c.getValue().nomCompletProperty());
-        colTel.setCellValueFactory(c -> c.getValue().telephoneProperty());
-        colEmail.setCellValueFactory(c -> c.getValue().emailProperty());
-        reload(null);
-        searchField.textProperty().addListener((o,ov,nv)->reload(nv));
-    }
 
     private void reload(String q){
         try {
@@ -44,8 +36,14 @@ public class ClientController implements Initializable {
     private void err(Throwable t){ new Alert(Alert.AlertType.ERROR, t.getMessage()).showAndWait(); }
 
 
-@Override
+    @Override
     public void initialize(java.net.URL location, java.util.ResourceBundle resources) {
+        colId.setCellValueFactory(c -> c.getValue().idProperty());
+        colNom.setCellValueFactory(c -> c.getValue().nomCompletProperty());
+        colTel.setCellValueFactory(c -> c.getValue().telephoneProperty());
+        colEmail.setCellValueFactory(c -> c.getValue().emailProperty());
+        reload(null);
+        searchField.textProperty().addListener((o,ov,nv)->reload(nv));
         // Initialization code here
     }
 }

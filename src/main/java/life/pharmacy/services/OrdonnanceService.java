@@ -8,7 +8,7 @@ public class OrdonnanceService {
     private static final String DB_URL = "jdbc:sqlite:pharmacy.db";
 
     public void add(Ordonnance o) throws SQLException {
-        String sql = "INSERT INTO ordonnance(client_id, medecin, date_prescription, details) VALUES(?,?,?,?)";
+        String sql = "INSERT INTO ordonnances(client_id, medecin, date_prescription, details) VALUES(?,?,?,?)";
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, o.getId());
@@ -26,7 +26,7 @@ public class OrdonnanceService {
     *  public Ordonnance(int id, int patientId, String medecin, LocalDate dateEmission, LocalDate dateExpiration,
                       String produitsPrescrits, String instructionsDosage, String statut, String numeroUnique) {*/
     public void update(Ordonnance o) throws SQLException {
-        String sql = "UPDATE ordonnance SET client_id=?, medecin=?, date_prescription=?, details=? WHERE id=?";
+        String sql = "UPDATE ordonnances SET client_id=?, medecin=?, date_prescription=?, details=? WHERE id=?";
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, o.getId());
@@ -44,7 +44,7 @@ public class OrdonnanceService {
 
     public void delete(int id) throws SQLException {
         try (Connection conn = DriverManager.getConnection(DB_URL);
-             PreparedStatement ps = conn.prepareStatement("DELETE FROM ordonnance WHERE id=?")) {
+             PreparedStatement ps = conn.prepareStatement("DELETE FROM ordonnances WHERE id=?")) {
             ps.setInt(1, id);
             ps.executeUpdate();
         }
@@ -57,7 +57,7 @@ public class OrdonnanceService {
         List<Ordonnance> list = new ArrayList<>();
         try (Connection conn = DriverManager.getConnection(DB_URL);
              Statement st = conn.createStatement();
-             ResultSet rs = st.executeQuery("SELECT * FROM ordonnance")) {
+             ResultSet rs = st.executeQuery("SELECT * FROM ordonnances")) {
             while (rs.next()) {
                 list.add(new Ordonnance(
                         rs.getInt("id"),

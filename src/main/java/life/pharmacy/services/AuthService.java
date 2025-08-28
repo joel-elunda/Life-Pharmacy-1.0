@@ -11,7 +11,7 @@ public class AuthService {
     public boolean authenticate(String login, String password) throws Exception {
         if (login == null || password == null) return false;
 
-        final String sql = "SELECT mot_de_passe_hache FROM employe WHERE login = ?";
+        final String sql = "SELECT mot_de_passe_hache FROM employes WHERE login = ?";
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, login);
