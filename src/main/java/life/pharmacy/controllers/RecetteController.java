@@ -21,16 +21,16 @@ public class RecetteController implements Initializable {
     private final RecetteService recetteService = new RecetteService();
 
     private void updateChart(String periode) {
-//        List<Recette> recettes = recetteService.getByPeriode(periode);
-//        XYChart.Series<String, Number> series = new XYChart.Series<>();
-//        series.setName("Chiffre d'affaires");
-//
-//        for (Recette r : recettes) {
-//            //series.getData().add(new XYChart.Data<Object, Number>(r.getDate(), r.getMontant()));
-//        }
-//
-//        recetteChart.getData().clear();
-//        recetteChart.getData().add(series);
+        List<Recette> recettes = recetteService.getByPeriode(periode);
+        XYChart.Series<String, Number> series = new XYChart.Series<>();
+        series.setName("Chiffre d'affaires");
+
+        for (Recette r : recettes) {
+            series.getData().add(new XYChart.Data<String, Number>(r.getDate().toString(), r.getMontant()));
+        }
+
+        recetteChart.getData().clear();
+        recetteChart.getData().add(series);
     }
 
     @Override

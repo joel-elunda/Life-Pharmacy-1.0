@@ -10,6 +10,8 @@ public class Recette {
     private final DoubleProperty montant = new SimpleDoubleProperty();
     private final StringProperty periode = new SimpleStringProperty();
 
+    public Recette() {}
+
     public Recette(int id, LocalDate date, double montant, String periode) {
         this.id.set(id);
         this.date.set(date);
@@ -26,4 +28,8 @@ public class Recette {
     public LocalDate getDate() { return date.get(); }
     public double getMontant() { return montant.get(); }
     public String getPeriode() { return periode.get(); }
+
+    public void setDate(LocalDate value) {date.set(value);}
+    public void setMontant(Double value) {montant.set(value);}
+
 }

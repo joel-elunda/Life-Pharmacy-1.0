@@ -1,26 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.control.cell.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
 
-
-<BorderPane prefHeight="700" prefWidth="1100"
-            xmlns="http://javafx.com/javafx/23.0.1"
-            xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="life.pharmacy.controllers.DashboardController">
+<BorderPane prefHeight="700" prefWidth="1100" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="life.pharmacy.controllers.DashboardController">
 
     <!-- Barre du haut -->
     <!-- Barre du haut -->
     <top>
-        <ToolBar style="-fx-background-color:#009688;">
-            <Button fx:id="produitsButton" style="-fx-background-color:#ffffff; -fx-text-fill:#009688;" text="Produits"/>
-            <Button fx:id="facturesButton" style="-fx-background-color:#ffffff; -fx-text-fill:#009688;" text="Factures"/>
-            <Button fx:id="fournisseursButton" style="-fx-background-color:#ffffff; -fx-text-fill:#009688;" text="Fournisseurs"/>
-            <Button fx:id="clientsButton" style="-fx-background-color:#ffffff; -fx-text-fill:#009688;" text="Clients"/>
-            <Button fx:id="recettesButton" style="-fx-background-color:#ffffff; -fx-text-fill:#009688;" text="Rapports / Recettes"/>
-            <Button fx:id="logoutButton" style="-fx-background-color:#ff5252; -fx-text-fill:white;" text="Déconnexion"/>
+        <ToolBar style="-fx-background-color:#009688;" BorderPane.alignment="CENTER_RIGHT">
+            <Button fx:id="produitsButton" style="-fx-background-color:#ffffff; -fx-text-fill:#009688;" text="Produits" />
+            <Button fx:id="facturesButton" style="-fx-background-color:#ffffff; -fx-text-fill:#009688;" text="Factures" />
+            <Button fx:id="fournisseursButton" style="-fx-background-color:#ffffff; -fx-text-fill:#009688;" text="Fournisseurs" />
+            <Button fx:id="clientsButton" style="-fx-background-color:#ffffff; -fx-text-fill:#009688;" text="Clients" />
+            <Button fx:id="recettesButton" style="-fx-background-color:#ffffff; -fx-text-fill:#009688;" text="Rapports / Recettes" />
+            <Button fx:id="logoutButton" alignment="CENTER_RIGHT" style="-fx-background-color:#ff5252; -fx-text-fill:white;" text="Déconnexion" />
         </ToolBar>
     </top>
 
@@ -30,90 +38,88 @@
         <SplitPane dividerPositions="0.35">
             <!-- Colonne gauche : Clients + Produits -->
             <VBox prefWidth="380" spacing="12">
-                <TitledPane text="Sélection Client" expanded="true">
+                <TitledPane expanded="true" text="Sélection Client">
                     <VBox spacing="8">
-                        <TextField fx:id="searchClientField" promptText="Rechercher client..."/>
+                        <TextField fx:id="searchClientField" promptText="Rechercher client..." />
                         <TableView fx:id="clientTable" prefHeight="220">
                             <columns>
-                                <TableColumn fx:id="colClientId" text="ID" prefWidth="60"/>
-                                <TableColumn fx:id="colClientNom" text="Nom" prefWidth="180"/>
-                                <TableColumn fx:id="colClientTel" text="Téléphone" prefWidth="120"/>
+                                <TableColumn fx:id="colClientId" prefWidth="60" text="ID" />
+                                <TableColumn fx:id="colClientNom" prefWidth="180" text="Nom" />
+                                <TableColumn fx:id="colClientTel" prefWidth="120" text="Téléphone" />
                             </columns>
                         </TableView>
                         <HBox spacing="8">
-                            <Button fx:id="btnNewClient" text="Nouveau client"/>
-                            <Button fx:id="btnEditClient" text="Modifier"/>
+                            <Button fx:id="btnNewClient" text="Nouveau client" />
+                            <Button fx:id="btnEditClient" text="Modifier" />
                         </HBox>
-                        <padding><Insets left="5" right="5" top="5" bottom="5"/></padding>
+                        <padding><Insets bottom="5" left="5" right="5" top="5" /></padding>
                     </VBox>
                 </TitledPane>
 
-                <TitledPane text="Produits" expanded="true">
+                <TitledPane expanded="true" text="Produits">
                     <VBox spacing="8">
-                        <TextField fx:id="searchProductField" promptText="Rechercher produit..."/>
+                        <TextField fx:id="searchProductField" promptText="Rechercher produit..." />
                         <TableView fx:id="productTable" prefHeight="280" VBox.vgrow="ALWAYS">
                             <columns>
-                                <TableColumn fx:id="colProdId" text="ID" prefWidth="60"/>
-                                <TableColumn fx:id="colProdNom" text="Désignation" prefWidth="180"/>
-                                <TableColumn fx:id="colProdCategorie" text="Catégorie" prefWidth="120"/>
-                                <TableColumn fx:id="colProdPrix" text="Prix" prefWidth="90"/>
-                                <TableColumn fx:id="colProdStock" text="Stock" prefWidth="80"/>
+                                <TableColumn fx:id="colProdId" prefWidth="60" text="ID" />
+                                <TableColumn fx:id="colProdNom" prefWidth="180" text="Désignation" />
+                                <TableColumn fx:id="colProdCategorie" prefWidth="120" text="Catégorie" />
+                                <TableColumn fx:id="colProdPrix" prefWidth="90" text="Prix" />
+                                <TableColumn fx:id="colProdStock" prefWidth="80" text="Stock" />
                             </columns>
                         </TableView>
 
-                        <HBox spacing="8" alignment="CENTER_LEFT">
-                            <Label text="Qté:"/>
-                            <Spinner fx:id="qtySpinner" editable="true" prefWidth="90"/>
-                            <Button fx:id="btnAddToCart" text="Ajouter au panier"/>
+                        <HBox alignment="CENTER_LEFT" spacing="8">
+                            <Label text="Qté:" />
+                            <Spinner fx:id="qtySpinner" editable="true" prefWidth="90" />
+                            <Button fx:id="btnAddToCart" text="Ajouter au panier" />
                         </HBox>
                     </VBox>
                 </TitledPane>
-                <padding><Insets left="8" right="8" top="8" bottom="8"/></padding>
+                <padding><Insets bottom="8" left="8" right="8" top="8" /></padding>
             </VBox>
 
             <!-- Colonne droite : Panier + Facture -->
             <VBox spacing="10">
-                <TitledPane text="Panier" expanded="true">
-                    <VBox spacing="8" >
-                        <TableView fx:id="cartTable" prefHeight="320" VBox.vgrow="ALWAYS" editable="true">
+                <TitledPane expanded="true" text="Panier">
+                    <VBox spacing="8">
+                        <TableView fx:id="cartTable" editable="true" prefHeight="320" VBox.vgrow="ALWAYS">
                             <columns>
-                                <TableColumn fx:id="colCartProd" text="Produit" prefWidth="220"/>
-                                <TableColumn fx:id="colCartQty" text="Qté" prefWidth="80"/>
-                                <TableColumn fx:id="colCartPrice" text="P.U." prefWidth="100"/>
-                                <TableColumn fx:id="colCartSubtotal" text="Sous-Total" prefWidth="120"/>
+                                <TableColumn fx:id="colCartProd" prefWidth="220" text="Produit" />
+                                <TableColumn fx:id="colCartQty" prefWidth="80" text="Qté" />
+                                <TableColumn fx:id="colCartPrice" prefWidth="100" text="P.U." />
+                                <TableColumn fx:id="colCartSubtotal" prefWidth="120" text="Sous-Total" />
                             </columns>
                         </TableView>
                         <HBox spacing="8">
-                            <Button fx:id="btnRemoveLine" text="Retirer"/>
-                            <Button fx:id="btnClearCart" text="Vider"/>
-                            <Pane HBox.hgrow="ALWAYS"/>
-                            <Label text="Total:"/>
-                            <Label fx:id="totalLabel" style="-fx-font-weight:bold;"/>
+                            <Button fx:id="btnRemoveLine" text="Retirer" />
+                            <Button fx:id="btnClearCart" text="Vider" />
+                            <Pane HBox.hgrow="ALWAYS" />
+                            <Label text="Total:" />
+                            <Label fx:id="totalLabel" style="-fx-font-weight:bold;" />
                         </HBox>
-                        <padding><Insets left="5" right="5" top="5" bottom="5"/></padding>
+                        <padding><Insets bottom="5" left="5" right="5" top="5" /></padding>
                     </VBox>
                 </TitledPane>
 
-                <TitledPane text="Aperçu - Paiement" expanded="true">
-                    <VBox spacing="8" >
-                        <HBox spacing="10" alignment="CENTER_LEFT">
-                            <Label text="Mode de paiement:"/>
-                            <ComboBox fx:id="paymentCombo" prefWidth="180"/>
-                            <Label text="Caissier:"/>
-                            <Label fx:id="currentUserLabel" style="-fx-font-weight:bold;"/>
+                <TitledPane expanded="true" text="Aperçu - Paiement">
+                    <VBox spacing="8">
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <Label text="Mode de paiement:" />
+                            <ComboBox fx:id="paymentCombo" prefWidth="180" />
+                            <Label text="Caissier:" />
+                            <Label fx:id="currentUserLabel" style="-fx-font-weight:bold;" />
                         </HBox>
-                        <TextArea fx:id="invoicePreview" prefHeight="160" wrapText="true"/>
-                        <HBox spacing="10" alignment="CENTER_RIGHT">
-                            <Button fx:id="printButton" text="Imprimer / Enregistrer"/>
-                            <Button fx:id="cancelButton" text="Annuler"/>
+                        <TextArea fx:id="invoicePreview" prefHeight="160" wrapText="true" />
+                        <HBox alignment="CENTER_RIGHT" spacing="10">
+                            <Button fx:id="printButton" text="Imprimer / Enregistrer" />
+                            <Button fx:id="cancelButton" text="Annuler" />
                         </HBox>
-                        <padding><Insets left="5" right="5" top="5" bottom="5"/></padding>
+                        <padding><Insets bottom="5" left="5" right="5" top="5" /></padding>
                     </VBox>
                 </TitledPane>
-                <padding><Insets left="8" right="8" top="8" bottom="8"/></padding>
+                <padding><Insets bottom="8" left="8" right="8" top="8" /></padding>
             </VBox>
         </SplitPane>
     </center>
 </BorderPane>
-
-

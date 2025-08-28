@@ -3,9 +3,14 @@ package life.pharmacy.controllers;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.stage.Stage;
 import life.pharmacy.models.*;
 import life.pharmacy.services.*;
 
@@ -57,8 +62,59 @@ public class DashboardController implements Initializable {
     private Employe currentUser;
 
     @FXML
-    public void initialize() {
+    private void handleProduits(ActionEvent event) {
+        openView("/life/pharmacy/produit-view.fxml", "Produits");
+    }
 
+    @FXML
+    private void handleFactures(ActionEvent event) {
+        openView("/life/pharmacy/facture-view.fxml", "Factures");
+    }
+
+    @FXML
+    private void handleClients(ActionEvent event) {
+        openView("/life/pharmacy/client-view.fxml", "Clients");
+    }
+
+    @FXML
+    private void handleFournisseurs(ActionEvent event) {
+        openView("/life/pharmacy/fournisseur-view.fxml", "Fournisseurs");
+    }
+
+    @FXML
+    private void handleRecettes(ActionEvent event) {
+        openView("/life/pharmacy/recette-view.fxml", "Recettes");
+    }
+
+    @FXML
+    private void handleDeconnexion(ActionEvent event) {
+        // Fermer le dashboard et revenir à la page de login
+        Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+        stage.close();
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/life/pharmacy/login-view.fxml"));
+            Parent root = loader.load();
+            Stage loginStage = new Stage();
+            loginStage.setTitle("Connexion - Life Pharmacy");
+            loginStage.setScene(new Scene(root));
+            loginStage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void openView(String fxmlPath, String title) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+            Parent root = loader.load();
+            Stage stage = new Stage();
+            stage.setTitle(title + " - Life Pharmacy");
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void reloadClients() {
@@ -221,7 +277,7 @@ public class DashboardController implements Initializable {
         panier.addListener((ListChangeListener<LigneTransaction>) change -> updateTotalsAndPreview());
     }
 
-    public static void openDashboard() {
-        // SceneLoader.openScene("/fxml/dashboard-view.fxml", "Dashboard - Life Pharmacy");
+    public void openDashboard() {
+        openView("/life/pharmacy/dashboard-view.fxml", "Dashboard - Life Pharmacy");
     }
 }

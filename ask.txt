@@ -1,0 +1,5 @@
+1. Oui, et passons à l'implémentation du code sur les boutons du top bar (Factures, Produits, Clients, Fournisseurs, Recette, Deconnexion)
+2. Crée la méthode recetteService.getByPeriode(periode);
+3. series.getData().add(new XYChart.Data<Object, Number>(r.getDate(), r.getMontant()));
+Required : Data<String, provided String> Data<Object, String>
+4. Et aussi on a oublié de générer le code ProduitController
