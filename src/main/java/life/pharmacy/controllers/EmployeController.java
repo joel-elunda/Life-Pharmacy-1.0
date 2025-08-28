@@ -27,12 +27,7 @@ public class EmployeController implements Initializable {
     private final EmployeService service = new EmployeService();
 
     @FXML public void initialize(){
-        colId.setCellValueFactory(c->c.getValue().idProperty());
-        colNom.setCellValueFactory(c->c.getValue().nomCompletProperty());
-        colRole.setCellValueFactory(c->c.getValue().roleProperty());
-        colLogin.setCellValueFactory(c->c.getValue().loginProperty());
-        reload(null);
-        searchField.textProperty().addListener((o,ov,nv)->reload(nv));
+
     }
 
     private void reload(String q){
@@ -44,6 +39,12 @@ public class EmployeController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        System.out.println("Employe dialog started... ");
+        System.out.println("Employe started... ");
+        colId.setCellValueFactory(c->c.getValue().idProperty());
+        colNom.setCellValueFactory(c->c.getValue().nomCompletProperty());
+        colRole.setCellValueFactory(c->c.getValue().roleProperty());
+        colLogin.setCellValueFactory(c->c.getValue().loginProperty());
+        reload(null);
+        searchField.textProperty().addListener((o,ov,nv)->reload(nv));
     }
 }

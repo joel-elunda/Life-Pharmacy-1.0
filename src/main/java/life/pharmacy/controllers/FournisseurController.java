@@ -28,13 +28,7 @@ public class FournisseurController implements Initializable {
     private final FournisseurService service = new FournisseurService();
 
     @FXML public void initialize(){
-        colId.setCellValueFactory(c->c.getValue().idProperty());
-        colNom.setCellValueFactory(c->c.getValue().nomProperty());
-        colContact.setCellValueFactory(c->c.getValue().contactProperty());
-        colTel.setCellValueFactory(c->c.getValue().telephoneProperty());
-        colEmail.setCellValueFactory(c->c.getValue().emailProperty());
-        reload(null);
-        searchField.textProperty().addListener((o,ov,nv)->reload(nv));
+
     }
 
     private void reload(String q){
@@ -46,6 +40,13 @@ public class FournisseurController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        System.out.println("Fournisseur dialog started... ");
+        System.out.println("Fournisseur started... ");
+        colId.setCellValueFactory(c->c.getValue().idProperty());
+        colNom.setCellValueFactory(c->c.getValue().nomProperty());
+        colContact.setCellValueFactory(c->c.getValue().contactProperty());
+        colTel.setCellValueFactory(c->c.getValue().telephoneProperty());
+        colEmail.setCellValueFactory(c->c.getValue().emailProperty());
+        reload(null);
+        searchField.textProperty().addListener((o,ov,nv)->reload(nv));
     }
 }

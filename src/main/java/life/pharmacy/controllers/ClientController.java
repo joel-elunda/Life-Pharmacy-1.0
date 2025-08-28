@@ -38,12 +38,15 @@ public class ClientController implements Initializable {
 
     @Override
     public void initialize(java.net.URL location, java.util.ResourceBundle resources) {
+        // Initialization code here
+        System.out.println("Client started...");
+
         colId.setCellValueFactory(c -> c.getValue().idProperty());
         colNom.setCellValueFactory(c -> c.getValue().nomCompletProperty());
         colTel.setCellValueFactory(c -> c.getValue().telephoneProperty());
         colEmail.setCellValueFactory(c -> c.getValue().emailProperty());
         reload(null);
         searchField.textProperty().addListener((o,ov,nv)->reload(nv));
-        // Initialization code here
+
     }
 }

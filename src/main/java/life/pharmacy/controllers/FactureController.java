@@ -28,13 +28,7 @@ public class FactureController implements Initializable {
 
     @FXML
     public void initialize() {
-        colId.setCellValueFactory(c -> c.getValue().idProperty());
-        colClient.setCellValueFactory(c -> c.getValue().clientProperty().get().nomCompletProperty());
-        colEmploye.setCellValueFactory(c -> c.getValue().employeProperty().get().nomCompletProperty());
-        colDate.setCellValueFactory(c -> c.getValue().dateProperty().asString());
-        colMontant.setCellValueFactory(c -> c.getValue().montantTotalProperty());
-        colModePaiement.setCellValueFactory(c -> c.getValue().modePaiementProperty());
-        reload(null);
+
     }
 
     @FXML private void onSearch(){ reload(searchFactureField.getText()); }
@@ -51,6 +45,13 @@ public class FactureController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-
+        System.out.println("Facture started...");
+        colId.setCellValueFactory(c -> c.getValue().idProperty());
+        colClient.setCellValueFactory(c -> c.getValue().clientProperty().get().nomCompletProperty());
+        colEmploye.setCellValueFactory(c -> c.getValue().employeProperty().get().nomCompletProperty());
+        colDate.setCellValueFactory(c -> c.getValue().dateProperty().asString());
+        colMontant.setCellValueFactory(c -> c.getValue().montantTotalProperty());
+        colModePaiement.setCellValueFactory(c -> c.getValue().modePaiementProperty());
+        reload(null);
     }
 }

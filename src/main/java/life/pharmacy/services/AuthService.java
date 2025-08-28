@@ -11,17 +11,17 @@ public class AuthService {
     public boolean authenticate(String login, String password) throws Exception {
         if (login == null || password == null) return false;
 
-        final String sql = "SELECT mot_de_passe_hache FROM employes WHERE login = ?";
+        final String sql = "SELECT motDePasseHash FROM employes WHERE login = ?";
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, login);
             ResultSet rs = ps.executeQuery();
 
             if (rs.next()) {
-                String stored = rs.getString("mot_de_passe_hache");
+                String stored = rs.getString("motDePasseHash");
                 return verifyPassword(password, stored);
             } else {
-                // fallback dev: si aucun employé trouvé, on accepte admin/admin
+                // fallback dev: si aucun employé trouvé, on accepte admin/@admin.2025
                 return "admin".equals(login) && "admin".equals(password);
             }
         }
@@ -37,7 +37,7 @@ public class AuthService {
 
     public static boolean verifyPassword(String rawPassword, String stored) throws Exception {
         if (stored == null) return false;
-        // Accepte soit mot de passe déjà hashé (SHA-256), soit (rare) en clair (ex: admin/admin)
+        // Accepte soit mot de passe déjà hashé (SHA-256), soit (rare) en clair (ex: admin/@admin.2025)
         String hashed = hashPassword(rawPassword);
         return stored.equals(hashed) || stored.equals(rawPassword);
     }

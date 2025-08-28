@@ -58,52 +58,13 @@ public class DashboardController implements Initializable {
 
     @FXML
     public void initialize() {
-        // user courant (exemple : admin)
-        currentUser = new Employe(); currentUser.setId(1); currentUser.setNomComplet("Admin"); currentUserLabel.setText(currentUser.getNomComplet());
 
-        // colonnes clients
-        colClientId.setCellValueFactory(c -> c.getValue().idProperty());
-        colClientNom.setCellValueFactory(c -> c.getValue().nomCompletProperty());
-        colClientTel.setCellValueFactory(c -> c.getValue().telephoneProperty());
-
-        // colonnes produits
-        colProdId.setCellValueFactory(c -> c.getValue().idProperty());
-        colProdNom.setCellValueFactory(c -> c.getValue().nomCommercialProperty());
-        colProdCategorie.setCellValueFactory(c -> c.getValue().categorieProperty());
-        colProdPrix.setCellValueFactory(c -> c.getValue().prixVenteProperty());
-        colProdStock.setCellValueFactory(c -> c.getValue().stockProperty());
-
-        // colonnes panier
-        colCartProd.setCellValueFactory(c -> c.getValue().produitProperty().get().nomCommercialProperty());
-        colCartQty.setCellValueFactory(c -> c.getValue().quantiteProperty());
-        colCartPrice.setCellValueFactory(c -> c.getValue().prixUnitaireProperty());
-        colCartSubtotal.setCellValueFactory(c -> c.getValue().sousTotalProperty());
-
-        cartTable.setItems(panier);
-
-        // données
-        reloadClients();
-        reloadProduits();
-
-        // spinner qté
-        qtySpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 1000, 1));
-
-        // modes de paiement
-        paymentCombo.getItems().setAll("Espèces", "Carte", "Mobile Money", "Chèque");
-        paymentCombo.getSelectionModel().selectFirst();
-
-        // filtre clients
-        searchClientField.textProperty().addListener((obs, old, val) -> reloadClients(val));
-        // filtre produits
-        searchProductField.textProperty().addListener((obs, old, val) -> reloadProduits(val));
-
-        // total bind manuel (recalc à chaque modif de panier)
-        panier.addListener((ListChangeListener<LigneTransaction>) change -> updateTotalsAndPreview());
     }
 
     private void reloadClients() {
         reloadClients(null);
     }
+
     private void reloadClients(String q) {
         try {
             var list = (q == null || q.isBlank()) ? clientService.getAll() : clientService.search(q);
@@ -217,5 +178,50 @@ public class DashboardController implements Initializable {
     public void initialize(java.net.URL location, java.util.ResourceBundle resources) {
         // Initialization code here
         System.out.println("Dashboard started...");
+        // user courant (exemple : admin)
+        currentUser = new Employe(); currentUser.setId(1); currentUser.setNomComplet("Admin"); currentUserLabel.setText(currentUser.getNomComplet());
+
+        // colonnes clients
+        colClientId.setCellValueFactory(c -> c.getValue().idProperty());
+        colClientNom.setCellValueFactory(c -> c.getValue().nomCompletProperty());
+        colClientTel.setCellValueFactory(c -> c.getValue().telephoneProperty());
+
+        // colonnes produits
+        colProdId.setCellValueFactory(c -> c.getValue().idProperty());
+        colProdNom.setCellValueFactory(c -> c.getValue().nomCommercialProperty());
+        colProdCategorie.setCellValueFactory(c -> c.getValue().categorieProperty());
+        colProdPrix.setCellValueFactory(c -> c.getValue().prixVenteProperty());
+        colProdStock.setCellValueFactory(c -> c.getValue().stockProperty());
+
+        // colonnes panier
+        colCartProd.setCellValueFactory(c -> c.getValue().produitProperty().get().nomCommercialProperty());
+        colCartQty.setCellValueFactory(c -> c.getValue().quantiteProperty());
+        colCartPrice.setCellValueFactory(c -> c.getValue().prixUnitaireProperty());
+        colCartSubtotal.setCellValueFactory(c -> c.getValue().sousTotalProperty());
+
+        cartTable.setItems(panier);
+
+        // données
+        reloadClients();
+        reloadProduits();
+
+        // spinner qté
+        qtySpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 1000, 1));
+
+        // modes de paiement
+        paymentCombo.getItems().setAll("Espèces", "Carte", "Mobile Money", "Chèque");
+        paymentCombo.getSelectionModel().selectFirst();
+
+        // filtre clients
+        searchClientField.textProperty().addListener((obs, old, val) -> reloadClients(val));
+        // filtre produits
+        searchProductField.textProperty().addListener((obs, old, val) -> reloadProduits(val));
+
+        // total bind manuel (recalc à chaque modif de panier)
+        panier.addListener((ListChangeListener<LigneTransaction>) change -> updateTotalsAndPreview());
+    }
+
+    public static void openDashboard() {
+        // SceneLoader.openScene("/fxml/dashboard-view.fxml", "Dashboard - Life Pharmacy");
     }
 }

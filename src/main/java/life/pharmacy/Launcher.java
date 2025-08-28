@@ -14,7 +14,7 @@ public class Launcher extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader(Launcher.class.getResource("login-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 300, 400);
         stage.setResizable(false);
-        stage.setTitle("Life Pharmacy 1.0");
+        stage.setTitle("Se connecter - Life Pharmacy 1.0");
         stage.setScene(scene);
         stage.show();
     }

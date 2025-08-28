@@ -14,6 +14,7 @@ import life.pharmacy.config.DatabaseInitializer;
 import life.pharmacy.services.AuthService;
 
 import java.net.URL;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class LoginController implements Initializable {
@@ -32,11 +33,11 @@ public class LoginController implements Initializable {
         try {
             if (authService.authenticate(u, p)) {
                 // ouvrir dashboard
-                var root = FXMLLoader.load(getClass().getResource("/views/dashboard-view.fxml"));
+                var root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/life/pharmacy/dashboard-view.fxml")));
                 var stage = new Stage();
                 stage.setTitle("Life Pharmacy — Dashboard");
                 var scene = new Scene((Parent) root);
-                scene.getStylesheets().add(getClass().getResource("/css/theme.css").toExternalForm());
+                scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/theme.css")).toExternalForm());
                 stage.setScene(scene);
                 stage.show();
                 ((Stage) loginButton.getScene().getWindow()).close();
