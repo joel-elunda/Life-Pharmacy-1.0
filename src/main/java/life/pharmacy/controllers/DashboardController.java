@@ -121,6 +121,9 @@ public class DashboardController implements Initializable {
         } catch (Exception e) { showError(e); }
     }
 
+
+
+    // Ajout au panier
     @FXML
     private void onAddToCart() {
         Produit p = productTable.getSelectionModel().getSelectedItem();
@@ -129,15 +132,17 @@ public class DashboardController implements Initializable {
         if (qte <= 0) { alert("Quantité invalide"); return; }
         if (p.getStock() < qte) { alert("Stock insuffisant"); return; }
 
-        // Si ligne déjà présente, on incrémente
+        // ligne déjà présente ? (par produitId)
         for (LigneTransaction lt : panier) {
-            if (lt.getProduit().getId() == p.getId()) {
+            if (lt.getProduitId() == p.getId()) {
                 lt.setQuantite(lt.getQuantite() + qte);
                 updateTotalsAndPreview();
                 return;
             }
         }
-        LigneTransaction line = new LigneTransaction(0, 0, p, qte, p.getPrixVente());
+
+        LigneTransaction line = new LigneTransaction(0, 0, p.getId(), qte, p.getPrixVente());
+        line.setProduitNom(p.getNomCommercial()); // pour affichage immédiat dans la table
         panier.add(line);
         updateTotalsAndPreview();
     }

@@ -8,13 +8,17 @@ public class LigneTransaction {
     private final IntegerProperty id = new SimpleIntegerProperty(this, "id");
     private final IntegerProperty transactionId = new SimpleIntegerProperty(this, "transactionId");
     private final IntegerProperty produitId = new SimpleIntegerProperty(this, "produitId");
+    private final StringProperty produitNom = new SimpleStringProperty(this, "produitNom"); // pour TableView (affichage)
     private final IntegerProperty quantite = new SimpleIntegerProperty(this, "quantite");
     private final DoubleProperty prixUnitaire = new SimpleDoubleProperty(this, "prixUnitaire");
     private final DoubleProperty sousTotal = new SimpleDoubleProperty(this, "sousTotal");
     private final StringProperty numeroOrdonnance = new SimpleStringProperty(this, "numeroOrdonnance");
     private final ObjectProperty<Produit> produit = new SimpleObjectProperty<>(this, "produit");
 
-    public LigneTransaction() {}
+    public LigneTransaction() {
+        sousTotal.bind(prixUnitaire.multiply(quantite));
+    }
+
 
     public LigneTransaction(int id, int transactionId, int produitId, int quantite, double prixUnitaire) {
         this.id.set(id);
@@ -36,6 +40,10 @@ public class LigneTransaction {
     public int getProduitId() { return produitId.get(); }
     public void setProduitId(int value) { produitId.set(value); }
     public IntegerProperty produitIdProperty() { return produitId; }
+
+    public String getProduitNom(){ return produitNom.get(); }
+    public void setProduitNom(String v){ produitNom.set(v); }
+    public StringProperty produitNomProperty(){ return produitNom; }
 
     public int getQuantite() { return quantite.get(); }
     public void setQuantite(int value) { quantite.set(value); }

@@ -70,4 +70,13 @@ public class TransactionService {
         }
         return list;
     }
+
+    public int getLastInsertId() throws SQLException {
+        String sql = "SELECT IFNULL(MAX(id),0) AS id FROM transaction";
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             Statement st = conn.createStatement();
+             ResultSet rs = st.executeQuery(sql)) {
+            return rs.next() ? rs.getInt("id") : 0;
+        }
+    }
 }
