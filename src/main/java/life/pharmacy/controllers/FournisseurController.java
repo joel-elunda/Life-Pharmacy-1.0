@@ -18,7 +18,7 @@ public class FournisseurController implements Initializable {
 
     @FXML
     private TextField searchField;
-    @FXML private TableView<Fournisseur> tableView;
+    @FXML private TableView<Fournisseur> fournisseurTable;
     @FXML private TableColumn<Fournisseur, Number> colId;
     @FXML private TableColumn<Fournisseur, String> colNom;
     @FXML private TableColumn<Fournisseur, String> colContact;
@@ -34,7 +34,7 @@ public class FournisseurController implements Initializable {
     private void reload(String q){
         try {
             List<Fournisseur> data = (q==null || q.isBlank()) ? service.getAll() : service.search(q);
-            tableView.setItems(FXCollections.observableArrayList(data));
+            fournisseurTable.setItems(FXCollections.observableArrayList(data));
         } catch(Exception e){ new Alert(Alert.AlertType.ERROR, e.getMessage()).showAndWait(); }
     }
 

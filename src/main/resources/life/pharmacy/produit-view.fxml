@@ -11,7 +11,7 @@
 <BorderPane prefHeight="600" prefWidth="900" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="life.pharmacy.controllers.ProduitController">
     <top>
         <HBox alignment="CENTER_RIGHT" spacing="10">
-            <TextField fx:id="searchField" prefHeight="26.0" prefWidth="230.0" promptText="Rechercher produit..." />
+            <TextField fx:id="searchField" onAction="#rechercherProduit" prefHeight="26.0" prefWidth="230.0" promptText="Rechercher produit..." />
             <Button fx:id="importButton" text="Importer Excel" />
             <Button fx:id="exportButton" text="Exporter Excel" />
          <padding>
@@ -24,10 +24,11 @@
         <TableView fx:id="produitTable">
             <columns>
                 <TableColumn fx:id="colId" text="ID" />
-                <TableColumn fx:id="colNom" text="Nom" />
-                <TableColumn fx:id="colCategorie" text="Catégorie" />
-                <TableColumn fx:id="colPrix" text="Prix" />
-                <TableColumn fx:id="colStock" text="Stock" />
+                <TableColumn fx:id="colNomCommercial" prefWidth="127.99999237060547" text="Nom commercial" />
+            <TableColumn fx:id="colNomGenerique" prefWidth="104.7999267578125" text="Nom générique" />
+                <TableColumn fx:id="colCategorie" minWidth="0.0" prefWidth="172.0" text="Catégorie" />
+                <TableColumn fx:id="colPrix" prefWidth="113.60000610351562" text="Prix" />
+                <TableColumn fx:id="colStock" prefWidth="104.79998779296875" text="Stock" />
             </columns>
         </TableView>
     </center>

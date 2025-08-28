@@ -19,8 +19,8 @@
             <Label style="-fx-text-fill:white; -fx-font-size:16px;" text="Factures" />
             <Pane HBox.hgrow="ALWAYS" />
             <TextField fx:id="searchFactureField" prefHeight="26.0" prefWidth="200.0" promptText="Rechercher… (ID/Client)" />
-            <Button fx:id="searchButton" style="-fx-background-color:#ffffff; -fx-text-fill:#009688;" text="Rechercher" />
-            <Button fx:id="refreshButton" style="-fx-background-color:#ffffff; -fx-text-fill:#009688;" text="Rafraîchir" />
+            <Button fx:id="searchButton" onAction="#onSearch" style="-fx-background-color:#ffffff; -fx-text-fill:#009688;" text="Rechercher" />
+            <Button fx:id="refreshButton" onAction="#onRefresh" style="-fx-background-color:#ffffff; -fx-text-fill:#009688;" text="Rafraîchir" />
         </ToolBar>
     </top>
 

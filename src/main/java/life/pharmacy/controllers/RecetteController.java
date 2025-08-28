@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import life.pharmacy.models.Recette;
 import life.pharmacy.services.RecetteService;
@@ -16,6 +17,7 @@ import java.util.ResourceBundle;
 public class RecetteController implements Initializable {
 
     @FXML private LineChart<String, Number> recetteChart;
+    @FXML private Button printButton, refreshButton, exportButton;
     @FXML private ComboBox<String> filtrePeriode;
 
     private final RecetteService recetteService = new RecetteService();

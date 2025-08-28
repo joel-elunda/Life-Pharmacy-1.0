@@ -26,10 +26,6 @@ public class FactureController implements Initializable {
 
     private final FactureService service = new FactureService();
 
-    @FXML
-    public void initialize() {
-
-    }
 
     @FXML private void onSearch(){ reload(searchFactureField.getText()); }
     @FXML private void onRefresh(){ reload(null); }

@@ -23,12 +23,12 @@
     <!-- Barre du haut -->
     <top>
         <ToolBar style="-fx-background-color:#009688;" BorderPane.alignment="CENTER_RIGHT">
-            <Button fx:id="produitsButton" style="-fx-background-color:#ffffff; -fx-text-fill:#009688;" text="Produits" />
-            <Button fx:id="facturesButton" style="-fx-background-color:#ffffff; -fx-text-fill:#009688;" text="Factures" />
-            <Button fx:id="fournisseursButton" style="-fx-background-color:#ffffff; -fx-text-fill:#009688;" text="Fournisseurs" />
-            <Button fx:id="clientsButton" style="-fx-background-color:#ffffff; -fx-text-fill:#009688;" text="Clients" />
-            <Button fx:id="recettesButton" style="-fx-background-color:#ffffff; -fx-text-fill:#009688;" text="Rapports / Recettes" />
-            <Button fx:id="logoutButton" alignment="CENTER_RIGHT" style="-fx-background-color:#ff5252; -fx-text-fill:white;" text="Déconnexion" />
+            <Button fx:id="produitsButton" onAction="#handleProduits" style="-fx-background-color:#ffffff; -fx-text-fill:#009688;" text="Produits" />
+            <Button fx:id="facturesButton" onAction="#handleFactures" style="-fx-background-color:#ffffff; -fx-text-fill:#009688;" text="Factures" />
+            <Button fx:id="fournisseursButton" onAction="#handleFournisseurs" style="-fx-background-color:#ffffff; -fx-text-fill:#009688;" text="Fournisseurs" />
+            <Button fx:id="clientsButton" onAction="#handleClients" style="-fx-background-color:#ffffff; -fx-text-fill:#009688;" text="Clients" />
+            <Button fx:id="recettesButton" onAction="#handleRecettes" style="-fx-background-color:#ffffff; -fx-text-fill:#009688;" text="Rapports" />
+            <Button fx:id="logoutButton" alignment="CENTER_RIGHT" onAction="#handleDeconnexion" style="-fx-background-color:#ff5252; -fx-text-fill:white;" text="Déconnexion" />
         </ToolBar>
     </top>
 

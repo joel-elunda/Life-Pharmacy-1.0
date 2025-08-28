@@ -14,12 +14,12 @@ import java.util.ResourceBundle;
 
 public class ProduitController implements Initializable {
 
-    @FXML private TableView<Produit> tableProduits;
+    @FXML private TableView<Produit> produitTable;
     @FXML private TableColumn<Produit, Integer> colId;
-    @FXML private TableColumn<Produit, String> colNomCommercia;
+    @FXML private TableColumn<Produit, String> colNomCommercial;
     @FXML private TableColumn<Produit, String> colNomGenerique;
     @FXML private TableColumn<Produit, String> colCategorie;
-    @FXML private TableColumn<Produit, Double> colPrixVente;
+    @FXML private TableColumn<Produit, Double> colPrix;
     @FXML private TableColumn<Produit, Integer> colStock;
 
     @FXML private TextField txtNomCommercia;
@@ -27,7 +27,8 @@ public class ProduitController implements Initializable {
     @FXML private TextField txtCategorie;
     @FXML private TextField txtPrixVente;
     @FXML private TextField txtStock;
-    @FXML private TextField txtSearch;
+    @FXML private TextField searchField;
+    @FXML private Button importButton, exportButton, addButton, editButton, deleteButton;
 
     private final ProduitService produitService = new ProduitService();
     private final ObservableList<Produit> produits = FXCollections.observableArrayList();
@@ -56,7 +57,7 @@ public class ProduitController implements Initializable {
 
     @FXML
     private void supprimerProduit() {
-        Produit selected = tableProduits.getSelectionModel().getSelectedItem();
+        Produit selected = produitTable.getSelectionModel().getSelectedItem();
         if (selected != null) {
             try {
                 produitService.delete(selected.getId());
@@ -71,7 +72,7 @@ public class ProduitController implements Initializable {
     @FXML
     private void rechercherProduit() {
         try {
-            produits.setAll(produitService.search(txtSearch.getText()));
+            produits.setAll(produitService.search(searchField.getText()));
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -88,10 +89,10 @@ public class ProduitController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         colId.setCellValueFactory(cell -> cell.getValue().idProperty().asObject());
-        colNomCommercia.setCellValueFactory(cell -> cell.getValue().nomCommercialProperty());
+        colNomCommercial.setCellValueFactory(cell -> cell.getValue().nomCommercialProperty());
         colNomGenerique.setCellValueFactory(cell -> cell.getValue().nomGeneriqueProperty());
         colCategorie.setCellValueFactory(cell -> cell.getValue().categorieProperty());
-        colPrixVente.setCellValueFactory(cell -> cell.getValue().prixVenteProperty().asObject());
+        colPrix.setCellValueFactory(cell -> cell.getValue().prixVenteProperty().asObject());
         colStock.setCellValueFactory(cell -> cell.getValue().stockProperty().asObject());
 
         try {
@@ -99,6 +100,6 @@ public class ProduitController implements Initializable {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        tableProduits.setItems(produits);
+        produitTable.setItems(produits);
     }
 }

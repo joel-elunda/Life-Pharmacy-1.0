@@ -12,10 +12,10 @@ import java.util.List;
 public class ClientController implements Initializable {
     @FXML
     private TextField searchField;
-    @FXML private TableView<Client> tableView;
+    @FXML private TableView<Client> clientTable;
     @FXML private TableColumn<Client, Number> colId;
     @FXML private TableColumn<Client, String> colNom;
-    @FXML private TableColumn<Client, String> colTel;
+    @FXML private TableColumn<Client, String> colTelephone;
     @FXML private TableColumn<Client, String> colEmail;
     @FXML private Button addButton, editButton, deleteButton;
 
@@ -25,13 +25,13 @@ public class ClientController implements Initializable {
     private void reload(String q){
         try {
             List<Client> data = (q==null || q.isBlank()) ? service.getAll() : service.search(q);
-            tableView.setItems(FXCollections.observableArrayList(data));
+            clientTable.setItems(FXCollections.observableArrayList(data));
         } catch (Exception e) { err(e); }
     }
 
     @FXML private void onAdd(){ /* ouvrir dialog, créer Client, service.add(...) puis reload */ }
     @FXML private void onEdit(){ /* idem update */ }
-    @FXML private void onDelete(){ var c = tableView.getSelectionModel().getSelectedItem(); if(c!=null){ try{ service.delete(c.getId()); reload(null);}catch(Exception e){err(e);} } }
+    @FXML private void onDelete(){ var c = clientTable.getSelectionModel().getSelectedItem(); if(c!=null){ try{ service.delete(c.getId()); reload(null);}catch(Exception e){err(e);} } }
 
     private void err(Throwable t){ new Alert(Alert.AlertType.ERROR, t.getMessage()).showAndWait(); }
 
@@ -43,7 +43,7 @@ public class ClientController implements Initializable {
 
         colId.setCellValueFactory(c -> c.getValue().idProperty());
         colNom.setCellValueFactory(c -> c.getValue().nomCompletProperty());
-        colTel.setCellValueFactory(c -> c.getValue().telephoneProperty());
+        colTelephone.setCellValueFactory(c -> c.getValue().telephoneProperty());
         colEmail.setCellValueFactory(c -> c.getValue().emailProperty());
         reload(null);
         searchField.textProperty().addListener((o,ov,nv)->reload(nv));

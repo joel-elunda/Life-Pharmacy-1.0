@@ -26,10 +26,6 @@ public class EmployeController implements Initializable {
 
     private final EmployeService service = new EmployeService();
 
-    @FXML public void initialize(){
-
-    }
-
     private void reload(String q){
         try {
             List<Employe> data = (q==null || q.isBlank()) ? service.getAll() : service.search(q);

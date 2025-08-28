@@ -25,6 +25,7 @@
             <columns>
                 <TableColumn fx:id="colId" text="ID" />
                 <TableColumn fx:id="colNom" text="Nom" />
+            <TableColumn fx:id="colEmail" prefWidth="75.0" text="Email" />
                 <TableColumn fx:id="colTelephone" text="Téléphone" />
                 <TableColumn fx:id="colAdresse" text="Adresse" />
             </columns>
