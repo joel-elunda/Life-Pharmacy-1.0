@@ -2,14 +2,25 @@ package life.pharmacy.controllers;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyEvent;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import life.pharmacy.controllers.dialogcontrollers.ProduitDialogController;
 import life.pharmacy.models.Produit;
 import life.pharmacy.services.ProduitService;
 
+import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class ProduitController implements Initializable {
@@ -32,6 +43,114 @@ public class ProduitController implements Initializable {
 
     private final ProduitService produitService = new ProduitService();
     private final ObservableList<Produit> produits = FXCollections.observableArrayList();
+
+    // === Bouton Ajouter ===
+    @FXML
+    private void handleAjouter(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/life/pharmacy/dialogs/produit-dialog.fxml"));
+            Parent root = loader.load();
+
+            ProduitDialogController controller = loader.getController();
+            controller.setProduit(new Produit());
+
+            Stage dialog = new Stage();
+            dialog.setTitle("Ajouter un produit");
+            dialog.initModality(Modality.APPLICATION_MODAL);
+            dialog.setScene(new Scene(root));
+            dialog.showAndWait();
+
+            Produit nouveau = controller.getProduit();
+            if (nouveau != null) {
+                try {
+                    produitService.add(nouveau);
+                    produitTable.getItems().setAll(produitService.getAll());
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // === Bouton Modifier ===
+    @FXML
+    private void handleModifier(ActionEvent event) {
+        Produit selected = produitTable.getSelectionModel().getSelectedItem();
+        if (selected == null) return;
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/life/pharmacy/dialogs/produit-dialog.fxml"));
+            Parent root = loader.load();
+
+            ProduitDialogController controller = loader.getController();
+            controller.setProduit(selected);
+
+            Stage dialog = new Stage();
+            dialog.setTitle("Modifier produit");
+            dialog.initModality(Modality.APPLICATION_MODAL);
+            dialog.setScene(new Scene(root));
+            dialog.showAndWait();
+
+            Produit updated = controller.getProduit();
+            if (updated != null) {
+                try {
+                    produitService.update(updated);
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+                produitTable.refresh();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // === Bouton Supprimer ===
+    @FXML
+    private void handleSupprimer(ActionEvent event) {
+        Produit selected = produitTable.getSelectionModel().getSelectedItem();
+        if (selected != null) {
+            try {
+                produitService.delete(selected.getId());
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            produitTable.getItems().remove(selected);
+        }
+    }
+
+    // === Bouton Rechercher ===
+    @FXML
+    private void handleRechercher(KeyEvent event) {
+        String query = searchField.getText();
+        List<Produit> resultats = null;
+        try {
+            resultats = produitService.search(query);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        produitTable.getItems().setAll(resultats);
+    }
+
+    // === Export Excel ===
+    @FXML
+    private void handleExportExcel(ActionEvent event) {
+        produitService.exportToFile("produits.xlsx");
+    }
+
+    // === Import Excel ===
+    @FXML
+    private void handleImportExcel(ActionEvent event) {
+        produitService.importFromFile("produits.xlsx");
+        try {
+            produitTable.getItems().setAll(produitService.getAll());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 
     @FXML
