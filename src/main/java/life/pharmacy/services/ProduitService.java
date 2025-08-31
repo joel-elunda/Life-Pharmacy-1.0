@@ -1,11 +1,22 @@
 package life.pharmacy.services;
 
 import life.pharmacy.models.Produit;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.sql.*;
 import java.sql.Date;
 import java.util.*;
 
 public class ProduitService {
+
+    private final List<Produit> produits = new ArrayList<>();
+
     private static final String DB_URL = "jdbc:sqlite:pharmacy.db";
 
     public void add(Produit p) throws SQLException {
@@ -65,7 +76,6 @@ public class ProduitService {
             ps.executeUpdate();
         }
     }
-
 
     public List<Produit> getAll() throws SQLException {
         List<Produit> list = new ArrayList<>();
@@ -128,5 +138,86 @@ public class ProduitService {
             }
         }
         return list;
+    }
+
+    public void exportToFile(String filename) {
+        try (Workbook workbook = new XSSFWorkbook()) {
+            Sheet sheet = workbook.createSheet("Produits");
+            Row header = sheet.createRow(0);
+            header.createCell(0).setCellValue("ID");
+            header.createCell(1).setCellValue("Nom");
+            header.createCell(2).setCellValue("Nom Générique");
+            header.createCell(3).setCellValue("Prix Achat");
+            header.createCell(4).setCellValue("Prix Vente");
+            header.createCell(5).setCellValue("Stock");
+
+            int rowNum = 1;
+            for (Produit p : produits) {
+                Row row = sheet.createRow(rowNum++);
+                row.createCell(0).setCellValue(p.getId());
+                row.createCell(1).setCellValue(p.getNomCommercial());
+                row.createCell(2).setCellValue(p.getNomGenerique());
+                row.createCell(3).setCellValue(p.getPrixAchat());
+                row.createCell(4).setCellValue(p.getPrixVente());
+                row.createCell(5).setCellValue(p.getStock());
+            }
+
+            try (FileOutputStream fos = new FileOutputStream(filename)) {
+                workbook.write(fos);
+            }
+        } catch (IOException e) { e.printStackTrace(); }
+    }
+
+    public void importFromFile(String filename) {
+        try (FileInputStream fis = new FileInputStream(filename);
+             Workbook workbook = new XSSFWorkbook(fis)) {
+            Sheet sheet = workbook.getSheetAt(0);
+            produits.clear();
+
+            for (int i = 1; i <= sheet.getLastRowNum(); i++) {
+                Row row = sheet.getRow(i);
+                if (row != null) {
+                    /*
+                    * public Produit(
+            int id,
+            String nomCommercial,
+            String nomGenerique,
+            String forme,
+            String dosage,
+            String conditionnement,
+            String fabricant,
+            String codeBarres,
+            double prixVente,
+            double prixAchat,
+            String statut,
+            String categorie,
+            boolean prescriptionRequise,
+            LocalDate dateExpiration,
+            String numeroLot,
+            int stock,
+            int seuilAlerte) {*/
+                    Produit p = new Produit(
+                            (int) row.getCell(0).getNumericCellValue(),
+                            row.getCell(1).getStringCellValue(),
+                            row.getCell(2).getStringCellValue(),
+                            row.getCell(3).getStringCellValue(),
+                            row.getCell(4).getStringCellValue(),
+                            row.getCell(5).getStringCellValue(),
+                            row.getCell(6).getStringCellValue(),
+                            row.getCell(7).getStringCellValue(),
+                            row.getCell(8).getNumericCellValue(),
+                            row.getCell(9).getNumericCellValue(),
+                            row.getCell(10).getStringCellValue(),
+                            row.getCell(11).getStringCellValue(),
+                            row.getCell(12).getBooleanCellValue(),
+                            row.getCell(13).getDateCellValue().toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate(),
+                            row.getCell(14).getStringCellValue(),
+                            (int) row.getCell(15).getNumericCellValue(),
+                            (int) row.getCell(5).getNumericCellValue()
+                    );
+                    produits.add(p);
+                }
+            }
+        } catch (IOException e) { e.printStackTrace(); }
     }
 }

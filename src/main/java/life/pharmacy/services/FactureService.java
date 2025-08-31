@@ -1,6 +1,15 @@
 package life.pharmacy.services;
 
 import life.pharmacy.models.*;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -8,6 +17,7 @@ import java.util.*;
 
 public class FactureService {
     private static final String DB_URL = "jdbc:sqlite:pharmacy.db";
+    private List<Facture> factures = new ArrayList<>();
 
     // Ici, on mappe la table 'transaction' comme 'facture' (vente = facture)
     public List<Facture> getAll() throws SQLException {
@@ -91,4 +101,64 @@ public class FactureService {
         }
         return 0;
     }
+
+    // === EXPORT EXCEL ===
+    public void exportToFile(String filename) {
+        try (Workbook workbook = new XSSFWorkbook()) {
+            Sheet sheet = workbook.createSheet("Factures");
+
+            Row header = sheet.createRow(0);
+            header.createCell(0).setCellValue("ID");
+            header.createCell(1).setCellValue("Client ID");
+            header.createCell(2).setCellValue("Employé ID");
+            header.createCell(3).setCellValue("Date");
+            header.createCell(4).setCellValue("Montant Total");
+            header.createCell(5).setCellValue("Mode Paiement");
+
+            int rowNum = 1;
+            for (Facture f : factures) {
+                Row row = sheet.createRow(rowNum++);
+                row.createCell(0).setCellValue(f.getId());
+                row.createCell(1).setCellValue(f.getClient().getId());
+                row.createCell(2).setCellValue(f.getEmploye().getId());
+                row.createCell(3).setCellValue(f.getDate().toString());
+                row.createCell(4).setCellValue(f.getMontantTotal());
+                row.createCell(5).setCellValue(f.getModePaiement());
+            }
+
+            try (FileOutputStream fos = new FileOutputStream(filename)) {
+                workbook.write(fos);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // === IMPORT EXCEL ===
+    public void importFromFile(String filename) {
+        try (FileInputStream fis = new FileInputStream(filename);
+             Workbook workbook = new XSSFWorkbook(fis)) {
+            Sheet sheet = workbook.getSheetAt(0);
+            factures.clear();
+
+            for (int i = 1; i <= sheet.getLastRowNum(); i++) {
+                Row row = sheet.getRow(i);
+                if (row != null) {
+//                    public Facture(int id, Client client, Employe employe, LocalDate date, double montantTotal, String modePaiement) {
+                    Facture f = new Facture(
+                            (int) row.getCell(0).getNumericCellValue(),
+                            new Client((int) row.getCell(1).getNumericCellValue(), "", null, "", "", "", "", ""),
+                            new Employe((int) row.getCell(2).getNumericCellValue(), "", "", "", "", ""),
+                            LocalDate.parse(row.getCell(3).getStringCellValue()),
+                            row.getCell(4).getNumericCellValue(),
+                            row.getCell(5).getStringCellValue()
+                    );
+                    factures.add(f);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

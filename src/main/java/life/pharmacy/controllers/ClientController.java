@@ -92,7 +92,17 @@ public class ClientController implements Initializable {
             }
         } catch (IOException e) { e.printStackTrace(); }
     }
-    @FXML private void onDelete(){ var c = clientTable.getSelectionModel().getSelectedItem(); if(c!=null){ try{ service.delete(c.getId()); reload(null);}catch(Exception e){err(e);} } }
+    @FXML private void onDelete(){
+        Client selected = clientTable.getSelectionModel().getSelectedItem();
+        if (selected != null) {
+            try {
+                service.delete(selected.getId());
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            clientTable.getItems().remove(selected);
+        }
+    }
 
     private void err(Throwable t){ new Alert(Alert.AlertType.ERROR, t.getMessage()).showAndWait(); }
 
