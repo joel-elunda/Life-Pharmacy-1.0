@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="life.pharmacy.controllers.EmployeController">
+
+    <top>
+        <HBox spacing="10" padding="10">
+            <TextField fx:id="searchField" promptText="Rechercher un employé..." HBox.hgrow="ALWAYS"/>
+            <Button text="Rechercher" onAction="#handleRechercher"/>
+            <Button text="Ajouter" onAction="#onAdd"/>
+            <Button text="Modifier" onAction="#onEdit"/>
+            <Button text="Supprimer" onAction="#onDelete"/>
+            <Button text="Exporter Excel" onAction="#handleExportExcel"/>
+            <Button text="Importer Excel" onAction="#handleImportExcel"/>
+        </HBox>
+    </top>
+
+    <center>
+        <TableView fx:id="tableView">
+            <columns>
+                <TableColumn fx:id="colId" text="ID" prefWidth="80"/>
+                <TableColumn fx:id="colNom" text="Nom" prefWidth="200"/>
+                <TableColumn fx:id="colRole" text="Rôle" prefWidth="150"/>
+                <TableColumn fx:id="colLogin" text="Login" prefWidth="150"/>
+            </columns>
+        </TableView>
+    </center>
+
+</BorderPane>

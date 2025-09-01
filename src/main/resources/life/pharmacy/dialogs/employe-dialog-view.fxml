@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="life.pharmacy.controllers.dialogcontrollers.EmployeDialogController"
+            prefWidth="400" prefHeight="250">
+
+    <center>
+        <GridPane hgap="10" vgap="10" padding="20">
+            <Label text="Nom:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+            <TextField fx:id="txtNom" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+            <Label text="Rôle:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+            <TextField fx:id="txtRole" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+            <Label text="Login:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+            <TextField fx:id="txtLogin" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+            <Label text="Mot de passe:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+            <PasswordField fx:id="txtPassword" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+        </GridPane>
+    </center>
+
+    <bottom>
+        <HBox spacing="10" alignment="CENTER_RIGHT" padding="10">
+            <Button text="Enregistrer" onAction="#handleSave"/>
+            <Button text="Annuler" onAction="#handleCancel"/>
+        </HBox>
+    </bottom>
+</BorderPane>

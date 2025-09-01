@@ -72,7 +72,7 @@
                         <HBox alignment="CENTER_LEFT" spacing="8">
                             <Label text="Qté:" />
                             <Spinner fx:id="qtySpinner" editable="true" prefWidth="90" />
-                            <Button fx:id="btnAddToCart" text="Ajouter au panier" />
+                            <Button fx:id="btnAddToCart" onAction="#onAddToCart" text="Ajouter au panier" />
                         </HBox>
                     </VBox>
                 </TitledPane>
@@ -92,8 +92,8 @@
                             </columns>
                         </TableView>
                         <HBox spacing="8">
-                            <Button fx:id="btnRemoveLine" text="Retirer" />
-                            <Button fx:id="btnClearCart" text="Vider" />
+                            <Button fx:id="btnRemoveLine" onAction="#onRemoveLine" text="Retirer" />
+                            <Button fx:id="btnClearCart" onAction="#onClearCart" text="Vider" />
                             <Pane HBox.hgrow="ALWAYS" />
                             <Label text="Total:" />
                             <Label fx:id="totalLabel" style="-fx-font-weight:bold;" />
@@ -112,7 +112,7 @@
                         </HBox>
                         <TextArea fx:id="invoicePreview" prefHeight="160" wrapText="true" />
                         <HBox alignment="CENTER_RIGHT" spacing="10">
-                            <Button fx:id="printButton" text="Imprimer / Enregistrer" />
+                            <Button fx:id="printButton" onAction="#onPrintAndSave" text="Imprimer / Enregistrer" />
                             <Button fx:id="cancelButton" text="Annuler" />
                         </HBox>
                         <padding><Insets bottom="5" left="5" right="5" top="5" /></padding>
