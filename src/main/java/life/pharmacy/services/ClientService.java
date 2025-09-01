@@ -22,7 +22,7 @@ public class ClientService {
     private static final String DB_URL = "jdbc:sqlite:pharmacy.db";
 
     public void add(Client c) throws SQLException {
-        String sql = "INSERT INTO clients (nom_complet, date_naissance, adresse, telephone, email, conditions_medicales, allergies) VALUES(?,?,?,?,?,?,?)";
+        String sql = "INSERT INTO clients (nomComplet, dateNaissance, adresse, telephone, email, conditionsMedicales, allergies) VALUES(?,?,?,?,?,?,?)";
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
@@ -38,7 +38,7 @@ public class ClientService {
     }
 
     public void update(Client c) throws SQLException {
-        String sql = "UPDATE clients SET nom_complet=?, date_naissance=?, adresse=?, telephone=?, email=?, conditions_medicales=?, allergies=? WHERE id=?";
+        String sql = "UPDATE clients SET nomComplet=?, dateNaissance=?, adresse=?, telephone=?, email=?, conditionsMedicales=?, allergies=? WHERE id=?";
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, c.getNomComplet());
@@ -71,12 +71,12 @@ public class ClientService {
             while (rs.next()) {
                 Client c = new Client(
                         rs.getInt("id"),
-                        rs.getString("nom_complet"),
-                        LocalDate.parse(rs.getString("date_naissance")),
+                        rs.getString("nomComplet"),
+                        LocalDate.parse(rs.getString("dateNaissance")),
                         rs.getString("adresse"),
                         rs.getString("telephone"),
                         rs.getString("email"),
-                        rs.getString("conditions_medicales"),
+                        rs.getString("conditionsMedicales"),
                         rs.getString("allergies")
                 );
                 list.add(c);
@@ -87,7 +87,7 @@ public class ClientService {
 
     public List<Client> search(String query) throws SQLException {
         List<Client> list = new ArrayList<>();
-        String sql = "SELECT * FROM clients WHERE nom_complet LIKE ? OR telephone LIKE ? OR email LIKE ?";
+        String sql = "SELECT * FROM clients WHERE nomComplet LIKE ? OR telephone LIKE ? OR email LIKE ?";
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, "%" + query + "%");
@@ -97,12 +97,12 @@ public class ClientService {
             while (rs.next()) {
                 Client c = new Client(
                         rs.getInt("id"),
-                        rs.getString("nom_complet"),
-                        LocalDate.parse(rs.getString("date_naissance")),
+                        rs.getString("nomComplet"),
+                        LocalDate.parse(rs.getString("dateNaissance")),
                         rs.getString("adresse"),
                         rs.getString("telephone"),
                         rs.getString("email"),
-                        rs.getString("conditions_medicales"),
+                        rs.getString("conditionsMedicales"),
                         rs.getString("allergies")
                 );
                 list.add(c);
@@ -166,6 +166,18 @@ public class ClientService {
             }
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public int getNextId() {
+        try {
+            List<Client> clients = getAll();
+            return clients.stream()
+                    .mapToInt(Client::getId)
+                    .max()
+                    .orElse(0) + 1;
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to fetch clients for ID generation", e);
         }
     }
 }

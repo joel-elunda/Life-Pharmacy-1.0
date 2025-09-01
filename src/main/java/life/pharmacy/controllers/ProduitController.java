@@ -33,7 +33,7 @@ public class ProduitController implements Initializable {
     @FXML private TableColumn<Produit, Double> colPrix;
     @FXML private TableColumn<Produit, Integer> colStock;
 
-    @FXML private TextField txtNomCommercia;
+    @FXML private TextField txtNomCommercial;
     @FXML private TextField txtNomGenerique;
     @FXML private TextField txtCategorie;
     @FXML private TextField txtPrixVente;
@@ -157,7 +157,7 @@ public class ProduitController implements Initializable {
     private void ajouterProduit() {
         Produit p = new Produit(
                 0,
-                txtNomCommercia.getText(),
+                txtNomCommercial.getText(),
                 txtNomGenerique.getText(),
                 "", "", "", "", "", // autres propriétés simplifiées
                 Double.parseDouble(txtPrixVente.getText()),
@@ -198,7 +198,7 @@ public class ProduitController implements Initializable {
     }
 
     private void clearFields() {
-        txtNomCommercia.clear();
+        txtNomCommercial.clear();
         txtNomGenerique.clear();
         txtCategorie.clear();
         txtPrixVente.clear();

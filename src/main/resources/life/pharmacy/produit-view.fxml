@@ -8,12 +8,13 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 
-<BorderPane prefHeight="600" prefWidth="900" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="life.pharmacy.controllers.ProduitController">
+<BorderPane prefHeight="600" prefWidth="900" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="life.pharmacy.controllers.ProduitController">
     <top>
         <HBox alignment="CENTER_RIGHT" spacing="10">
             <TextField fx:id="searchField" onAction="#rechercherProduit" prefHeight="26.0" prefWidth="230.0" promptText="Rechercher produit..." />
+         <Button mnemonicParsing="false" onAction="#handleRechercher" text="Rechercher" />
             <Button fx:id="importButton" text="Importer Excel" />
-            <Button fx:id="exportButton" text="Exporter Excel" />
+            <Button fx:id="exportButton" onAction="#handleExportExcel" text="Exporter Excel" />
          <padding>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
          </padding>
@@ -35,9 +36,9 @@
 
     <bottom>
         <HBox alignment="CENTER_LEFT" spacing="10">
-            <Button fx:id="addButton" text="Ajouter" />
-            <Button fx:id="editButton" text="Modifier" />
-            <Button fx:id="deleteButton" text="Supprimer" />
+            <Button fx:id="addButton" onAction="#handleAjouter" text="Ajouter" />
+            <Button fx:id="editButton" onAction="#handleModifier" text="Modifier" />
+            <Button fx:id="deleteButton" onAction="#handleSupprimer" text="Supprimer" />
          <padding>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
          </padding>

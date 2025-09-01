@@ -5,8 +5,7 @@ module life.pharmacy {
     requires org.apache.poi.poi;
     requires org.apache.poi.ooxml;
     requires javafx.graphics;
-    requires life.pharmacy;
-    requires javafx.base;
+    requires java.naming;
 
     // export pour permettre à FXMLLoader d'accéder aux contrôleurs
     opens life.pharmacy.controllers to javafx.fxml;

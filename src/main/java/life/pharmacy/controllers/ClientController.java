@@ -1,148 +1,188 @@
 package life.pharmacy.controllers;
 
-import javafx.collections.FXCollections;
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
+
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.input.KeyEvent;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import life.pharmacy.controllers.dialogcontrollers.ClientDialogController;
 import life.pharmacy.models.Client;
 import life.pharmacy.services.ClientService;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.scene.control.*;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import java.io.IOException;
+import javax.naming.Context;
+import javax.naming.NamingException;
+import javax.naming.spi.InitialContextFactory;
+import java.io.*;
+import java.net.URL;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.util.Hashtable;
 import java.util.List;
+import java.util.ResourceBundle;
 
 public class ClientController implements Initializable {
-    @FXML
-    private TextField searchField;
-    @FXML private TableView<Client> clientTable;
+
+    @FXML private TextField fieldNom;
+    @FXML private DatePicker dateDateNaissance;
+    @FXML private TextField fieldAdresse;
+    @FXML private TextField fieldTelephone;
+    @FXML private TextField fieldEmail;
+    @FXML private TextArea areaConditionsMedicales;
+    @FXML private TextArea areaAllergies;
+    @FXML private TextField fieldRechercher;
+
+    @FXML private TableView<Client> tableView;
     @FXML private TableColumn<Client, Number> colId;
     @FXML private TableColumn<Client, String> colNom;
     @FXML private TableColumn<Client, String> colTelephone;
     @FXML private TableColumn<Client, String> colEmail;
-    @FXML private Button addButton, editButton, deleteButton;
+    @FXML private TableColumn<Client, String> colAdresse;
+    @FXML private TableColumn<Client, String> colDateNaissance;
+    @FXML private TableColumn<Client, String> colConditionsMedicales;
+    @FXML private TableColumn<Client, String> colAllergies;
+
+    @FXML private Button addButton;
+    @FXML private Button editButton;
+    @FXML private Button deleteButton;
+    @FXML private Button searchButton;
 
     private final ClientService service = new ClientService();
+    private final ObservableList<Client> data = FXCollections.observableArrayList();
 
 
-    private void reload(String q){
+    @FXML
+    public void onAdd() {
+        Client c = new Client(
+                service.getNextId(),
+                fieldNom.getText(),
+                dateDateNaissance.getValue(),
+                fieldAdresse.getText(),
+                fieldTelephone.getText(),
+                fieldEmail.getText(),
+                areaConditionsMedicales.getText(),
+                areaAllergies.getText()
+        );
         try {
-            List<Client> data = (q==null || q.isBlank()) ? service.getAll() : service.search(q);
-            clientTable.setItems(FXCollections.observableArrayList(data));
-        } catch (Exception e) { err(e); }
+            service.add(c);
+            data.setAll(service.getAll());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        clearFields();
     }
 
-    @FXML private void onAdd(){
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/life/pharmacy/views/ClientDialog.fxml"));
-            Parent root = loader.load();
-
-            ClientDialogController controller = loader.getController();
-            controller.setClient(new Client());
-
-            Stage dialog = new Stage();
-            dialog.setTitle("Ajouter Client");
-            dialog.initModality(Modality.APPLICATION_MODAL);
-            dialog.setScene(new Scene(root));
-            dialog.showAndWait();
-
-            Client nouveau = controller.getClient();
-            if (nouveau != null) {
-                try {
-                    service.add(nouveau);
-                    clientTable.getItems().setAll(service.getAll());
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
-
-            }
-        } catch (IOException e) { e.printStackTrace(); }
-    }
-    @FXML private void onEdit(){
-        Client selected = clientTable.getSelectionModel().getSelectedItem();
-        if (selected == null) return;
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/life/pharmacy/dialogs/client-dialog.fxml"));
-            Parent root = loader.load();
-
-            ClientDialogController controller = loader.getController();
-            controller.setClient(selected);
-
-            Stage dialog = new Stage();
-            dialog.setTitle("Modifier Client");
-            dialog.initModality(Modality.APPLICATION_MODAL);
-            dialog.setScene(new Scene(root));
-            dialog.showAndWait();
-
-            Client updated = controller.getClient();
-            if (updated != null) {
-                try {
-                    service.update(updated);
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
-                clientTable.refresh();
-            }
-        } catch (IOException e) { e.printStackTrace(); }
-    }
-    @FXML private void onDelete(){
-        Client selected = clientTable.getSelectionModel().getSelectedItem();
+    @FXML
+    public void onEdit() {
+        Client selected = tableView.getSelectionModel().getSelectedItem();
         if (selected != null) {
+            selected.setNomComplet(fieldNom.getText());
+            selected.setDateNaissance(dateDateNaissance.getValue());
+            selected.setAdresse(fieldAdresse.getText());
+            selected.setTelephone(fieldTelephone.getText());
+            selected.setEmail(fieldEmail.getText());
+            selected.setConditionsMedicales(areaConditionsMedicales.getText());
+            selected.setAllergies(areaAllergies.getText());
+
             try {
-                service.delete(selected.getId());
+                service.update(selected);
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
-            clientTable.getItems().remove(selected);
+            tableView.refresh();
+            clearFields();
+        } else {
+            showAlert("Sélectionnez un client à modifier.");
         }
     }
 
-    private void err(Throwable t){ new Alert(Alert.AlertType.ERROR, t.getMessage()).showAndWait(); }
+    @FXML
+    public void onDelete() {
+        Client selected = tableView.getSelectionModel().getSelectedItem();
+        if (selected != null) {
+            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, "Supprimer ce client ?", ButtonType.YES, ButtonType.NO);
+            confirm.showAndWait();
+            if (confirm.getResult() == ButtonType.YES) {
+                try {
+                    service.delete(selected.getId());
+                    data.setAll(service.getAll());
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
 
-
-    @Override
-    public void initialize(java.net.URL location, java.util.ResourceBundle resources) {
-        // Initialization code here
-        System.out.println("Client started...");
-
-        colId.setCellValueFactory(c -> c.getValue().idProperty());
-        colNom.setCellValueFactory(c -> c.getValue().nomCompletProperty());
-        colTelephone.setCellValueFactory(c -> c.getValue().telephoneProperty());
-        colEmail.setCellValueFactory(c -> c.getValue().emailProperty());
-        reload(null);
-        searchField.textProperty().addListener((o,ov,nv)->reload(nv));
-
+            }
+        } else {
+            showAlert("Sélectionnez un client à supprimer.");
+        }
     }
 
     @FXML
-    private void handleRechercher(KeyEvent event) {
-        String query = searchField.getText();
+    public void onSearch() {
+        String query = fieldRechercher.getText();
+        List<Client> c = null;
         try {
-            clientTable.getItems().setAll(service.search(query));
+            c = service.search(query);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+        if (c != null) {
+            data.setAll(c);
+        } else {
+            showAlert("Aucun client trouvé !");
+        }
     }
 
     @FXML
-    private void handleExportExcel(ActionEvent event) {
+    public void onExportExcel() {
         service.exportToFile("clients.xlsx");
+        showAlert("Exportation réussie !");
     }
 
     @FXML
-    private void handleImportExcel(ActionEvent event) {
+    public void onImportExcel() {
         service.importFromFile("clients.xlsx");
         try {
-            clientTable.getItems().setAll(service.getAll());
+            data.setAll(service.getAll());
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+        showAlert("Importation réussie !");
+    }
+
+    private void clearFields() {
+        fieldNom.clear();
+        dateDateNaissance.setValue(null);
+        fieldAdresse.clear();
+        fieldTelephone.clear();
+        fieldEmail.clear();
+        areaConditionsMedicales.clear();
+        areaAllergies.clear();
+    }
+
+    private void showAlert(String msg) {
+        new Alert(Alert.AlertType.INFORMATION, msg, ButtonType.OK).showAndWait();
+    }
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        colId.setCellValueFactory(cell -> cell.getValue().idProperty());
+        colNom.setCellValueFactory(cell -> cell.getValue().nomCompletProperty());
+        colTelephone.setCellValueFactory(cell -> cell.getValue().telephoneProperty());
+        colEmail.setCellValueFactory(cell -> cell.getValue().emailProperty());
+        colAdresse.setCellValueFactory(cell -> cell.getValue().adresseProperty());
+        colDateNaissance.setCellValueFactory(cell -> cell.getValue().dateNaissanceProperty().asString());
+        colConditionsMedicales.setCellValueFactory(cell -> cell.getValue().conditionsMedicalesProperty());
+        colAllergies.setCellValueFactory(cell -> cell.getValue().allergiesProperty());
+
+        try {
+            data.addAll(service.getAll());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        tableView.setItems(data);
     }
 }
+
+
