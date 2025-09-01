@@ -17,7 +17,7 @@ public class FournisseurService {
     private final List<Fournisseur> fournisseurs = new ArrayList<>();
 
     public void add(Fournisseur f) throws SQLException {
-        String sql = "INSERT INTO fournisseurs (nom, contact, adresse, email) VALUES(?,?,?,?)";
+        String sql = "INSERT INTO fournisseurs (nom, contact, adresse, email, conditionsPaiement) VALUES(?,?,?,?)";
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, f.getNom());
@@ -29,7 +29,7 @@ public class FournisseurService {
     }
 
     public void update(Fournisseur f) throws SQLException {
-        String sql = "UPDATE fournisseurs SET nom=?, contact=?, adresse=?, email=? WHERE id=?";
+        String sql = "UPDATE fournisseurs SET nom=?, contact=?, adresse=?, email=?, conditionsPaiement=? WHERE id=?";
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, f.getNom());
@@ -63,7 +63,7 @@ public class FournisseurService {
                         rs.getString("telephone"),
                         rs.getString("email"),
                         rs.getString("adresse"),
-                        rs.getString("conditions_paiement")
+                        rs.getString("conditionsPaiement")
                 ));
             }
         }
@@ -87,7 +87,7 @@ public class FournisseurService {
                         rs.getString("telephone"),
                         rs.getString("email"),
                         rs.getString("adresse"),
-                        rs.getString("conditions_paiement")
+                        rs.getString("conditionsPaiement")
                 ));
             }
         }

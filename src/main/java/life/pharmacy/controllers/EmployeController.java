@@ -1,23 +1,13 @@
 package life.pharmacy.controllers;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.input.KeyEvent;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import life.pharmacy.controllers.dialogcontrollers.EmployeDialogController;
 import life.pharmacy.models.Employe;
 import life.pharmacy.services.EmployeService;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.scene.control.*;
 
-import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.List;
@@ -25,111 +15,161 @@ import java.util.ResourceBundle;
 
 public class EmployeController implements Initializable {
 
-    @FXML private TextField searchField;
+    @FXML private TextField fiedlNomComplet;
+    @FXML private ComboBox<String> comboRole;
+    @FXML private TextField fieldLogin;
+    @FXML private PasswordField fieldMotDePasseHash;
+    @FXML private ListView<CheckBox> Permissions;
+    @FXML private TextField fieldRechercher;
+
     @FXML private TableView<Employe> tableView;
     @FXML private TableColumn<Employe, Number> colId;
     @FXML private TableColumn<Employe, String> colNom;
     @FXML private TableColumn<Employe, String> colRole;
     @FXML private TableColumn<Employe, String> colLogin;
-    @FXML private Button addButton, editButton, deleteButton;
+
+    @FXML private Button addButton;
+    @FXML private Button editButton;
+    @FXML private Button deleteButton;
+    @FXML private Button searchButton;
 
     private final EmployeService service = new EmployeService();
+    private final ObservableList<Employe> data = FXCollections.observableArrayList();
 
-    private void reload(String q){
-        try {
-            List<Employe> data = (q==null || q.isBlank()) ? service.getAll() : service.search(q);
-            tableView.setItems(FXCollections.observableArrayList(data));
-        } catch (Exception e) { err(e); }
+    @FXML
+    public void initialize() {
+
     }
 
-    @FXML private void onAdd(){
+    @FXML
+    public void onAdd() {
+        StringBuilder perms = new StringBuilder();
+        for (CheckBox cb : Permissions.getItems()) {
+            if (cb.isSelected()) perms.append(cb.getText()).append(",");
+        }
+        Employe e = new Employe(
+                service.getNextId(),
+                fiedlNomComplet.getText(),
+                comboRole.getValue(),
+                fieldLogin.getText(),
+                fieldMotDePasseHash.getText(),
+                perms.toString()
+        );
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/life/pharmacy/dialogs/employe-dialog-view.fxml"));
-            Parent root = loader.load();
+            service.add(e);
+            data.setAll(service.getAll());
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
+        }
 
-            EmployeDialogController controller = loader.getController();
-            controller.setEmploye(new Employe());
-
-            Stage dialog = new Stage();
-            dialog.setTitle("Ajouter Employé");
-            dialog.initModality(Modality.APPLICATION_MODAL);
-            dialog.setScene(new Scene(root));
-            dialog.showAndWait();
-
-            Employe nouveau = controller.getEmploye();
-            if (nouveau != null) {
-                service.add(nouveau);
-                tableView.getItems().setAll(service.getAll());
-            }
-        } catch (IOException | SQLException e) { err(e); }
+        clearFields();
     }
 
-    @FXML private void onEdit(){
-        Employe selected = tableView.getSelectionModel().getSelectedItem();
-        if (selected == null) return;
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/life/pharmacy/dialogs/employe-dialog-view.fxml"));
-            Parent root = loader.load();
-
-            EmployeDialogController controller = loader.getController();
-            controller.setEmploye(selected);
-
-            Stage dialog = new Stage();
-            dialog.setTitle("Modifier Employé");
-            dialog.initModality(Modality.APPLICATION_MODAL);
-            dialog.setScene(new Scene(root));
-            dialog.showAndWait();
-
-            Employe updated = controller.getEmploye();
-            if (updated != null) {
-                service.update(updated);
-                tableView.refresh();
-            }
-        } catch (IOException | SQLException e) { err(e); }
-    }
-
-    @FXML private void onDelete(){
+    @FXML
+    public void onEdit() {
         Employe selected = tableView.getSelectionModel().getSelectedItem();
         if (selected != null) {
+            StringBuilder perms = new StringBuilder();
+            for (CheckBox cb : Permissions.getItems()) {
+                if (cb.isSelected()) perms.append(cb.getText()).append(",");
+            }
+            selected.setNomComplet(fiedlNomComplet.getText());
+            selected.setRole(comboRole.getValue());
+            selected.setLogin(fieldLogin.getText());
+            selected.setMotDePasseHash(fieldMotDePasseHash.getText());
+            selected.setPermissions(perms.toString());
+
             try {
-                service.delete(selected.getId());
-                tableView.getItems().remove(selected);
-            } catch (SQLException e) { err(e); }
+                service.update(selected);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            tableView.refresh();
+            clearFields();
+        } else {
+            showAlert("Sélectionnez un employé à modifier.");
         }
     }
 
-    private void err(Throwable t){ new Alert(Alert.AlertType.ERROR, t.getMessage()).showAndWait(); }
+    @FXML
+    public void onDelete() {
+        Employe selected = tableView.getSelectionModel().getSelectedItem();
+        if (selected != null) {
+            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, "Supprimer cet employé ?", ButtonType.YES, ButtonType.NO);
+            confirm.showAndWait();
+            if (confirm.getResult() == ButtonType.YES) {
+                try {
+                    service.delete(selected.getId());
+                    data.setAll(service.getAll());
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
 
-    @Override
-    public void initialize(java.net.URL location, java.util.ResourceBundle resources) {
-        System.out.println("Employe started...");
-
-        colId.setCellValueFactory(c -> c.getValue().idProperty());
-        colNom.setCellValueFactory(c -> c.getValue().nomCompletProperty());
-        colRole.setCellValueFactory(c -> c.getValue().roleProperty());
-        colLogin.setCellValueFactory(c -> c.getValue().loginProperty());
-
-        reload(null);
-        searchField.textProperty().addListener((o,ov,nv)->reload(nv));
+            }
+        } else {
+            showAlert("Sélectionnez un employé à supprimer.");
+        }
     }
 
-    @FXML private void handleRechercher(KeyEvent event) {
-        String query = searchField.getText();
+    @FXML
+    public void onSearch() {
+        String query = fieldRechercher.getText();
+        List<Employe> e = null;
         try {
-            tableView.getItems().setAll(service.search(query));
-        } catch (SQLException e) { err(e); }
+            e = service.search(query);
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
+        }
+        if (e != null) {
+            data.setAll(e);
+        } else {
+            showAlert("Aucun employé trouvé !");
+        }
     }
 
-    @FXML private void handleExportExcel(ActionEvent event) {
+    @FXML
+    public void onExportExcel() {
         service.exportToFile("employes.xlsx");
+        showAlert("Exportation réussie !");
     }
 
-    @FXML private void handleImportExcel(ActionEvent event) {
+    @FXML
+    public void onImportExcel() {
         service.importFromFile("employes.xlsx");
         try {
-            tableView.getItems().setAll(service.getAll());
-        } catch (SQLException e) { err(e); }
+            data.setAll(service.getAll());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        showAlert("Importation réussie !");
+    }
+
+    private void clearFields() {
+        fiedlNomComplet.clear();
+        comboRole.setValue(null);
+        fieldLogin.clear();
+        fieldMotDePasseHash.clear();
+        for (CheckBox cb : Permissions.getItems()) cb.setSelected(false);
+    }
+
+    private void showAlert(String msg) {
+        new Alert(Alert.AlertType.INFORMATION, msg, ButtonType.OK).showAndWait();
     }
 
 
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        colId.setCellValueFactory(cell -> cell.getValue().idProperty());
+        colNom.setCellValueFactory(cell -> cell.getValue().nomCompletProperty());
+        colRole.setCellValueFactory(cell -> cell.getValue().roleProperty());
+        colLogin.setCellValueFactory(cell -> cell.getValue().loginProperty());
+
+
+        try {
+            data.addAll(service.getAll());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        tableView.setItems(data);
+    }
 }

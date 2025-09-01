@@ -1,6 +1,7 @@
 package life.pharmacy.services;
 
 
+import life.pharmacy.models.Client;
 import life.pharmacy.models.Employe;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -20,7 +21,7 @@ public class EmployeService {
     private List<Employe> employes = new ArrayList<>();
 
     public void add(Employe e) throws SQLException {
-        String sql = "INSERT INTO employes (nom_complet, role, login, mot_de_passe, permissions) VALUES(?,?,?,?,?)";
+        String sql = "INSERT INTO employes (nomComplet, role, login, motDePasseHash, permissions) VALUES(?,?,?,?,?)";
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, e.getNomComplet());
@@ -33,7 +34,7 @@ public class EmployeService {
     }
 
     public void update(Employe e) throws SQLException {
-        String sql = "UPDATE employes SET nom_complet=?, role=?, login=?, mot_de_passe=?, permissions=? WHERE id=?";
+        String sql = "UPDATE employes SET nomComplet=?, role=?, login=?, motDePasseHash=?, permissions=? WHERE id=?";
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, e.getNomComplet());
@@ -64,7 +65,7 @@ public class EmployeService {
             while (rs.next()) {
                 Employe e = new Employe(
                         rs.getInt("id"),
-                        rs.getString("nom_complet"),
+                        rs.getString("nomComplet"),
                         rs.getString("role"),
                         rs.getString("login"),
                         rs.getString("mot_de_passe"),
@@ -88,7 +89,7 @@ public class EmployeService {
             while (rs.next()) {
                 Employe e = new Employe(
                         rs.getInt("id"),
-                        rs.getString("nom_complet"),
+                        rs.getString("nomComplet"),
                         rs.getString("role"),
                         rs.getString("login"),
                         rs.getString("mot_de_passe"),
@@ -158,6 +159,16 @@ public class EmployeService {
         }
     }
 
-
+    public int getNextId() {
+        try {
+            List<Employe> employes = getAll();
+            return employes.stream()
+                    .mapToInt(Employe::getId)
+                    .max()
+                    .orElse(0) + 1;
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to fetch clients for ID generation", e);
+        }
+    }
 
 }

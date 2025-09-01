@@ -25,185 +25,172 @@ import java.util.ResourceBundle;
 
 public class ProduitController implements Initializable {
 
-    @FXML private TableView<Produit> produitTable;
-    @FXML private TableColumn<Produit, Integer> colId;
+    @FXML private TextField fieldNomCommercial;
+    @FXML private TextField fieldNomGenerique;
+    @FXML private ComboBox<String> comboForme;
+    @FXML private TextField fieldDosage;
+    @FXML private TextField fieldConditionnement;
+    @FXML private TextField fieldFabricant;
+    @FXML private TextField fieldCodeBarres;
+    @FXML private TextField fieldPrixVente;
+    @FXML private TextField fieldPrixAchat;
+    @FXML private TextField fieldStatut;
+    @FXML private ComboBox<String> comboCategorie;
+    @FXML private CheckBox checkPrescriptionRequise;
+    @FXML private DatePicker dataDateExpiration;
+    @FXML private TextField fieldNumeroLot;
+    @FXML private TextField fieldStock;
+    @FXML private TextField fieldSeuilAlerte;
+    @FXML private TextField fieldRechercher;
+
+    @FXML private TableView<Produit> tableView;
+    @FXML private TableColumn<Produit, Number> colId;
     @FXML private TableColumn<Produit, String> colNomCommercial;
     @FXML private TableColumn<Produit, String> colNomGenerique;
-    @FXML private TableColumn<Produit, String> colCategorie;
-    @FXML private TableColumn<Produit, Double> colPrix;
-    @FXML private TableColumn<Produit, Integer> colStock;
+    @FXML private TableColumn<Produit, String> colForme;
+    @FXML private TableColumn<Produit, String> colDosage;
+    @FXML private TableColumn<Produit, Number> colPrixVente;
+    @FXML private TableColumn<Produit, Number> colStock;
 
-    @FXML private TextField txtNomCommercial;
-    @FXML private TextField txtNomGenerique;
-    @FXML private TextField txtCategorie;
-    @FXML private TextField txtPrixVente;
-    @FXML private TextField txtStock;
-    @FXML private TextField searchField;
-    @FXML private Button importButton, exportButton, addButton, editButton, deleteButton;
+    @FXML private Button addButton;
+    @FXML private Button editButton;
+    @FXML private Button deleteButton;
+    @FXML private Button searchButton;
 
-    private final ProduitService produitService = new ProduitService();
-    private final ObservableList<Produit> produits = FXCollections.observableArrayList();
+    private final ProduitService service = new ProduitService();
+    private final ObservableList<Produit> data = FXCollections.observableArrayList();
 
-    // === Bouton Ajouter ===
     @FXML
-    private void handleAjouter(ActionEvent event) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/life/pharmacy/dialogs/produit-dialog.fxml"));
-            Parent root = loader.load();
+    public void initialize() {
+        colId.setCellValueFactory(cell -> cell.getValue().idProperty());
+        colNomCommercial.setCellValueFactory(cell -> cell.getValue().nomCommercialProperty());
+        colNomGenerique.setCellValueFactory(cell -> cell.getValue().nomGeneriqueProperty());
+        colForme.setCellValueFactory(cell -> cell.getValue().formeProperty());
+        colDosage.setCellValueFactory(cell -> cell.getValue().dosageProperty());
+        colPrixVente.setCellValueFactory(cell -> cell.getValue().prixVenteProperty());
+        colStock.setCellValueFactory(cell -> cell.getValue().stockProperty());
 
-            ProduitDialogController controller = loader.getController();
-            controller.setProduit(new Produit());
-
-            Stage dialog = new Stage();
-            dialog.setTitle("Ajouter un produit");
-            dialog.initModality(Modality.APPLICATION_MODAL);
-            dialog.setScene(new Scene(root));
-            dialog.showAndWait();
-
-            Produit nouveau = controller.getProduit();
-            if (nouveau != null) {
-                try {
-                    produitService.add(nouveau);
-                    produitTable.getItems().setAll(produitService.getAll());
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
-
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        data.addAll(service.getProduits());
+        tableView.setItems(data);
     }
 
-    // === Bouton Modifier ===
     @FXML
-    private void handleModifier(ActionEvent event) {
-        Produit selected = produitTable.getSelectionModel().getSelectedItem();
-        if (selected == null) return;
-
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/life/pharmacy/dialogs/produit-dialog.fxml"));
-            Parent root = loader.load();
-
-            ProduitDialogController controller = loader.getController();
-            controller.setProduit(selected);
-
-            Stage dialog = new Stage();
-            dialog.setTitle("Modifier produit");
-            dialog.initModality(Modality.APPLICATION_MODAL);
-            dialog.setScene(new Scene(root));
-            dialog.showAndWait();
-
-            Produit updated = controller.getProduit();
-            if (updated != null) {
-                try {
-                    produitService.update(updated);
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
-                produitTable.refresh();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    // === Bouton Supprimer ===
-    @FXML
-    private void handleSupprimer(ActionEvent event) {
-        Produit selected = produitTable.getSelectionModel().getSelectedItem();
-        if (selected != null) {
-            try {
-                produitService.delete(selected.getId());
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-            produitTable.getItems().remove(selected);
-        }
-    }
-
-    // === Bouton Rechercher ===
-    @FXML
-    private void handleRechercher(KeyEvent event) {
-        String query = searchField.getText();
-        List<Produit> resultats = null;
-        try {
-            resultats = produitService.search(query);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        produitTable.getItems().setAll(resultats);
-    }
-
-    // === Export Excel ===
-    @FXML
-    private void handleExportExcel(ActionEvent event) {
-        produitService.exportToFile("produits.xlsx");
-    }
-
-    // === Import Excel ===
-    @FXML
-    private void handleImportExcel(ActionEvent event) {
-        produitService.importFromFile("produits.xlsx");
-        try {
-            produitTable.getItems().setAll(produitService.getAll());
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-
-    @FXML
-    private void ajouterProduit() {
+    public void onAdd() {
         Produit p = new Produit(
-                0,
-                txtNomCommercial.getText(),
-                txtNomGenerique.getText(),
-                "", "", "", "", "", // autres propriétés simplifiées
-                Double.parseDouble(txtPrixVente.getText()),
-                0.0, "", txtCategorie.getText(),
-                false, null, "", Integer.parseInt(txtStock.getText()), 0
+                service.getNextId(),
+                fieldNomCommercial.getText(),
+                fieldNomGenerique.getText(),
+                comboForme.getValue(),
+                fieldDosage.getText(),
+                fieldConditionnement.getText(),
+                fieldFabricant.getText(),
+                fieldCodeBarres.getText(),
+                Double.parseDouble(fieldPrixVente.getText()),
+                Double.parseDouble(fieldPrixAchat.getText()),
+                fieldStatut.getText(),
+                comboCategorie.getValue(),
+                checkPrescriptionRequise.isSelected(),
+                dataDateExpiration.getValue(),
+                fieldNumeroLot.getText(),
+                Integer.parseInt(fieldStock.getText()),
+                Integer.parseInt(fieldSeuilAlerte.getText())
         );
-
-        try {
-            produitService.add(p);
-            produits.setAll(produitService.getAll());
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        service.addProduit(p);
+        data.setAll(service.getProduits());
         clearFields();
     }
 
     @FXML
-    private void supprimerProduit() {
-        Produit selected = produitTable.getSelectionModel().getSelectedItem();
+    public void onEdit() {
+        Produit selected = tableView.getSelectionModel().getSelectedItem();
         if (selected != null) {
-            try {
-                produitService.delete(selected.getId());
-                produits.setAll(produitService.getAll());
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
+            selected.setNomCommercial(fieldNomCommercial.getText());
+            selected.setNomGenerique(fieldNomGenerique.getText());
+            selected.setForme(comboForme.getValue());
+            selected.setDosage(fieldDosage.getText());
+            selected.setConditionnement(fieldConditionnement.getText());
+            selected.setFabricant(fieldFabricant.getText());
+            selected.setCodeBarres(fieldCodeBarres.getText());
+            selected.setPrixVente(Double.parseDouble(fieldPrixVente.getText()));
+            selected.setPrixAchat(Double.parseDouble(fieldPrixAchat.getText()));
+            selected.setStatut(fieldStatut.getText());
+            selected.setCategorie(comboCategorie.getValue());
+            selected.setPrescriptionRequise(checkPrescriptionRequise.isSelected());
+            selected.setDateExpiration(dataDateExpiration.getValue());
+            selected.setNumeroLot(fieldNumeroLot.getText());
+            selected.setStock(Integer.parseInt(fieldStock.getText()));
+            selected.setSeuilAlerte(Integer.parseInt(fieldSeuilAlerte.getText()));
 
+            service.updateProduit(selected);
+            tableView.refresh();
+            clearFields();
+        } else {
+            showAlert("Sélectionnez un produit à modifier.");
         }
     }
 
     @FXML
-    private void rechercherProduit() {
-        try {
-            produits.setAll(produitService.search(searchField.getText()));
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+    public void onDelete() {
+        Produit selected = tableView.getSelectionModel().getSelectedItem();
+        if (selected != null) {
+            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, "Supprimer ce produit ?", ButtonType.YES, ButtonType.NO);
+            confirm.showAndWait();
+            if (confirm.getResult() == ButtonType.YES) {
+                service.deleteProduit(selected.getId());
+                data.setAll(service.getProduits());
+            }
+        } else {
+            showAlert("Sélectionnez un produit à supprimer.");
         }
     }
 
-    private void clearFields() {
-        txtNomCommercial.clear();
-        txtNomGenerique.clear();
-        txtCategorie.clear();
-        txtPrixVente.clear();
-        txtStock.clear();
+    @FXML
+    public void onSearch() {
+        String query = fieldRechercher.getText();
+        Produit p = service.search(query);
+        if (p != null) {
+            data.setAll(p);
+        } else {
+            showAlert("Aucun produit trouvé !");
+        }
     }
+
+    @FXML
+    public void onExportExcel() {
+        service.exportToFile("produits.xlsx");
+        showAlert("Exportation réussie !");
+    }
+
+    @FXML
+    public void onImportExcel() {
+        service.importFromFile("produits.xlsx");
+        data.setAll(service.getProduits());
+        showAlert("Importation réussie !");
+    }
+
+    private void clearFields() {
+        fieldNomCommercial.clear();
+        fieldNomGenerique.clear();
+        comboForme.setValue(null);
+        fieldDosage.clear();
+        fieldConditionnement.clear();
+        fieldFabricant.clear();
+        fieldCodeBarres.clear();
+        fieldPrixVente.clear();
+        fieldPrixAchat.clear();
+        fieldStatut.clear();
+        comboCategorie.setValue(null);
+        checkPrescriptionRequise.setSelected(false);
+        dataDateExpiration.setValue(null);
+        fieldNumeroLot.clear();
+        fieldStock.clear();
+        fieldSeuilAlerte.clear();
+    }
+
+    private void showAlert(String msg) {
+        new Alert(Alert.AlertType.INFORMATION, msg, ButtonType.OK).showAndWait();
+    }
+
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
