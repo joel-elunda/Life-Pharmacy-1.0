@@ -1,5 +1,6 @@
 package life.pharmacy.controllers;
 
+import javafx.fxml.Initializable;
 import life.pharmacy.models.Facture;
 import life.pharmacy.services.FactureService;
 import javafx.collections.FXCollections;
@@ -7,9 +8,13 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
+import java.net.URL;
+import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.ResourceBundle;
 
-public class FactureController {
+public class FactureController implements Initializable {
 
     @FXML private ComboBox<String> comboClient;
     @FXML private ComboBox<String> comboEmploye;
@@ -32,29 +37,39 @@ public class FactureController {
     private final FactureService service = new FactureService();
     private final ObservableList<Facture> data = FXCollections.observableArrayList();
 
-    @FXML
-    public void initialize() {
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
         colId.setCellValueFactory(cell -> cell.getValue().idProperty());
-        colClient.setCellValueFactory(cell -> cell.getValue().clientProperty());
-        colEmploye.setCellValueFactory(cell -> cell.getValue().employeProperty());
+        colClient.setCellValueFactory(cell -> cell.getValue().clientProperty().asString());
+        colEmploye.setCellValueFactory(cell -> cell.getValue().employeProperty().asString());
         colMontantTotal.setCellValueFactory(cell -> cell.getValue().montantTotalProperty());
 
-        data.addAll(service.getFactures());
+        try {
+            data.addAll(service.getAll());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         tableView.setItems(data);
     }
 
     @FXML
     public void onAdd() {
+//        public Facture(int id, Client client, Employe employe, LocalDate date, double montantTotal, String modePaiement) {
         Facture f = new Facture(
                 service.getNextId(),
-                comboClient.getValue(),
-                comboEmploye.getValue(),
+                service.getClientByName(comboClient.getValue()),
+                service.getEmployeByName(comboEmploye.getValue()),
                 dateDate.getValue(),
                 Double.parseDouble(fieldMontantTotal.getText()),
                 fieldModePaiement.getText()
         );
-        service.addFacture(f);
-        data.setAll(service.getFactures());
+        try {
+            service.add(f);
+            data.setAll(service.getAll());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
         clearFields();
     }
 
@@ -62,13 +77,17 @@ public class FactureController {
     public void onEdit() {
         Facture selected = tableView.getSelectionModel().getSelectedItem();
         if (selected != null) {
-            selected.setClient(comboClient.getValue());
-            selected.setEmploye(comboEmploye.getValue());
+            selected.setClient(service.getClientByName(comboClient.getValue()));
+            selected.setEmploye(service.getEmployeByName(comboEmploye.getValue()));
             selected.setDate(dateDate.getValue());
             selected.setMontantTotal(Double.parseDouble(fieldMontantTotal.getText()));
             selected.setModePaiement(fieldModePaiement.getText());
 
-            service.updateFacture(selected);
+            try {
+                service.update(selected);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
             tableView.refresh();
             clearFields();
         } else {
@@ -83,8 +102,13 @@ public class FactureController {
             Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, "Supprimer cette facture ?", ButtonType.YES, ButtonType.NO);
             confirm.showAndWait();
             if (confirm.getResult() == ButtonType.YES) {
-                service.deleteFacture(selected.getId());
-                data.setAll(service.getFactures());
+
+                try {
+                    service.delete(selected.getId());
+                    data.setAll(service.getAll());
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
             }
         } else {
             showAlert("Sélectionnez une facture à supprimer.");
@@ -94,7 +118,12 @@ public class FactureController {
     @FXML
     public void onSearch() {
         String query = fieldRechercher.getText();
-        Facture f = service.search(query);
+        List<Facture> f = null;
+        try {
+            f = service.search(query);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         if (f != null) {
             data.setAll(f);
         } else {
@@ -111,7 +140,11 @@ public class FactureController {
     @FXML
     public void onImportExcel() {
         service.importFromFile("factures.xlsx");
-        data.setAll(service.getFactures());
+        try {
+            data.setAll(service.getAll());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         showAlert("Importation réussie !");
     }
 

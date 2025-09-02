@@ -2,19 +2,24 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 
-<BorderPane prefHeight="600" prefWidth="900" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="life.pharmacy.controllers.ProduitController">
+<BorderPane prefHeight="699.0" prefWidth="1137.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="life.pharmacy.controllers.ProduitController">
     <top>
         <HBox alignment="CENTER_RIGHT" spacing="10">
-            <TextField fx:id="searchField" onAction="#rechercherProduit" prefHeight="26.0" prefWidth="230.0" promptText="Rechercher produit..." />
-         <Button mnemonicParsing="false" onAction="#handleRechercher" text="Rechercher" />
-            <Button fx:id="importButton" text="Importer Excel" />
-            <Button fx:id="exportButton" onAction="#handleExportExcel" text="Exporter Excel" />
+            <TextField fx:id="fieldRechercher" prefHeight="26.0" prefWidth="230.0" promptText="Rechercher produit..." />
+         <Button mnemonicParsing="false" onAction="#onSearch" text="Rechercher" />
+            <Button onAction="#onImportExcel" text="Importer Excel" />
+            <Button onAction="#onExportExcel" text="Exporter Excel" />
          <padding>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
          </padding>
@@ -27,21 +32,54 @@
                 <TableColumn fx:id="colId" text="ID" />
                 <TableColumn fx:id="colNomCommercial" prefWidth="127.99999237060547" text="Nom commercial" />
             <TableColumn fx:id="colNomGenerique" prefWidth="104.7999267578125" text="Nom générique" />
-                <TableColumn fx:id="colCategorie" minWidth="0.0" prefWidth="172.0" text="Catégorie" />
-                <TableColumn fx:id="colPrix" prefWidth="113.60000610351562" text="Prix" />
-                <TableColumn fx:id="colStock" prefWidth="104.79998779296875" text="Stock" />
+                <TableColumn fx:id="colCategorie" minWidth="0.0" prefWidth="91.0" text="Catégorie" />
+                <TableColumn fx:id="colPrix" prefWidth="79.0" text="Prix" />
+                <TableColumn fx:id="colStock" prefWidth="99.0" text="Stock" />
+            <TableColumn fx:id="colPrixVente" prefWidth="86.0" text="Prix de vente" />
+            <TableColumn fx:id="colDosage" prefWidth="64.0" text="Dosage" />
+            <TableColumn fx:id="colForme" prefWidth="75.0" text="Forme" />
             </columns>
         </TableView>
     </center>
 
     <bottom>
         <HBox alignment="CENTER_LEFT" spacing="10">
-            <Button fx:id="addButton" onAction="#handleAjouter" text="Ajouter" />
-            <Button fx:id="editButton" onAction="#handleModifier" text="Modifier" />
-            <Button fx:id="deleteButton" onAction="#handleSupprimer" text="Supprimer" />
+            <Button fx:id="deleteButton" onAction="#onDelete" text="Supprimer" />
          <padding>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
          </padding>
         </HBox>
     </bottom>
+   <right>
+      <VBox prefHeight="628.0" prefWidth="286.0" spacing="7.0" BorderPane.alignment="CENTER">
+         <padding>
+            <Insets bottom="7.0" left="7.0" right="7.0" top="7.0" />
+         </padding>
+         <children>
+            <Label text="Produit" />
+            <TextField fx:id="fieldNomCommercial" promptText="Nom commercial" />
+            <TextField fx:id="fieldNomGenerique" promptText="Nom générique" />
+            <ComboBox fx:id="comboForme" editable="true" prefWidth="150.0" promptText="Forme" />
+            <TextField fx:id="fieldDosage" promptText="Dosage" />
+            <TextField fx:id="fieldConditionnement" promptText="Conditionnement" />
+            <TextField fx:id="fieldFabricant" promptText="Fabricant" />
+            <TextField fx:id="fieldCodeBarres" promptText="Code barre" />
+            <TextField fx:id="fieldPrixVente" promptText="Prix de vente" />
+            <TextField fx:id="fieldPrixAchat" promptText="Prix d'achat" />
+            <TextField fx:id="fieldStatut" promptText="Statut" />
+            <ComboBox fx:id="comboCategorie" editable="true" prefWidth="150.0" promptText="Catégorie" />
+            <CheckBox fx:id="checkPrescriptionRequise" mnemonicParsing="false" text="Prescription requise" />
+            <DatePicker fx:id="dataDateExpiration" promptText="Date d'expiration" />
+            <TextField fx:id="fieldNumeroLot" promptText="Numéro du lot" />
+            <TextField fx:id="fieldStock" promptText="Stock" />
+            <TextField fx:id="fieldSeuilAlerte" promptText="Seuil alerte" />
+            <HBox alignment="CENTER" spacing="20.0">
+               <children>
+                     <Button fx:id="addButton" onAction="#onAdd" prefHeight="25.0" prefWidth="90.0" text="Ajouter" />
+                     <Button fx:id="editButton" onAction="#onEdit" prefHeight="25.0" prefWidth="90.0" text="Modifier" />
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </right>
 </BorderPane>

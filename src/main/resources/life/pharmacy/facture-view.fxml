@@ -2,6 +2,8 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
@@ -12,33 +14,33 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane prefHeight="620" prefWidth="980" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="life.pharmacy.controllers.FactureController">
+<BorderPane prefHeight="556.0" prefWidth="980" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="life.pharmacy.controllers.FactureController">
 
     <top>
         <ToolBar style="-fx-background-color:#009688;">
             <Label style="-fx-text-fill:white; -fx-font-size:16px;" text="Factures" />
             <Pane HBox.hgrow="ALWAYS" />
-            <TextField fx:id="searchFactureField" prefHeight="26.0" prefWidth="200.0" promptText="Rechercher… (ID/Client)" />
-            <Button fx:id="searchButton" onAction="#onSearch" style="-fx-background-color:#ffffff; -fx-text-fill:#009688;" text="Rechercher" />
+            <TextField fx:id="fieldRechercher" prefHeight="26.0" prefWidth="200.0" promptText="Rechercher… " />
+            <Button onAction="#onSearch" style="-fx-background-color:#ffffff; -fx-text-fill:#009688;" text="Rechercher" />
             <Button fx:id="refreshButton" onAction="#onRefresh" style="-fx-background-color:#ffffff; -fx-text-fill:#009688;" text="Rafraîchir" />
         </ToolBar>
     </top>
 
     <center>
         <VBox spacing="10">
-            <TableView fx:id="factureTable" VBox.vgrow="ALWAYS">
+            <TableView fx:id="tableView" VBox.vgrow="ALWAYS">
                 <columns>
                     <TableColumn fx:id="colId" prefWidth="90" text="ID" />
-                    <TableColumn fx:id="colClient" prefWidth="220" text="Client" />
-                    <TableColumn fx:id="colEmploye" prefWidth="200" text="Employé" />
-                    <TableColumn fx:id="colDate" prefWidth="150" text="Date" />
-                    <TableColumn fx:id="colMontant" prefWidth="120" text="Montant" />
-                    <TableColumn fx:id="colModePaiement" prefWidth="140" text="Paiement" />
+                    <TableColumn fx:id="colClient" prefWidth="125.0" text="Client" />
+                    <TableColumn fx:id="colEmploye" prefWidth="172.0" text="Employé" />
+                    <TableColumn fx:id="colDate" prefWidth="95.0" text="Date" />
+                    <TableColumn fx:id="colMontantTotal" prefWidth="112.0" text="Montant" />
+                    <TableColumn fx:id="colModePaiement" prefWidth="326.0" text="Paiement" />
                 </columns>
             </TableView>
             <HBox alignment="CENTER_RIGHT" spacing="10">
-                <Button fx:id="deleteButton" text="Supprimer" />
-                <Button fx:id="exportButton" text="Exporter" />
+                <Button fx:id="deleteButton" onAction="#onDelete" text="Supprimer" />
+                <Button fx:id="exportButton" onAction="#onExportExcel" text="Exporter" />
             </HBox>
             <padding><Insets bottom="8" left="8" right="8" top="8" /></padding>
         </VBox>
@@ -47,15 +49,15 @@
       <VBox prefHeight="584.0" prefWidth="286.0" spacing="10.0" BorderPane.alignment="CENTER">
          <children>
             <Label text="Facture" />
-            <TextField promptText="Client" />
-            <TextField promptText="Utilisateur" />
-            <TextField promptText="Date de facturation" />
-            <TextField promptText="Montant : CDF 20.000" />
-            <TextField promptText="Paiement " />
+            <ComboBox fx:id="comboClient" prefWidth="150.0" promptText="Client" />
+            <ComboBox fx:id="comboEmploye" prefWidth="150.0" promptText="Utilisateur" />
+            <DatePicker fx:id="dateDate" promptText="Date" />
+            <TextField fx:id="fieldMontantTotal" promptText="Montant : CDF 20.000" />
+            <TextField fx:id="fieldModePaiement" promptText="Paiement " />
             <HBox alignment="CENTER" spacing="20.0">
                <children>
-                      <Button fx:id="newButton" disable="true" prefHeight="25.0" prefWidth="115.0" text="Nouvelle" />
-                      <Button fx:id="editButton" prefHeight="25.0" prefWidth="112.0" text="Modifier" />
+                      <Button fx:id="addButton" disable="true" onAction="#onAdd" prefHeight="25.0" prefWidth="115.0" text="Nouvelle" />
+                      <Button fx:id="editButton" onAction="#onEdit" prefHeight="25.0" prefWidth="112.0" text="Modifier" />
                </children>
             </HBox>
          </children>

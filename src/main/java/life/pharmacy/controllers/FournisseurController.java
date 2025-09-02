@@ -1,5 +1,6 @@
 package life.pharmacy.controllers;
 
+import javafx.fxml.Initializable;
 import life.pharmacy.models.Fournisseur;
 import life.pharmacy.services.FournisseurService;
 import javafx.collections.FXCollections;
@@ -12,10 +13,12 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URL;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.ResourceBundle;
 
-public class FournisseurController {
+public class FournisseurController implements Initializable {
 
     @FXML private TextField fieldNom;
     @FXML private TextField fieldContact;
@@ -37,8 +40,8 @@ public class FournisseurController {
     private final FournisseurService service = new FournisseurService();
     private Fournisseur selected;
 
-    @FXML
-    private void initialize() {
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
         colId.setCellValueFactory(data -> data.getValue().idProperty());
         colNom.setCellValueFactory(data -> data.getValue().nomProperty());
         colContact.setCellValueFactory(data -> data.getValue().contactProperty());

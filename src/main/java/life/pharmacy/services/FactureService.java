@@ -19,6 +19,22 @@ public class FactureService {
     private static final String DB_URL = "jdbc:sqlite:pharmacy.db";
     private List<Facture> factures = new ArrayList<>();
 
+
+    public void add(Facture f) throws SQLException {
+
+        String sql = "INSERT INTO factures (clientId, employedId, date, montantTotal, modePaiement) VALUES(?,?,?,?,?)";
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, String.valueOf(f.getClient().getId()));
+            pstmt.setString(2, String.valueOf(f.getEmploye().getId()));
+            pstmt.setString(3, String.valueOf(f.getDate()));
+            pstmt.setString(4, String.valueOf(f.getMontantTotal()));
+            pstmt.setString(5, f.getModePaiement());
+            pstmt.executeUpdate();
+        }
+    }
+
     // Ici, on mappe la table 'transaction' comme 'facture' (vente = facture)
     public List<Facture> getAll() throws SQLException {
         List<Facture> list = new ArrayList<>();
@@ -161,4 +177,96 @@ public class FactureService {
         }
     }
 
+    public void update(Facture f) throws SQLException {
+        String sql = "UPDATE factures SET clientId=?, employedId=?, date=?, montantTotal=?, modePaiement=? WHERE id=?";
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, f.getClient().getId() + "");
+            pstmt.setString(2, f.getEmploye().getId()  + "");
+            pstmt.setString(3, String.valueOf(f.getDate()));
+            pstmt.setString(4, String.valueOf(f.getMontantTotal()));
+            pstmt.setString(5, f.getModePaiement());
+            pstmt.setInt(8, f.getId());
+            pstmt.executeUpdate();
+        }
+    }
+
+    public void delete(int id) throws SQLException {
+        String sql = "DELETE FROM factures WHERE id=?";
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, id);
+            pstmt.executeUpdate();
+        }
+    }
+
+    public int getNextId() {
+        try {
+            List<Facture> factures = getAll();
+            return factures.stream()
+                    .mapToInt(Facture::getId)
+                    .max()
+                    .orElse(0) + 1;
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to fetch invoices for ID generation", e);
+        }
+    }
+
+    private List<Client> getAllClients() throws SQLException {
+        List<Client> clients = new ArrayList<>();
+        String sql = "SELECT id, nomComplet FROM clients ORDER BY nomComplet";
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             Statement st = conn.createStatement();
+             ResultSet rs = st.executeQuery(sql)) {
+            while (rs.next()) {
+                Client c = new Client();
+                c.setId(rs.getInt("id"));
+                c.setNomComplet(rs.getString("nomComplet"));
+                clients.add(c);
+            }
+        }
+        return clients;
+    }
+
+    private List<Employe> getAllEmployes() throws SQLException {
+        List<Employe> employes = new ArrayList<>();
+        String sql = "SELECT id, nomComplet FROM employes ORDER BY nomComplet";
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             Statement st = conn.createStatement();
+             ResultSet rs = st.executeQuery(sql)) {
+            while (rs.next()) {
+                Employe e = new Employe();
+                e.setId(rs.getInt("id"));
+                e.setNomComplet(rs.getString("nomComplet"));
+                employes.add(e);
+            }
+        }
+        return employes;
+    }
+
+    public Client getClientByName(String name) {
+        try {
+            for (Client c : getAllClients()) {
+                if (c.getNomComplet().equals(name)) {
+                    return c;
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to fetch client by name", e);
+        }
+        return null;
+    }
+
+    public Employe getEmployeByName(String name) {
+        try {
+            for (Employe e : getAllEmployes()) {
+                if (e.getNomComplet().equals(name)) {
+                    return e;
+                }
+            }
+        } catch (SQLException ex) {
+            throw new RuntimeException("Failed to fetch employe by name", ex);
+        }
+        return null;
+    }
 }

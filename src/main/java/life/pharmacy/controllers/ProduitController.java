@@ -2,24 +2,14 @@ package life.pharmacy.controllers;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.input.KeyEvent;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import life.pharmacy.controllers.dialogcontrollers.ProduitDialogController;
 import life.pharmacy.models.Produit;
 import life.pharmacy.services.ProduitService;
 
-import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -70,7 +60,11 @@ public class ProduitController implements Initializable {
         colPrixVente.setCellValueFactory(cell -> cell.getValue().prixVenteProperty());
         colStock.setCellValueFactory(cell -> cell.getValue().stockProperty());
 
-        data.addAll(service.getProduits());
+        try {
+            data.addAll(service.getAll());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         tableView.setItems(data);
     }
 
@@ -95,8 +89,13 @@ public class ProduitController implements Initializable {
                 Integer.parseInt(fieldStock.getText()),
                 Integer.parseInt(fieldSeuilAlerte.getText())
         );
-        service.addProduit(p);
-        data.setAll(service.getProduits());
+        try {
+            service.add(p);
+            data.setAll(service.getAll());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
         clearFields();
     }
 
@@ -121,7 +120,11 @@ public class ProduitController implements Initializable {
             selected.setStock(Integer.parseInt(fieldStock.getText()));
             selected.setSeuilAlerte(Integer.parseInt(fieldSeuilAlerte.getText()));
 
-            service.updateProduit(selected);
+            try {
+                service.update(selected);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
             tableView.refresh();
             clearFields();
         } else {
@@ -136,8 +139,12 @@ public class ProduitController implements Initializable {
             Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, "Supprimer ce produit ?", ButtonType.YES, ButtonType.NO);
             confirm.showAndWait();
             if (confirm.getResult() == ButtonType.YES) {
-                service.deleteProduit(selected.getId());
-                data.setAll(service.getProduits());
+                try {
+                    service.delete(selected.getId());
+                    data.setAll(service.getAll());
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
             }
         } else {
             showAlert("Sélectionnez un produit à supprimer.");
@@ -147,7 +154,12 @@ public class ProduitController implements Initializable {
     @FXML
     public void onSearch() {
         String query = fieldRechercher.getText();
-        Produit p = service.search(query);
+        List<Produit> p = null;
+        try {
+            p = service.search(query);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         if (p != null) {
             data.setAll(p);
         } else {
@@ -164,7 +176,11 @@ public class ProduitController implements Initializable {
     @FXML
     public void onImportExcel() {
         service.importFromFile("produits.xlsx");
-        data.setAll(service.getProduits());
+        try {
+            data.setAll(service.getAll());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         showAlert("Importation réussie !");
     }
 
@@ -194,18 +210,18 @@ public class ProduitController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        colId.setCellValueFactory(cell -> cell.getValue().idProperty().asObject());
+        colId.setCellValueFactory(cell -> cell.getValue().idProperty());
         colNomCommercial.setCellValueFactory(cell -> cell.getValue().nomCommercialProperty());
         colNomGenerique.setCellValueFactory(cell -> cell.getValue().nomGeneriqueProperty());
-        colCategorie.setCellValueFactory(cell -> cell.getValue().categorieProperty());
-        colPrix.setCellValueFactory(cell -> cell.getValue().prixVenteProperty().asObject());
-        colStock.setCellValueFactory(cell -> cell.getValue().stockProperty().asObject());
+        colForme.setCellValueFactory(cell -> cell.getValue().formeProperty());
+        colDosage.setCellValueFactory(cell -> cell.getValue().dosageProperty());
+        colStock.setCellValueFactory(cell -> cell.getValue().stockProperty());
 
         try {
-            produits.addAll(produitService.getAll());
+            data.addAll(service.getAll());
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        produitTable.setItems(produits);
+        tableView.setItems(data);
     }
 }

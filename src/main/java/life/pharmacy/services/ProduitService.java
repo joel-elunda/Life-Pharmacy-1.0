@@ -1,5 +1,6 @@
 package life.pharmacy.services;
 
+import life.pharmacy.models.Client;
 import life.pharmacy.models.Produit;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -219,5 +220,17 @@ public class ProduitService {
                 }
             }
         } catch (IOException e) { e.printStackTrace(); }
+    }
+
+    public int getNextId() {
+        try {
+            List<Produit> p = getAll();
+            return p.stream()
+                    .mapToInt(Produit::getId)
+                    .max()
+                    .orElse(0) + 1;
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to fetch products for ID generation", e);
+        }
     }
 }
