@@ -21,7 +21,8 @@ public class ProduitService {
     private static final String DB_URL = "jdbc:sqlite:pharmacy.db";
 
     public void add(Produit p) throws SQLException {
-        String sql = "INSERT INTO produits(nom, description, prix, quantite_stock, date_expiration, fournisseur_id, categorie) VALUES(?,?,?,?,?,?,?)";
+        String sql = "INSERT INTO produits(nomCommercial, nomGenerique, forme, dosage, conditionnement, fabricant, codeBarres, " +
+                "prixVente, prixAchat, statut, categorie, prescriptionRequise, dateExpiration, numeroLot, stock, seuilAlert) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
@@ -47,7 +48,7 @@ public class ProduitService {
     }
 
     public void update(Produit p) throws SQLException {
-        String sql = "UPDATE produits SET nom=?, description=?, prix=?, quantite_stock=?, date_expiration=?, fournisseur_id=?, categorie=? WHERE id=?";
+        String sql = "UPDATE produits SET nomCommercial=?, nomGenerique=?, forme=?, dosage=?, conditionnement=?, fabricant=?, codeBarres=?, prixVente=?, prixAchat=?, statut=?, categorie=?, prescriptionRequise=?, dateExpiration=?, numeroLot=?, stock=?, seuilAlert=? WHERE id=?";
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, p.getNomCommercial());
@@ -86,8 +87,8 @@ public class ProduitService {
             while (rs.next()) {
                 list.add(new Produit(
                         rs.getInt("id"),
-                        rs.getString("nom_commercial"),
-                        rs.getString("nom_generique"),
+                        rs.getString("nomCommercial"),
+                        rs.getString("nomGenerique"),
                         rs.getString("forme"),
                         rs.getString("dosage"),
                         rs.getString("conditionnement"),
@@ -119,8 +120,8 @@ public class ProduitService {
             while (rs.next()) {
                 list.add(new Produit(
                         rs.getInt("id"),
-                        rs.getString("nom_commercial"),
-                        rs.getString("nom_generique"),
+                        rs.getString("nomCommercial"),
+                        rs.getString("nomGenerique"),
                         rs.getString("forme"),
                         rs.getString("dosage"),
                         rs.getString("conditionnement"),
@@ -178,25 +179,7 @@ public class ProduitService {
             for (int i = 1; i <= sheet.getLastRowNum(); i++) {
                 Row row = sheet.getRow(i);
                 if (row != null) {
-                    /*
-                    * public Produit(
-            int id,
-            String nomCommercial,
-            String nomGenerique,
-            String forme,
-            String dosage,
-            String conditionnement,
-            String fabricant,
-            String codeBarres,
-            double prixVente,
-            double prixAchat,
-            String statut,
-            String categorie,
-            boolean prescriptionRequise,
-            LocalDate dateExpiration,
-            String numeroLot,
-            int stock,
-            int seuilAlerte) {*/
+
                     Produit p = new Produit(
                             (int) row.getCell(0).getNumericCellValue(),
                             row.getCell(1).getStringCellValue(),

@@ -27,7 +27,7 @@
     </top>
 
     <center>
-        <TableView fx:id="produitTable">
+        <TableView fx:id="tableView">
             <columns>
                 <TableColumn fx:id="colId" text="ID" />
                 <TableColumn fx:id="colNomCommercial" prefWidth="127.99999237060547" text="Nom commercial" />

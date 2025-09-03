@@ -17,7 +17,7 @@ public class FournisseurService {
     private final List<Fournisseur> fournisseurs = new ArrayList<>();
 
     public void add(Fournisseur f) throws SQLException {
-        String sql = "INSERT INTO fournisseurs (nom, contact, adresse, email, conditionsPaiement) VALUES(?,?,?,?)";
+        String sql = "INSERT INTO fournisseurs (nom, contact, adresse, email, conditionsPaiement) VALUES(?,?,?,?,?)";
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, f.getNom());
