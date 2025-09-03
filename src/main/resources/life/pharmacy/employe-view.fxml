@@ -48,7 +48,7 @@
             <TextField fx:id="fiedlNomComplet" promptText="Nom" />
             <ComboBox fx:id="comboRole" prefHeight="25.0" prefWidth="330.0" VBox.vgrow="ALWAYS" />
             <TextField fx:id="fieldLogin" promptText="Login" />
-            <CheckBox fx:id="Permissions" mnemonicParsing="false" text="Toutes les permissions" />
+            <CheckBox fx:id="areaPermissions" mnemonicParsing="false" text="Toutes les permissions" />
             <PasswordField fx:id="fieldMotDePasseHash" promptText="Mot de passe" />
             <HBox alignment="CENTER" spacing="20.0">
                <children>
