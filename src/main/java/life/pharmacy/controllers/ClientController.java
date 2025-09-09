@@ -26,6 +26,7 @@ public class ClientController implements Initializable {
     @FXML private TextArea areaConditionsMedicales;
     @FXML private TextArea areaAllergies;
     @FXML private TextField fieldRechercher;
+    @FXML private ComboBox<String> comboResearch;
 
     @FXML private TableView<Client> tableView;
     @FXML private TableColumn<Client, Number> colId;
@@ -170,12 +171,58 @@ public class ClientController implements Initializable {
         colConditionsMedicales.setCellValueFactory(cell -> cell.getValue().conditionsMedicalesProperty());
         colAllergies.setCellValueFactory(cell -> cell.getValue().allergiesProperty());
 
+//        filtrePeriode.setItems(FXCollections.observableArrayList(
+//                "Jour", "Semaine", "Mois", "Trimestre", "Semestre", "Année"
+//        ));
+        try {
+            comboResearch.setItems(FXCollections.observableArrayList(
+                    service.getAll().stream()
+                            .map(c -> c.getNomComplet() + " - " + c.getTelephone() + " - " + c.getEmail())
+                            .toList()
+            ));
+
+            // Quand on change la sélection → on affiche uniquement l’élément dans la table
+            comboResearch.getSelectionModel().selectedItemProperty().addListener((obs, old, selected) -> {
+                if (selected == null) return;
+                // Récupérer le nom (avant le pipe)
+                String nom = selected.split("\\|")[0].trim();
+                List<Client> found = null; // ta méthode retourne 0..n éléments
+                try {
+                    found = service.search(nom);
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+                data.setAll(found);
+                tableView.setItems(FXCollections.observableArrayList(data));
+                if (!found.isEmpty()) tableView.getSelectionModel().selectFirst();
+            });
+
+            // Remplir les champs quand on sélectionne une ligne (voir point 4, plus bas)
+            tableView.getSelectionModel().selectedItemProperty().addListener((o,ov,nv)->populateFieldsFromSelection(nv));
+
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+
         try {
             data.addAll(service.getAll());
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
         tableView.setItems(data);
+    }
+
+    private void populateFieldsFromSelection(Client c) {
+        if (c == null) return;
+        fieldNom.setText(c.getNomComplet());
+        dateDateNaissance.setValue(c.getDateNaissance());
+        fieldAdresse.setText(c.getAdresse());
+        fieldTelephone.setText(c.getTelephone());
+        fieldEmail.setText(c.getEmail());
+        areaConditionsMedicales.setText(c.getConditionsMedicales());
+        areaAllergies.setText(c.getAllergies());
     }
 }
 

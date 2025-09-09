@@ -1,7 +1,9 @@
 package life.pharmacy.controllers;
 
 import javafx.fxml.Initializable;
+import life.pharmacy.models.Client;
 import life.pharmacy.models.Facture;
+import life.pharmacy.services.ClientService;
 import life.pharmacy.services.FactureService;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -37,12 +39,21 @@ public class FactureController implements Initializable {
     private final FactureService service = new FactureService();
     private final ObservableList<Facture> data = FXCollections.observableArrayList();
 
+    private ClientService clientService = new ClientService();
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         colId.setCellValueFactory(cell -> cell.getValue().idProperty());
         colClient.setCellValueFactory(cell -> cell.getValue().clientProperty().asString());
         colEmploye.setCellValueFactory(cell -> cell.getValue().employeProperty().asString());
         colMontantTotal.setCellValueFactory(cell -> cell.getValue().montantTotalProperty());
+
+        try {
+            comboClient.setItems(FXCollections.observableArrayList(
+                    clientService.getAll().stream().map(Client::getNomComplet).toList()));
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
 
         try {
             data.addAll(service.getAll());

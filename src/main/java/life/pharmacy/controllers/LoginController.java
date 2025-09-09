@@ -37,7 +37,7 @@ public class LoginController implements Initializable {
                 var stage = new Stage();
                 stage.setTitle("Life Pharmacy — Dashboard");
                 var scene = new Scene((Parent) root);
-                scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/theme.css")).toExternalForm());
+//                scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/theme.css")).toExternalForm());
                 stage.setScene(scene);
                 stage.show();
                 ((Stage) loginButton.getScene().getWindow()).close();

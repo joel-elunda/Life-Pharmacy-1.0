@@ -39,26 +39,26 @@ public class FactureService {
     public List<Facture> getAll() throws SQLException {
         List<Facture> list = new ArrayList<>();
         String sql = """
-            SELECT t.id, t.client_id, t.employe_id, t.date_transaction, t.montant_total, t.methode_paiement,
-                   c.nom_complet AS client_nom, e.nom_complet AS employe_nom
+            SELECT t.id, t.clientId, t.employeId, t.dateHeure, t.total, t.statutPaiement,
+                   c.nomComplet AS client_nom, e.nomComplet AS employe_nom
             FROM table_transactions t
-            LEFT JOIN clients c ON c.id=t.client_id
-            LEFT JOIN employes e ON e.id=t.employe_id
+            LEFT JOIN clients c ON c.id=t.clientId
+            LEFT JOIN employes e ON e.id=t.employeId
             ORDER BY t.id DESC
         """;
         try (Connection conn = DriverManager.getConnection(DB_URL);
              Statement st = conn.createStatement();
              ResultSet rs = st.executeQuery(sql)) {
             while (rs.next()) {
-                Client cli = new Client(); cli.setId(rs.getInt("client_id")); cli.setNomComplet(rs.getString("client_nom"));
-                Employe emp = new Employe(); emp.setId(rs.getInt("employe_id")); emp.setNomComplet(rs.getString("employe_nom"));
+                Client cli = new Client(); cli.setId(rs.getInt("clientId")); cli.setNomComplet(rs.getString("nomComplet"));
+                Employe emp = new Employe(); emp.setId(rs.getInt("employeId")); emp.setNomComplet(rs.getString("nomComplet"));
                 Facture f = new Facture(
                         rs.getInt("id"),
                         cli,
                         emp,
-                        rs.getTimestamp("date_transaction").toLocalDateTime().toLocalDate(),
-                        rs.getDouble("montant_total"),
-                        rs.getString("methode_paiement")
+                        rs.getTimestamp("date").toLocalDateTime().toLocalDate(),
+                        rs.getDouble("montantTotal"),
+                        rs.getString("methodePaiement")
                 );
                 list.add(f);
             }
@@ -70,12 +70,12 @@ public class FactureService {
         if (q == null || q.isBlank()) return getAll();
         List<Facture> list = new ArrayList<>();
         String sql = """
-            SELECT t.id, t.client_id, t.employe_id, t.date_transaction, t.montant_total, t.methode_paiement,
-                   c.nom_complet AS client_nom, e.nom_complet AS employe_nom
+            SELECT t.id, t.clientId, t.employeId, t.dateHeure, t.total, t.statutPaiement,
+                   c.nomComplet AS client_nom, e.nomComplet AS employe_nom
             FROM table_transactions t
-            LEFT JOIN clients c ON c.id=t.client_id
-            LEFT JOIN employes e ON e.id=t.employe_id
-            WHERE CAST(t.id AS TEXT) LIKE ? OR c.nom_complet LIKE ?
+            LEFT JOIN clients c ON c.id=t.clientId
+            LEFT JOIN employes e ON e.id=t.employeId
+            WHERE CAST(t.id AS TEXT) LIKE ? OR c.nomComplet LIKE ?
             ORDER BY t.id DESC
         """;
         try (Connection conn = DriverManager.getConnection(DB_URL);
@@ -103,7 +103,7 @@ public class FactureService {
 
     // Enregistrement d'une facture (via table transaction)
     public int saveAsTransaction(Facture facture) throws SQLException {
-        String sql = "INSERT INTO table_transactions(client_id, employe_id, date_transaction, montant_total, methode_paiement) VALUES(?,?,?,?,?)";
+        String sql = "INSERT INTO table_transactions(clientId, employeId, dateHeure, total, statutPaiement) VALUES(?,?,?,?,?)";
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setInt(1, facture.getClient() != null ? facture.getClient().getId() : 0);

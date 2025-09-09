@@ -52,10 +52,10 @@ public class RecetteService {
         List<Recette> recettes = new ArrayList<>();
 
         String query = switch (periode.toLowerCase()) {
-            case "jour" -> "SELECT date, SUM(montant) as montant FROM recette GROUP BY date";
-            case "semaine" -> "SELECT strftime('%W', date) as semaine, SUM(montant) as montant FROM recette GROUP BY semaine";
-            case "mois" -> "SELECT strftime('%m-%Y', date) as mois, SUM(montant) as montant FROM recette GROUP BY mois";
-            case "annee" -> "SELECT strftime('%Y', date) as annee, SUM(montant) as montant FROM recette GROUP BY annee";
+            case "jour" -> "SELECT date, SUM(montant) as montant FROM recettes GROUP BY date";
+            case "semaine" -> "SELECT strftime('%W', date) as semaine, SUM(montant) as montant FROM recettes GROUP BY semaine";
+            case "mois" -> "SELECT strftime('%m-%Y', date) as mois, SUM(montant) as montant FROM recettes GROUP BY mois";
+            case "annee" -> "SELECT strftime('%Y', date) as annee, SUM(montant) as montant FROM recettes GROUP BY annee";
             default -> "SELECT date, montant FROM recette";
         };
 

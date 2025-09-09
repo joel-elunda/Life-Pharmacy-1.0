@@ -12,6 +12,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.*;
 import java.sql.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class ProduitService {
@@ -22,7 +24,7 @@ public class ProduitService {
 
     public void add(Produit p) throws SQLException {
         String sql = "INSERT INTO produits(nomCommercial, nomGenerique, forme, dosage, conditionnement, fabricant, codeBarres, " +
-                "prixVente, prixAchat, statut, categorie, prescriptionRequise, dateExpiration, numeroLot, stock, seuilAlert) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                "prixVente, prixAchat, statut, categorie, prescriptionRequise, dateExpiration, numeroLot, stock, seuilAlerte) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
@@ -38,7 +40,9 @@ public class ProduitService {
             ps.setString(10, p.getStatut());
             ps.setString(11, p.getCategorie());
             ps.setBoolean(12, p.isPrescriptionRequise());
-            ps.setString(13, p.getDateExpiration().toString());
+            ps.setString(13,
+                    p.getDateExpiration() != null ? p.getDateExpiration().toString() : null
+            );
             ps.setString(14, p.getNumeroLot());
             ps.setInt(15, p.getStock());
             ps.setInt(16, p.getSeuilAlerte());
@@ -48,7 +52,7 @@ public class ProduitService {
     }
 
     public void update(Produit p) throws SQLException {
-        String sql = "UPDATE produits SET nomCommercial=?, nomGenerique=?, forme=?, dosage=?, conditionnement=?, fabricant=?, codeBarres=?, prixVente=?, prixAchat=?, statut=?, categorie=?, prescriptionRequise=?, dateExpiration=?, numeroLot=?, stock=?, seuilAlert=? WHERE id=?";
+        String sql = "UPDATE produits SET nomCommercial=?, nomGenerique=?, forme=?, dosage=?, conditionnement=?, fabricant=?, codeBarres=?, prixVente=?, prixAchat=?, statut=?, categorie=?, prescriptionRequise=?, dateExpiration=?, numeroLot=?, stock=?, seuilAlerte=? WHERE id=?";
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, p.getNomCommercial());
@@ -63,7 +67,9 @@ public class ProduitService {
             ps.setString(10, p.getStatut());
             ps.setString(11, p.getCategorie());
             ps.setBoolean(12, p.isPrescriptionRequise());
-            ps.setString(13, p.getDateExpiration().toString());
+            ps.setString(13,
+                    p.getDateExpiration() != null ? p.getDateExpiration().toString() : null
+            );
             ps.setString(14, p.getNumeroLot());
             ps.setInt(15, p.getStock());
             ps.setInt(16, p.getSeuilAlerte());
@@ -81,10 +87,17 @@ public class ProduitService {
 
     public List<Produit> getAll() throws SQLException {
         List<Produit> list = new ArrayList<>();
+
         try (Connection conn = DriverManager.getConnection(DB_URL);
              Statement st = conn.createStatement();
              ResultSet rs = st.executeQuery("SELECT * FROM produits")) {
             while (rs.next()) {
+                String dateStr = rs.getString("dateExpiration"); // ← LIRE COMME STRING
+                LocalDate dateExp = null;
+                if (dateStr != null && !dateStr.isBlank()) {
+                    // parse "YYYY-MM-DD"
+                    dateExp = LocalDate.parse(dateStr, DateTimeFormatter.ISO_LOCAL_DATE);
+                }
                 list.add(new Produit(
                         rs.getInt("id"),
                         rs.getString("nomCommercial"),
@@ -99,7 +112,7 @@ public class ProduitService {
                         rs.getString("statut"),
                         rs.getString("categorie"),
                         rs.getBoolean("prescriptionRequise"),
-                        rs.getDate("dateExpiration").toLocalDate(),
+                        dateExp, // ← LocalDate
                         rs.getString("numeroLot"),
                         rs.getInt("stock"),
                         rs.getInt("seuilAlerte")
@@ -118,6 +131,12 @@ public class ProduitService {
             ps.setString(2, "%" + query + "%");
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
+                String dateStr = rs.getString("dateExpiration"); // ← LIRE COMME STRING
+                LocalDate dateExp = null;
+                if (dateStr != null && !dateStr.isBlank()) {
+                    // parse "YYYY-MM-DD"
+                    dateExp = LocalDate.parse(dateStr, DateTimeFormatter.ISO_LOCAL_DATE);
+                }
                 list.add(new Produit(
                         rs.getInt("id"),
                         rs.getString("nomCommercial"),
@@ -132,7 +151,7 @@ public class ProduitService {
                         rs.getString("statut"),
                         rs.getString("categorie"),
                         rs.getBoolean("prescriptionRequise"),
-                        rs.getDate("dateExpiration").toLocalDate(),
+                        dateExp, // ← LocalDate
                         rs.getString("numeroLot"),
                         rs.getInt("stock"),
                         rs.getInt("seuilAlerte")

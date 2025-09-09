@@ -41,6 +41,8 @@ public class ProduitController implements Initializable {
     @FXML private TableColumn<Produit, String> colDosage;
     @FXML private TableColumn<Produit, Number> colPrixVente;
     @FXML private TableColumn<Produit, Number> colStock;
+    @FXML private TableColumn<Produit, String> colCategorie;
+    @FXML private TableColumn<Produit, Number> colPrixAchat;
 
     @FXML private Button addButton;
     @FXML private Button editButton;
@@ -215,6 +217,9 @@ public class ProduitController implements Initializable {
         colForme.setCellValueFactory(cell -> cell.getValue().formeProperty());
         colDosage.setCellValueFactory(cell -> cell.getValue().dosageProperty());
         colStock.setCellValueFactory(cell -> cell.getValue().stockProperty());
+        colPrixVente.setCellValueFactory(cell -> cell.getValue().prixVenteProperty());
+        colCategorie.setCellValueFactory(cell -> cell.getValue().categorieProperty());
+        colPrixAchat.setCellValueFactory(cell -> cell.getValue().prixAchatProperty());
 
         try {
             data.addAll(service.getAll());

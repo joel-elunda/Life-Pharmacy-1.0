@@ -22,7 +22,7 @@
             <Pane HBox.hgrow="ALWAYS" />
             <TextField fx:id="fieldRechercher" prefHeight="26.0" prefWidth="200.0" promptText="Rechercher… " />
             <Button onAction="#onSearch" style="-fx-background-color:#ffffff; -fx-text-fill:#009688;" text="Rechercher" />
-            <Button fx:id="refreshButton"  style="-fx-background-color:#ffffff; -fx-text-fill:#009688;" text="Rafraîchir" />
+            <Button fx:id="refreshButton" style="-fx-background-color:#ffffff; -fx-text-fill:#009688;" text="Rafraîchir" />
         </ToolBar>
     </top>
 
@@ -49,8 +49,8 @@
       <VBox prefHeight="584.0" prefWidth="286.0" spacing="10.0" BorderPane.alignment="CENTER">
          <children>
             <Label text="Facture" />
-            <ComboBox fx:id="comboClient" prefWidth="150.0" promptText="Client" />
-            <ComboBox fx:id="comboEmploye" prefWidth="150.0" promptText="Utilisateur" />
+            <ComboBox fx:id="comboClient" editable="true" prefWidth="150.0" promptText="Client" />
+            <ComboBox fx:id="comboEmploye" disable="true" prefWidth="150.0" promptText="Utilisateur" />
             <DatePicker fx:id="dateDate" promptText="Date" />
             <TextField fx:id="fieldMontantTotal" promptText="Montant : CDF 20.000" />
             <TextField fx:id="fieldModePaiement" promptText="Paiement " />

@@ -33,11 +33,11 @@
                 <TableColumn fx:id="colNomCommercial" prefWidth="127.99999237060547" text="Nom commercial" />
             <TableColumn fx:id="colNomGenerique" prefWidth="104.7999267578125" text="Nom générique" />
                 <TableColumn fx:id="colCategorie" minWidth="0.0" prefWidth="91.0" text="Catégorie" />
-                <TableColumn fx:id="colPrix" prefWidth="79.0" text="Prix" />
                 <TableColumn fx:id="colStock" prefWidth="99.0" text="Stock" />
-            <TableColumn fx:id="colPrixVente" prefWidth="86.0" text="Prix de vente" />
             <TableColumn fx:id="colDosage" prefWidth="64.0" text="Dosage" />
             <TableColumn fx:id="colForme" prefWidth="75.0" text="Forme" />
+            <TableColumn fx:id="colPrixVente" prefWidth="86.0" text="Prix de vente" />
+                <TableColumn fx:id="colPrixAchat" prefWidth="79.0" text="Prix d'achat" />
             </columns>
         </TableView>
     </center>
