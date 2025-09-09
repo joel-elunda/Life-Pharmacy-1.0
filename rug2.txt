@@ -1,0 +1,31 @@
+1. Tu vois la comboBox de recherche là, génère un code qui affiche dans le tableau l'élément séléectionné dans la comboBox, comme avec le bouton rechercher.
+2. resouds moi ce bug :
+Caused by: java.lang.reflect.InvocationTargetException
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:119)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at com.sun.javafx.reflect.Trampoline.invoke(MethodUtil.java:72)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at javafx.base@21.0.6/com.sun.javafx.reflect.MethodUtil.invoke(MethodUtil.java:270)
+	at javafx.fxml@21.0.6/com.sun.javafx.fxml.MethodHelper.invoke(MethodHelper.java:84)
+	at javafx.fxml@21.0.6/javafx.fxml.FXMLLoader$MethodHandler.invoke(FXMLLoader.java:1855)
+	... 46 more
+Caused by: java.lang.RuntimeException: java.sql.SQLException: Error parsing time stamp
+	at life.pharmacy/life.pharmacy.controllers.ProduitController.onAdd(ProduitController.java:96)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
+	... 53 more
+Caused by: java.sql.SQLException: Error parsing time stamp
+	at org.xerial.sqlitejdbc@3.46.0.0/org.sqlite.jdbc3.JDBC3ResultSet.getDate(JDBC3ResultSet.java:280)
+	at org.xerial.sqlitejdbc@3.46.0.0/org.sqlite.jdbc3.JDBC3ResultSet.getDate(JDBC3ResultSet.java:295)
+	at life.pharmacy/life.pharmacy.services.ProduitService.getAll(ProduitService.java:102)
+	at life.pharmacy/life.pharmacy.controllers.ProduitController.onAdd(ProduitController.java:94)
+	... 54 more
+Caused by: java.text.ParseException: Unparseable date: "2030-09-28" does not match (\p{Nd}++)\Q-\E(\p{Nd}++)\Q-\E(\p{Nd}++)\Q \E(\p{Nd}++)\Q:\E(\p{Nd}++)\Q:\E(\p{Nd}++)\Q.\E(\p{Nd}++)
+	at org.xerial.sqlitejdbc@3.46.0.0/org.sqlite.date.FastDateParser.parse(FastDateParser.java:311)
+	at org.xerial.sqlitejdbc@3.46.0.0/org.sqlite.date.FastDateFormat.parse(FastDateFormat.java:449)
+	at org.xerial.sqlitejdbc@3.46.0.0/org.sqlite.jdbc3.JDBC3ResultSet.getDate(JDBC3ResultSet.java:278)
+
+3. Le clic sur les boutons Exporter vers Excel et Importer d'Excel devrait normalement afficher une boite de dialogue,
+pour choisir un fichier à importer ou écrire un nom de fichier pour exporter, génère moi ce code là pour ClientController, FactureController, FournisseurController,  ProduitController
+
+4. Lorsqu'on sélection par exemple un élément dans la table client, je veux que les données de l'élement sélectionner affiche dans les champs respectifs (nom, telephone, email, ...) 
