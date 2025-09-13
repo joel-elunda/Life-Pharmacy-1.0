@@ -15,6 +15,7 @@ public class LigneTransaction {
     private final StringProperty numeroOrdonnance = new SimpleStringProperty(this, "numeroOrdonnance");
     private final ObjectProperty<Produit> produit = new SimpleObjectProperty<>(this, "produit");
 
+
     public LigneTransaction() {
         sousTotal.bind(prixUnitaire.multiply(quantite));
     }

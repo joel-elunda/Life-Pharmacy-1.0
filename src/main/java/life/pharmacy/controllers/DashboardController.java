@@ -154,7 +154,6 @@ public class DashboardController implements Initializable {
     private void reloadClients() {
         reloadClients(null);
     }
-
     private void reloadClients(String q) {
         try {
             var list = (q == null || q.isBlank()) ? clientService.getAll() : clientService.search(q);
@@ -171,7 +170,6 @@ public class DashboardController implements Initializable {
             productTable.getItems().setAll(list);
         } catch (Exception e) { showError(e); }
     }
-
 
 
     // Ajout au panier
@@ -206,11 +204,15 @@ public class DashboardController implements Initializable {
         totalLabel.setText(String.format("%.2f", total));
 
         Client cli = clientTable.getSelectionModel().getSelectedItem();
+
         StringBuilder sb = new StringBuilder();
         sb.append("FACTURE\n");
         sb.append("Client: ").append(cli != null ? cli.getNomComplet() : "Anonyme").append("\n");
         sb.append("Caissier: ").append(currentUser != null ? currentUser.getNomComplet() : "").append("\n");
-        sb.append("Mode de paiement: ").append(paymentCombo.getValue()).append("\n\n");
+        sb.append("Mode de paiement: ").append(
+                paymentCombo.getValue() != null ? paymentCombo.getValue() : "Non défini"
+        ).append("\n\n");
+
         sb.append(String.format("%-30s %5s %10s %12s\n", "Produit", "Qté", "P.U.", "Sous-Total"));
         sb.append("---------------------------------------------------------------\n");
         for (LigneTransaction lt : panier) {
@@ -231,16 +233,31 @@ public class DashboardController implements Initializable {
 
     @FXML
     private void onPrintAndSave() {
-        if (panier.isEmpty()) { alert("Panier vide"); return; }
+        if (panier.isEmpty()) {
+            alert("Panier vide");
+            return;
+        }
+
         String mode = paymentCombo.getValue();
         Client cli = clientTable.getSelectionModel().getSelectedItem(); // peut être null (vente anonyme)
-
         double total = panier.stream().mapToDouble(LigneTransaction::getSousTotal).sum();
 
         // Impression simple (aperçu texte) : PrinterJob optionnel — ici on enregistre surtout
         try {
+            // si aucun client sélectionné → utiliser "Anonyme" (id = 1)
+            int clientId = (cli != null) ? cli.getId() : 1;
+
             // Enregistrer transaction
-            Transaction t = new Transaction(0, LocalDateTime.now(), total, "payé", mode, cli.getId(), currentUser.getId());
+            Transaction t = new Transaction(
+                    0,
+                    LocalDateTime.now(),
+                    total,
+                    "payé",
+                    (mode != null ? mode : "Non défini"),
+                    clientId,
+                    currentUser.getId()
+            );
+
             transactionService.add(t);
 
             // Récupérer ID transaction créée (si service renvoie l'id, sinon on recharge le max)
@@ -265,6 +282,7 @@ public class DashboardController implements Initializable {
     }
 
     @FXML private void onCancel(){ panier.clear(); updateTotalsAndPreview(); }
+
     @FXML
     private void onLogout(){ /* Navigation login */ alert("Déconnexion…"); }
 
