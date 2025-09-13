@@ -177,7 +177,7 @@ public class ClientController implements Initializable {
         try {
             comboResearch.setItems(FXCollections.observableArrayList(
                     service.getAll().stream()
-                            .map(c -> c.getNomComplet() + " - " + c.getTelephone() + " - " + c.getEmail())
+                            .map(Client::getNomComplet)
                             .toList()
             ));
 

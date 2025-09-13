@@ -13,7 +13,7 @@ public class TransactionService {
 
     //int id, LocalDateTime dateHeure, double total, String statutPaiement, String methodePaiement, int clientId, int employeId)
     public void add(Transaction t) throws SQLException {
-        String sql = "INSERT INTO table_transactions(client_id, employe_id, date_transaction, montant_total, methode_paiement) VALUES(?,?,?,?,?)";
+        String sql = "INSERT INTO table_transactions(clientId, employeId, dateHeure, total, methodePaiement) VALUES(?,?,?,?,?)";
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, t.getId());
@@ -29,7 +29,7 @@ public class TransactionService {
     }
 
     public void update(Transaction t) throws SQLException {
-        String sql = "UPDATE table_transactions SET client_id=?, employe_id=?, date_transaction=?, montant_total=?, methode_paiement=? WHERE id=?";
+        String sql = "UPDATE table_transactions SET clientId=?, employeId=?, dateHeure=?, total=?, methodePaiement=? WHERE id=?";
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, t.getId());
@@ -50,7 +50,7 @@ public class TransactionService {
             ps.executeUpdate();
         }
     }
-    //public Transaction(int id, LocalDateTime dateHeure, double total, String statutPaiement, String methodePaiement, int clientId, int employeId)
+
     public List<Transaction> getAll() throws SQLException {
         List<Transaction> list = new ArrayList<>();
         try (Connection conn = DriverManager.getConnection(DB_URL);
@@ -59,12 +59,12 @@ public class TransactionService {
             while (rs.next()) {
                 list.add(new Transaction(
                         rs.getInt("id"),
-                        LocalDateTime.parse(rs.getString("date_transaction")),
-                        rs.getDouble("montant_total"),
-                        rs.getString("statut_paiement"),
-                        rs.getString("methode_paiement"),
-                        rs.getInt("client_id"),
-                        rs.getInt("employe_id")
+                        LocalDateTime.parse(rs.getString("dateHeure")),
+                        rs.getDouble("total"),
+                        rs.getString("statutPaiement"),
+                        rs.getString("methodePaiement"),
+                        rs.getInt("clientId"),
+                        rs.getInt("employeId")
                 ));
             }
         }

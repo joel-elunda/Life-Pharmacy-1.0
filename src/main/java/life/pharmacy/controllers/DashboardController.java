@@ -1,5 +1,6 @@
 package life.pharmacy.controllers;
 
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -14,6 +15,7 @@ import javafx.stage.Stage;
 import life.pharmacy.models.*;
 import life.pharmacy.services.*;
 
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 
 public class DashboardController implements Initializable {
@@ -54,12 +56,44 @@ public class DashboardController implements Initializable {
 
     private final ClientService clientService = new ClientService();
     private final ProduitService produitService = new ProduitService();
+    private final FactureService factureService = new FactureService();
+    private final FournisseurService fournisseurService = new FournisseurService();
+    private final EmployeService employeService = new EmployeService();
+    private final RecetteService recetteService = new RecetteService();
     private final TransactionService transactionService = new TransactionService();
     private final LigneTransactionService ligneService = new LigneTransactionService();
-    private final EmployeService employeService = new EmployeService();
 
     private final ObservableList<LigneTransaction> panier = FXCollections.observableArrayList();
     private Employe currentUser;
+
+    @FXML private Button refreshButton;
+
+    @FXML private Button btnAddClient;
+
+    @FXML
+    private void onAddClient(ActionEvent event) {
+        this.handleClients(event);
+    }
+
+    @FXML
+    private void handleRefresh(ActionEvent event) {
+        //        chargerProduits();
+        //        chargerClients();
+        try {
+            clientTable.setItems(FXCollections.observableArrayList(clientService.getAll()));
+            productTable.setItems(FXCollections.observableArrayList(produitService.getAll()));
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        // ajoute ici toutes les méthodes de reload selon ce que tu as
+        reloadClients();
+        reloadProduits();
+
+        Alert alert = new Alert(Alert.AlertType.INFORMATION, "Données mises à jour avec succès !");
+        alert.showAndWait();
+    }
+
 
     @FXML
     private void handleProduits(ActionEvent event) {
@@ -138,6 +172,8 @@ public class DashboardController implements Initializable {
         } catch (Exception e) { showError(e); }
     }
 
+
+
     // Ajout au panier
     @FXML
     private void onAddToCart() {
@@ -178,9 +214,16 @@ public class DashboardController implements Initializable {
         sb.append(String.format("%-30s %5s %10s %12s\n", "Produit", "Qté", "P.U.", "Sous-Total"));
         sb.append("---------------------------------------------------------------\n");
         for (LigneTransaction lt : panier) {
+            String nom = (lt.getProduit() != null)
+                    ? lt.getProduit().getNomCommercial()
+                    : lt.getProduitNom(); // fallback sur le champ produitNom
             sb.append(String.format("%-30s %5d %10.2f %12.2f\n",
-                    lt.getProduit().getNomCommercial(), lt.getQuantite(), lt.getPrixUnitaire(), lt.getSousTotal()));
+                    nom, lt.getQuantite(), lt.getPrixUnitaire(), lt.getSousTotal()));
         }
+//        for (LigneTransaction lt : panier) {
+//            sb.append(String.format("%-30s %5d %10.2f %12.2f\n",
+//                    lt.getProduit().getNomCommercial(), lt.getQuantite(), lt.getPrixUnitaire(), lt.getSousTotal()));
+//        }
         sb.append("---------------------------------------------------------------\n");
         sb.append(String.format("TOTAL: %.2f\n", total));
         invoicePreview.setText(sb.toString());
@@ -248,7 +291,17 @@ public class DashboardController implements Initializable {
         colProdStock.setCellValueFactory(c -> c.getValue().stockProperty());
 
         // colonnes panier
-        colCartProd.setCellValueFactory(c -> c.getValue().produitProperty().get().nomCommercialProperty());
+//        colCartProd.setCellValueFactory(c -> c.getValue().produitProperty().get().nomCommercialProperty());
+//
+        colCartProd.setCellValueFactory(cellData -> {
+            LigneTransaction lt = cellData.getValue();
+            if (lt.getProduit() != null) {
+                return lt.getProduit().nomCommercialProperty();
+            } else {
+                return new SimpleStringProperty(lt.getProduitNom()); // fallback sur produitNom
+            }
+        });
+
         colCartQty.setCellValueFactory(c -> c.getValue().quantiteProperty());
         colCartPrice.setCellValueFactory(c -> c.getValue().prixUnitaireProperty());
         colCartSubtotal.setCellValueFactory(c -> c.getValue().sousTotalProperty());
