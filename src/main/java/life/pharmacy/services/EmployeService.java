@@ -68,7 +68,7 @@ public class EmployeService {
                         rs.getString("nomComplet"),
                         rs.getString("role"),
                         rs.getString("login"),
-                        rs.getString("mot_de_passe"),
+                        rs.getString("motDePasseHash"),
                         rs.getString("permissions")
                 );
                 list.add(e);
@@ -79,7 +79,7 @@ public class EmployeService {
 
     public List<Employe> search(String query) throws SQLException {
         List<Employe> list = new ArrayList<>();
-        String sql = "SELECT * FROM employes WHERE nom_complet LIKE ? OR role LIKE ? OR login LIKE ?";
+        String sql = "SELECT * FROM employes WHERE nomComplet LIKE ? OR role LIKE ? OR login LIKE ?";
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, "%" + query + "%");
@@ -92,7 +92,7 @@ public class EmployeService {
                         rs.getString("nomComplet"),
                         rs.getString("role"),
                         rs.getString("login"),
-                        rs.getString("mot_de_passe"),
+                        rs.getString("motDePasseHash"),
                         rs.getString("permissions")
                 );
                 list.add(e);

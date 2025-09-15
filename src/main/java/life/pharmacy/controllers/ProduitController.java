@@ -2,15 +2,14 @@ package life.pharmacy.controllers;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import life.pharmacy.models.Produit;
 import life.pharmacy.services.ProduitService;
 
-import javax.sound.midi.SysexMessage;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.List;
@@ -269,7 +268,7 @@ public class ProduitController implements Initializable {
     }
 
     @FXML
-    private void onSearch(KeyEvent event) {
+    private void onSearch(ActionEvent event) {
         String query = comboResearch.getValue().toLowerCase().trim();
 
         try {

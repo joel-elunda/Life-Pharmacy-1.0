@@ -1,11 +1,9 @@
 package life.pharmacy.controllers;
 
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
-import javafx.scene.input.KeyEvent;
-import life.pharmacy.models.Client;
 import life.pharmacy.models.Fournisseur;
-import life.pharmacy.models.Produit;
 import life.pharmacy.services.FournisseurService;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -202,7 +200,7 @@ public class FournisseurController implements Initializable {
     }
 
     @FXML
-    private void onSearch(KeyEvent event) {
+    private void onSearch(ActionEvent event) {
         String query = comboResearch.getValue().toLowerCase().trim();
 
         try {

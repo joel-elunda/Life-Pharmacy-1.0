@@ -1,8 +1,8 @@
 package life.pharmacy.controllers;
 
 
+import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import life.pharmacy.models.Client;
 import life.pharmacy.services.ClientService;
@@ -222,7 +222,7 @@ public class ClientController implements Initializable {
     }
 
     @FXML
-    private void onSearch(KeyEvent event) {
+    private void onSearch(ActionEvent event) {
         String query = comboResearch.getValue().toLowerCase().trim();
 
         try {

@@ -1,9 +1,8 @@
 package life.pharmacy.controllers;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import life.pharmacy.models.Client;
 import life.pharmacy.models.Employe;
 import life.pharmacy.services.EmployeService;
 import javafx.collections.FXCollections;
@@ -22,7 +21,7 @@ public class EmployeController implements Initializable {
     @FXML private ComboBox<String> comboRole;
     @FXML private TextField fieldLogin;
     @FXML private PasswordField fieldMotDePasseHash;
-    @FXML private ListView<CheckBox> Permissions;
+    @FXML private ListView<CheckBox> checkPermissions;
     @FXML private ComboBox<String> comboResearch;
 
     @FXML public  TableView<Employe> tableView;
@@ -47,7 +46,7 @@ public class EmployeController implements Initializable {
             comboRole.setValue(selected.getRole());
             fieldLogin.setText(selected.getLogin());
             fieldMotDePasseHash.setText(selected.getMotDePasseHash());
-            for (CheckBox cb : Permissions.getItems()) {
+            for (CheckBox cb : checkPermissions.getItems()) {
                 cb.setSelected(selected.getPermissions().contains(cb.getText()));
             }
         }
@@ -59,7 +58,7 @@ public class EmployeController implements Initializable {
          comboRole.setValue(e.getRole());
          fieldLogin.setText(e.getLogin());
          fieldMotDePasseHash.setText(e.getMotDePasseHash());
-        for (CheckBox cb : Permissions.getItems()) {
+        for (CheckBox cb : checkPermissions.getItems()) {
             cb.setSelected(e.getPermissions().contains(cb.getText()));
         }
 }
@@ -75,7 +74,7 @@ public class EmployeController implements Initializable {
     @FXML
     public void onAdd() {
         StringBuilder perms = new StringBuilder();
-        for (CheckBox cb : Permissions.getItems()) {
+        for (CheckBox cb : checkPermissions.getItems()) {
             if (cb.isSelected()) perms.append(cb.getText()).append(",");
         }
         Employe e = new Employe(
@@ -101,7 +100,7 @@ public class EmployeController implements Initializable {
         Employe selected = tableView.getSelectionModel().getSelectedItem();
         if (selected != null) {
             StringBuilder perms = new StringBuilder();
-            for (CheckBox cb : Permissions.getItems()) {
+            for (CheckBox cb : checkPermissions.getItems()) {
                 if (cb.isSelected()) perms.append(cb.getText()).append(",");
             }
             selected.setNomComplet(fiedlNomComplet.getText());
@@ -164,7 +163,7 @@ public class EmployeController implements Initializable {
         comboRole.setValue(null);
         fieldLogin.clear();
         fieldMotDePasseHash.clear();
-        for (CheckBox cb : Permissions.getItems()) cb.setSelected(false);
+        for (CheckBox cb : checkPermissions.getItems()) cb.setSelected(false);
     }
 
     private void showAlert(String msg) {
@@ -215,7 +214,7 @@ public class EmployeController implements Initializable {
     }
 
     @FXML
-    private void onSearch(KeyEvent event) {
+    private void onSearch(ActionEvent event) {
         String query = comboResearch.getValue().toLowerCase().trim();
 
         try {
