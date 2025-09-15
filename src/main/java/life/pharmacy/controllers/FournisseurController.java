@@ -36,7 +36,7 @@ public class FournisseurController implements Initializable {
     @FXML private TextArea areaConditionsPaiement;
     @FXML private ComboBox<String> comboResearch;
 
-    @FXML public static TableView<Fournisseur> tableView;
+    @FXML public  TableView<Fournisseur> tableView;
     @FXML private TableColumn<Fournisseur, Number> colId;
     @FXML private TableColumn<Fournisseur, String> colNom;
     @FXML private TableColumn<Fournisseur, String> colContact;
@@ -49,8 +49,8 @@ public class FournisseurController implements Initializable {
     public static final FournisseurService service = new FournisseurService();
     private Fournisseur selected;
 
-    public static void reloadFournisseurs() { reloadFournisseurs(null); }
-    private static void reloadFournisseurs( String q) {
+    public void reloadFournisseurs() { reloadFournisseurs(null); }
+    private void reloadFournisseurs( String q) {
         try {
             var list = (q == null || q.isBlank()) ? service.getAll() : service.search(q);
             tableView.getItems().setAll(list);

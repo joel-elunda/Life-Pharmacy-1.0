@@ -17,7 +17,7 @@
         <HBox alignment="CENTER_RIGHT" spacing="10">
             <ComboBox fx:id="comboResearch" editable="true" prefHeight="25.0" prefWidth="217.0" promptText="Rechercher un fournisseur..." />
             <Button mnemonicParsing="false" onAction="#onSearch" prefHeight="25.0" prefWidth="90.0" text="Rechercher" />
-            <Button fx:id="refreshButton" style="-fx-background-color:#ffffff; -fx-text-fill:#009688;" text="Actualiser" />
+            <Button fx:id="refreshButton"  text="Actualiser" />
             <Button fx:id="importButton" onAction="#handleImportExcel" text="Importer Excel" />
             <Button fx:id="exportButton" onAction="#handleExportExcel" text="Exporter Excel" />
          <padding>

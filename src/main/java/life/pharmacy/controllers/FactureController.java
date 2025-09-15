@@ -28,7 +28,7 @@ public class FactureController implements Initializable {
     @FXML private TextField fieldModePaiement;
     @FXML private ComboBox<String> comboResearch;
 
-    @FXML public static TableView<Facture> tableView;
+    @FXML public  TableView<Facture> tableView;
     @FXML private TableColumn<Facture, Number> colId;
     @FXML private TableColumn<Facture, String> colClient;
     @FXML private TableColumn<Facture, String> colEmploye;
@@ -55,8 +55,8 @@ public class FactureController implements Initializable {
         }
     }
 
-    public static void reloadFactures() { reloadFactures(null); }
-    private static void reloadFactures( String q) {
+    public void reloadFactures() { reloadFactures(null); }
+    private void reloadFactures( String q) {
         try {
             var list = (q == null || q.isBlank()) ? service.getAll() : service.search(q);
             tableView.getItems().setAll(list);

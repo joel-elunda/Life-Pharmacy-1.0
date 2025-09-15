@@ -27,6 +27,8 @@
             <Button fx:id="facturesButton" onAction="#handleFactures" style="-fx-background-color:#ffffff; -fx-text-fill:#009688;" text="Factures" />
             <Button fx:id="fournisseursButton" onAction="#handleFournisseurs" style="-fx-background-color:#ffffff; -fx-text-fill:#009688;" text="Fournisseurs" />
             <Button fx:id="clientsButton" onAction="#handleClients" style="-fx-background-color:#ffffff; -fx-text-fill:#009688;" text="Clients" />
+            <Button fx:id="emloyesButton" onAction="#handleEmployes" style="-fx-background-color:#ffffff; -fx-text-fill:#009688;" text="Utilisateurs" />
+
             <Button fx:id="recettesButton" onAction="#handleRecettes" style="-fx-background-color:#ffffff; -fx-text-fill:#009688;" text="Rapports" />
             <Button fx:id="refreshButton" onAction="#handleRefresh" style="-fx-background-color:#ffffff; -fx-text-fill:#009688;" text="Actualiser" />
             <Button fx:id="logoutButton" alignment="CENTER_RIGHT" onAction="#handleDeconnexion" style="-fx-background-color:#ff5252; -fx-text-fill:white;" text="Déconnexion" />

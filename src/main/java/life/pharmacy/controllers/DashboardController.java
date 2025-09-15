@@ -26,7 +26,6 @@ public class DashboardController implements Initializable {
     @FXML private TableColumn<Client, Number> colClientId;
     @FXML private TableColumn<Client, String> colClientNom;
     @FXML private TableColumn<Client, String> colClientTel;
-    @FXML private Button btnNewClient, btnEditClient;
 
     // Produits
     @FXML private TextField searchProductField;
@@ -63,6 +62,11 @@ public class DashboardController implements Initializable {
     private final TransactionService transactionService = new TransactionService();
     private final LigneTransactionService ligneService = new LigneTransactionService();
 
+    private FournisseurController fournisseurController = new FournisseurController();
+    private FactureController factureController = new FactureController();
+    private EmployeController employeController = new EmployeController();
+
+
     private final ObservableList<LigneTransaction> panier = FXCollections.observableArrayList();
     private Employe currentUser;
 
@@ -82,9 +86,9 @@ public class DashboardController implements Initializable {
         try {
             clientTable.setItems(FXCollections.observableArrayList(clientService.getAll()));
             productTable.setItems(FXCollections.observableArrayList(produitService.getAll()));
-            FournisseurController.tableView.setItems(FXCollections.observableArrayList(fournisseurService.getAll()));
-            FactureController.tableView.setItems(FXCollections.observableArrayList(factureService.getAll()));
-            EmployeController.tableView.setItems(FXCollections.observableArrayList(employeService.getAll()));
+            fournisseurController.tableView.setItems(FXCollections.observableArrayList(fournisseurService.getAll()));
+            factureController.tableView.setItems(FXCollections.observableArrayList(factureService.getAll()));
+            employeController.tableView.setItems(FXCollections.observableArrayList(employeService.getAll()));
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -93,9 +97,9 @@ public class DashboardController implements Initializable {
         // ajoute ici toutes les méthodes de reload selon ce que tu as
         reloadClients();
         reloadProduits();
-        FournisseurController.reloadFournisseurs();
-        FactureController.reloadFactures();
-        EmployeController.reloadEmploye();
+        fournisseurController.reloadFournisseurs();
+        factureController.reloadFactures();
+        employeController.reloadEmploye();
 
         Alert alert = new Alert(Alert.AlertType.INFORMATION, "Données mises à jour avec succès !");
         alert.showAndWait();
@@ -114,6 +118,10 @@ public class DashboardController implements Initializable {
     @FXML
     private void handleClients(ActionEvent event) {
         openView("/life/pharmacy/client-view.fxml", "Clients");
+    }
+
+    @FXML private void handleEmployes(ActionEvent event) {
+        openView("/life/pharmacy/employe-view.fxml", "Employés");
     }
 
     @FXML

@@ -21,8 +21,8 @@
             <Label style="-fx-text-fill:white; -fx-font-size:16px;" text="Factures" />
             <Pane HBox.hgrow="ALWAYS" />
             <ComboBox fx:id="comboResearch" editable="true" prefHeight="25.0" prefWidth="217.0" promptText="Rechercher une facture..." />
-            <Button onAction="#onSearch" style="-fx-background-color:#ffffff; -fx-text-fill:#009688;" text="Rechercher" />
-            <Button fx:id="refreshButton" style="-fx-background-color:#ffffff; -fx-text-fill:#009688;" text="Actualiser" />
+            <Button onAction="#onSearch"  text="Rechercher" />
+            <Button fx:id="refreshButton" text="Actualiser" />
         </ToolBar>
     </top>
 

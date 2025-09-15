@@ -25,7 +25,7 @@ public class EmployeController implements Initializable {
     @FXML private ListView<CheckBox> Permissions;
     @FXML private ComboBox<String> comboResearch;
 
-    @FXML public static TableView<Employe> tableView;
+    @FXML public  TableView<Employe> tableView;
     @FXML private TableColumn<Employe, Number> colId;
     @FXML private TableColumn<Employe, String> colNom;
     @FXML private TableColumn<Employe, String> colRole;
@@ -64,8 +64,8 @@ public class EmployeController implements Initializable {
         }
 }
 
-    public static void reloadEmploye() { reloadEmploye(null); }
-    private static void reloadEmploye( String q) {
+    public void reloadEmploye() { reloadEmploye(null); }
+    private void reloadEmploye( String q) {
         try {
             var list = (q == null || q.isBlank()) ? service.getAll() : service.search(q);
             tableView.getItems().setAll(list);
