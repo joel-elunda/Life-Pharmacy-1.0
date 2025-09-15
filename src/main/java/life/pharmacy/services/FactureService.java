@@ -71,7 +71,7 @@ public class FactureService {
         List<Facture> list = new ArrayList<>();
         String sql = """
             SELECT t.id, t.clientId, t.employeId, t.dateHeure, t.total, t.statutPaiement,
-                   c.nomComplet AS client_nom, e.nomComplet AS employe_nom
+                   c.nomComplet AS clientNom, e.nomComplet AS employeNom
             FROM table_transactions t
             LEFT JOIN clients c ON c.id=t.clientId
             LEFT JOIN employes e ON e.id=t.employeId
@@ -85,15 +85,15 @@ public class FactureService {
             ps.setString(2, like);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                Client cli = new Client(); cli.setId(rs.getInt("client_id")); cli.setNomComplet(rs.getString("client_nom"));
-                Employe emp = new Employe(); emp.setId(rs.getInt("employe_id")); emp.setNomComplet(rs.getString("employe_nom"));
+                Client cli = new Client(); cli.setId(rs.getInt("clientId")); cli.setNomComplet(rs.getString("client_nom"));
+                Employe emp = new Employe(); emp.setId(rs.getInt("employeId")); emp.setNomComplet(rs.getString("employe_nom"));
                 Facture f = new Facture(
                         rs.getInt("id"),
                         cli,
                         emp,
-                        rs.getTimestamp("date_transaction").toLocalDateTime().toLocalDate(),
-                        rs.getDouble("montant_total"),
-                        rs.getString("methode_paiement")
+                        rs.getTimestamp("date").toLocalDateTime().toLocalDate(),
+                        rs.getDouble("montantTotal"),
+                        rs.getString("methodePaiement")
                 );
                 list.add(f);
             }

@@ -124,7 +124,7 @@ public class ProduitService {
 
     public List<Produit> search(String query) throws SQLException {
         List<Produit> list = new ArrayList<>();
-        String sql = "SELECT * FROM produits WHERE nom LIKE ? OR categorie LIKE ?";
+        String sql = "SELECT * FROM produits WHERE nomCommercial LIKE ? OR nomGenerique LIKE ? OR categorie LIKE ?";
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, "%" + query + "%");
