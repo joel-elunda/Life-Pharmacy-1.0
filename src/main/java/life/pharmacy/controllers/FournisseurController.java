@@ -2,13 +2,17 @@ package life.pharmacy.controllers;
 
 import javafx.collections.ObservableList;
 import javafx.fxml.Initializable;
+import javafx.scene.input.KeyEvent;
 import life.pharmacy.models.Client;
 import life.pharmacy.models.Fournisseur;
+import life.pharmacy.models.Produit;
 import life.pharmacy.services.FournisseurService;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -21,6 +25,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 public class FournisseurController implements Initializable {
+
+    private static final Logger log = LogManager.getLogger(FournisseurController.class);
 
     @FXML private TextField fieldNom;
     @FXML private TextField fieldContact;
@@ -52,7 +58,7 @@ public class FournisseurController implements Initializable {
     }
 
 
-        @Override
+    @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         colId.setCellValueFactory(data -> data.getValue().idProperty());
         colNom.setCellValueFactory(data -> data.getValue().nomProperty());
@@ -192,6 +198,31 @@ public class FournisseurController implements Initializable {
             fieldEmail.setText(selected.getEmail());
             fieldAdresse.setText(selected.getAdresse());
             areaConditionsPaiement.setText(selected.getConditionsPaiement());
+        }
+    }
+
+    @FXML
+    private void onSearch(KeyEvent event) {
+        String query = comboResearch.getValue().toLowerCase().trim();
+
+        try {
+            // Récupérer tous les clients
+            List<Fournisseur> fournisseurs = service.getAll();
+
+            // Filtrer selon le texte saisi
+            List<Fournisseur> filtered = fournisseurs.stream()
+                    .filter(f ->
+                            f.getNom().toLowerCase().contains(query) ||
+                                    f.getContact().toLowerCase().contains(query) ||
+                                    f.getTelephone().toLowerCase().contains(query)
+                    )
+                    .toList();
+
+            // Afficher dans la TableView
+            tableView.setItems(FXCollections.observableArrayList(filtered));
+
+        } catch (SQLException e) {
+            log.error("Error : ", e);
         }
     }
 

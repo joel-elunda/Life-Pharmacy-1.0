@@ -2,6 +2,8 @@ package life.pharmacy.controllers;
 
 
 import javafx.fxml.Initializable;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import life.pharmacy.models.Client;
 import life.pharmacy.services.ClientService;
 import javafx.collections.FXCollections;
@@ -42,6 +44,7 @@ public class ClientController implements Initializable {
     @FXML private Button deleteButton;
     @FXML private Button searchButton;
 
+    private Client selected = null;
     private final ClientService service = new ClientService();
     private final ObservableList<Client> data = FXCollections.observableArrayList();
 
@@ -112,8 +115,6 @@ public class ClientController implements Initializable {
         }
     }
 
-
-
     @FXML
     public void onExportExcel() {
         service.exportToFile("clients.xlsx");
@@ -129,6 +130,19 @@ public class ClientController implements Initializable {
             throw new RuntimeException(e);
         }
         showAlert("Importation réussie !");
+    }
+
+    private void handleTableClick(MouseEvent event) {
+        selected = tableView.getSelectionModel().getSelectedItem();
+        if (selected != null) {
+            fieldNom.setText(selected.getNomComplet());
+            dateDateNaissance.setValue(selected.getDateNaissance());
+            fieldTelephone.setText(selected.getTelephone());
+            fieldEmail.setText(selected.getEmail());
+            fieldAdresse.setText(selected.getAdresse());
+            areaConditionsMedicales.setText(selected.getConditionsMedicales());
+            areaAllergies.setText(selected.getAllergies());
+        }
     }
 
     private void clearFields() {
@@ -155,6 +169,8 @@ public class ClientController implements Initializable {
         colDateNaissance.setCellValueFactory(cell -> cell.getValue().dateNaissanceProperty().asString());
         colConditionsMedicales.setCellValueFactory(cell -> cell.getValue().conditionsMedicalesProperty());
         colAllergies.setCellValueFactory(cell -> cell.getValue().allergiesProperty());
+
+        tableView.setOnMouseClicked(this::handleTableClick);
 
 //        filtrePeriode.setItems(FXCollections.observableArrayList(
 //                "Jour", "Semaine", "Mois", "Trimestre", "Semestre", "Année"
@@ -204,6 +220,33 @@ public class ClientController implements Initializable {
         areaConditionsMedicales.setText(c.getConditionsMedicales());
         areaAllergies.setText(c.getAllergies());
     }
+
+    @FXML
+    private void onSearch(KeyEvent event) {
+        String query = comboResearch.getValue().toLowerCase().trim();
+
+        try {
+            // Récupérer tous les clients
+            List<Client> clients = service.getAll();
+
+            // Filtrer selon le texte saisi
+            List<Client> filtered = clients.stream()
+                    .filter(c ->
+                            c.getNomComplet().toLowerCase().contains(query) ||
+                            c.getTelephone().toLowerCase().contains(query) ||
+                            c.getAdresse().toLowerCase().contains(query) ||
+                            c.getEmail().toLowerCase().contains(query)
+                    )
+                    .toList();
+
+            // Afficher dans la TableView
+            tableView.setItems(FXCollections.observableArrayList(filtered));
+
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+    }
+
 }
 
 

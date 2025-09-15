@@ -101,7 +101,6 @@ public class DashboardController implements Initializable {
         alert.showAndWait();
     }
 
-
     @FXML
     private void handleProduits(ActionEvent event) {
         openView("/life/pharmacy/produit-view.fxml", "Produits");
@@ -177,8 +176,6 @@ public class DashboardController implements Initializable {
             productTable.getItems().setAll(list);
         } catch (Exception e) { showError(e); }
     }
-
-
 
     // Ajout au panier
     @FXML

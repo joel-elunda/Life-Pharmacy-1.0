@@ -1,6 +1,9 @@
 package life.pharmacy.controllers;
 
 import javafx.fxml.Initializable;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
+import life.pharmacy.models.Client;
 import life.pharmacy.models.Employe;
 import life.pharmacy.services.EmployeService;
 import javafx.collections.FXCollections;
@@ -33,11 +36,24 @@ public class EmployeController implements Initializable {
     @FXML private Button deleteButton;
     @FXML private Button searchButton;
 
+    private Employe selected = null;
     public static final EmployeService service = new EmployeService();
     private final ObservableList<Employe> data = FXCollections.observableArrayList();
 
+    private void handleTableClick(MouseEvent event) {
+        selected = tableView.getSelectionModel().getSelectedItem();
+        if (selected != null) {
+            fiedlNomComplet.setText(selected.getNomComplet());
+            comboRole.setValue(selected.getRole());
+            fieldLogin.setText(selected.getLogin());
+            fieldMotDePasseHash.setText(selected.getMotDePasseHash());
+            for (CheckBox cb : Permissions.getItems()) {
+                cb.setSelected(selected.getPermissions().contains(cb.getText()));
+            }
+        }
+    }
 
-     private void populateFieldsFromSelection(Employe e) {
+    private void populateFieldsFromSelection(Employe e) {
          if (e == null) return;
          fiedlNomComplet.setText(e.getNomComplet());
          comboRole.setValue(e.getRole());
@@ -46,7 +62,7 @@ public class EmployeController implements Initializable {
         for (CheckBox cb : Permissions.getItems()) {
             cb.setSelected(e.getPermissions().contains(cb.getText()));
         }
-     }
+}
 
     public static void reloadEmploye() { reloadEmploye(null); }
     private static void reloadEmploye( String q) {
@@ -155,7 +171,6 @@ public class EmployeController implements Initializable {
         new Alert(Alert.AlertType.INFORMATION, msg, ButtonType.OK).showAndWait();
     }
 
-
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         colId.setCellValueFactory(cell -> cell.getValue().idProperty());
@@ -163,6 +178,7 @@ public class EmployeController implements Initializable {
         colRole.setCellValueFactory(cell -> cell.getValue().roleProperty());
         colLogin.setCellValueFactory(cell -> cell.getValue().loginProperty());
 
+        tableView.setOnMouseClicked(this::handleTableClick);
 
         try {
             comboResearch.setItems(FXCollections.observableArrayList(
@@ -195,6 +211,30 @@ public class EmployeController implements Initializable {
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    @FXML
+    private void onSearch(KeyEvent event) {
+        String query = comboResearch.getValue().toLowerCase().trim();
+
+        try {
+            // Récupérer tous les clients
+            List<Employe> employes = service.getAll();
+
+            // Filtrer selon le texte saisi
+            List<Employe> filtered = employes.stream()
+                    .filter(e ->
+                            e.getNomComplet().toLowerCase().contains(query) ||
+                            e.getRole().toLowerCase().contains(query)
+                    )
+                    .toList();
+
+            // Afficher dans la TableView
+            tableView.setItems(FXCollections.observableArrayList(filtered));
+
+        } catch (SQLException e) {
+            System.out.println(e);
         }
     }
 }

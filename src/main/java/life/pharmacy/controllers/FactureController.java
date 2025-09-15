@@ -1,6 +1,8 @@
 package life.pharmacy.controllers;
 
 import javafx.fxml.Initializable;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import life.pharmacy.models.Client;
 import life.pharmacy.models.Facture;
 import life.pharmacy.services.ClientService;
@@ -39,9 +41,19 @@ public class FactureController implements Initializable {
 
     public static final FactureService service = new FactureService();
     private final ObservableList<Facture> data = FXCollections.observableArrayList();
-
     private ClientService clientService = new ClientService();
+    private Facture selected = null;
 
+    private void handleTableClick(MouseEvent event) {
+        selected = tableView.getSelectionModel().getSelectedItem();
+        if (selected != null) {
+            comboClient.setValue(selected.getClient().getNomComplet());
+            comboEmploye.setValue(selected.getEmploye().getNomComplet());
+            dateDate.setValue(selected.getDate());
+            fieldMontantTotal.setText(String.valueOf(selected.getMontantTotal()));
+            fieldModePaiement.setText(selected.getModePaiement());
+        }
+    }
 
     public static void reloadFactures() { reloadFactures(null); }
     private static void reloadFactures( String q) {
@@ -58,14 +70,12 @@ public class FactureController implements Initializable {
         colEmploye.setCellValueFactory(cell -> cell.getValue().employeProperty().asString());
         colMontantTotal.setCellValueFactory(cell -> cell.getValue().montantTotalProperty());
 
+        tableView.setOnMouseClicked(this::handleTableClick);
+
         try {
             comboClient.setItems(FXCollections.observableArrayList(
             clientService.getAll().stream().map(Client::getNomComplet).toList()));
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
 
-        try {
             comboResearch.setItems(FXCollections.observableArrayList(
                     service.getAll().stream()
                             .map(f ->   f.getClient().getNomComplet() )
@@ -194,6 +204,30 @@ public class FactureController implements Initializable {
         dateDate.setValue(LocalDate.now());
         fieldMontantTotal.clear();
         fieldModePaiement.clear();
+    }
+
+    @FXML
+    private void onSearch(KeyEvent event) {
+        String query = comboResearch.getValue().toLowerCase().trim();
+
+        try {
+            // Récupérer tous les clients
+            List<Facture> factures = service.getAll();
+
+            // Filtrer selon le texte saisi
+            List<Facture> filtered = factures.stream()
+                    .filter(f ->
+                            f.getClient().getNomComplet().toLowerCase().contains(query) ||
+                            f.getEmploye().getNomComplet().toLowerCase().contains(query)
+                    )
+                    .toList();
+
+            // Afficher dans la TableView
+            tableView.setItems(FXCollections.observableArrayList(filtered));
+
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
     }
 
     private void showAlert(String msg) {

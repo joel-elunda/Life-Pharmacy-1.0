@@ -5,10 +5,12 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import life.pharmacy.models.Client;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import life.pharmacy.models.Produit;
 import life.pharmacy.services.ProduitService;
 
+import javax.sound.midi.SysexMessage;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.List;
@@ -208,6 +210,8 @@ public class ProduitController implements Initializable {
         colCategorie.setCellValueFactory(cell -> cell.getValue().categorieProperty());
         colPrixAchat.setCellValueFactory(cell -> cell.getValue().prixAchatProperty());
 
+        tableView.setOnMouseClicked(this::handleTableClick);
+
         try {
             comboResearch.setItems(FXCollections.observableArrayList(
                     service.getAll().stream()
@@ -239,6 +243,52 @@ public class ProduitController implements Initializable {
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private void handleTableClick(MouseEvent event) {
+        Produit selected = tableView.getSelectionModel().getSelectedItem();
+        if (selected != null) {
+            fieldNomCommercial.setText(selected.getNomCommercial());
+            fieldNomGenerique.setText(selected.getNomGenerique());
+            comboForme.setValue(selected.getForme());
+            fieldDosage.setText(selected.getDosage());
+            fieldConditionnement.setText(selected.getConditionnement());
+            fieldFabricant.setText(selected.getFabricant());
+            fieldCodeBarres.setText(selected.getCodeBarres());
+            fieldPrixVente.setText(String.valueOf(selected.getPrixVente()));
+            fieldPrixAchat.setText(String.valueOf(selected.getPrixAchat()));
+            fieldStatut.setText(selected.getStatut());
+            comboCategorie.setValue(selected.getCategorie());
+            checkPrescriptionRequise.setSelected(selected.isPrescriptionRequise());
+            dataDateExpiration.setValue(selected.getDateExpiration());
+            fieldNumeroLot.setText(selected.getNumeroLot());
+            fieldStock.setText(String.valueOf(selected.getStock()));
+            fieldSeuilAlerte.setText(String.valueOf(selected.getSeuilAlerte()));
+        }
+    }
+
+    @FXML
+    private void onSearch(KeyEvent event) {
+        String query = comboResearch.getValue().toLowerCase().trim();
+
+        try {
+            // Récupérer tous les clients
+            List<Produit> produits = service.getAll();
+
+            // Filtrer selon le texte saisi
+            List<Produit> filtered = produits.stream()
+                    .filter(p ->
+                            p.getNomCommercial().toLowerCase().contains(query) ||
+                            p.getNomGenerique().toLowerCase().contains(query)
+                    )
+                    .toList();
+
+            // Afficher dans la TableView
+            tableView.setItems(FXCollections.observableArrayList(filtered));
+
+        } catch (SQLException e) {
+            System.out.println(e);
         }
     }
 }
