@@ -20,9 +20,9 @@
         <ToolBar style="-fx-background-color:#009688;">
             <Label style="-fx-text-fill:white; -fx-font-size:16px;" text="Factures" />
             <Pane HBox.hgrow="ALWAYS" />
-            <TextField fx:id="fieldRechercher" prefHeight="26.0" prefWidth="200.0" promptText="Rechercher… " />
+            <ComboBox fx:id="comboResearch" editable="true" prefHeight="25.0" prefWidth="217.0" promptText="Rechercher une facture..." />
             <Button onAction="#onSearch" style="-fx-background-color:#ffffff; -fx-text-fill:#009688;" text="Rechercher" />
-            <Button fx:id="refreshButton" style="-fx-background-color:#ffffff; -fx-text-fill:#009688;" text="Rafraîchir" />
+            <Button fx:id="refreshButton" style="-fx-background-color:#ffffff; -fx-text-fill:#009688;" text="Actualiser" />
         </ToolBar>
     </top>
 

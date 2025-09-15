@@ -28,7 +28,7 @@ public class FournisseurController implements Initializable {
     @FXML private TextArea areaConditionsPaiement;
     @FXML private TextField fieldRechercher;
 
-    @FXML private TableView<Fournisseur> tableView;
+    @FXML public static TableView<Fournisseur> tableView;
     @FXML private TableColumn<Fournisseur, Number> colId;
     @FXML private TableColumn<Fournisseur, String> colNom;
     @FXML private TableColumn<Fournisseur, String> colContact;
@@ -37,10 +37,19 @@ public class FournisseurController implements Initializable {
     @FXML private TableColumn<Fournisseur, String> colAdresse;
     @FXML private TableColumn<Fournisseur, String> colConditionsPaiement;
 
-    private final FournisseurService service = new FournisseurService();
+    public static final FournisseurService service = new FournisseurService();
     private Fournisseur selected;
 
-    @Override
+    public static void reloadFournisseurs() { reloadFournisseurs(null); }
+    private static void reloadFournisseurs( String q) {
+        try {
+            var list = (q == null || q.isBlank()) ? service.getAll() : service.search(q);
+            tableView.getItems().setAll(list);
+        } catch (Exception e) { DashboardController.showError(e); }
+    }
+
+
+        @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         colId.setCellValueFactory(data -> data.getValue().idProperty());
         colNom.setCellValueFactory(data -> data.getValue().nomProperty());

@@ -52,6 +52,7 @@ public class ProduitController implements Initializable {
     private final ProduitService service = new ProduitService();
     private final ObservableList<Produit> data = FXCollections.observableArrayList();
 
+
     @FXML
     public void initialize() {
         colId.setCellValueFactory(cell -> cell.getValue().idProperty());

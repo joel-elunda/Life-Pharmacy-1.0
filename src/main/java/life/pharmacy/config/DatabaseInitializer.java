@@ -114,7 +114,7 @@ public class DatabaseInitializer {
                     prixUnitaire REAL NOT NULL,
                     sousTotal REAL NOT NULL,
                     numeroOrdonnance TEXT,
-                    FOREIGN KEY(transactionId) REFERENCES transactions(id),
+                    FOREIGN KEY(transactionId) REFERENCES table_transactions(id),
                     FOREIGN KEY(produitId) REFERENCES produits(id)
                 )
             """);
@@ -167,6 +167,8 @@ public class DatabaseInitializer {
                 SELECT 'Administrateur', 'Admin', 'admin', '@admin.2025', 'ALL'
                 WHERE NOT EXISTS (SELECT 1 FROM employes WHERE login = 'admin')
             """);
+
+                stmt.execute("PRAGMA journal_mode=WAL;");
             }
         } catch (Exception e) {
             e.printStackTrace();

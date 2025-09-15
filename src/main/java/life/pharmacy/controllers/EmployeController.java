@@ -22,7 +22,7 @@ public class EmployeController implements Initializable {
     @FXML private ListView<CheckBox> Permissions;
     @FXML private TextField fieldRechercher;
 
-    @FXML private TableView<Employe> tableView;
+    @FXML public static TableView<Employe> tableView;
     @FXML private TableColumn<Employe, Number> colId;
     @FXML private TableColumn<Employe, String> colNom;
     @FXML private TableColumn<Employe, String> colRole;
@@ -33,12 +33,20 @@ public class EmployeController implements Initializable {
     @FXML private Button deleteButton;
     @FXML private Button searchButton;
 
-    private final EmployeService service = new EmployeService();
+    public static final EmployeService service = new EmployeService();
     private final ObservableList<Employe> data = FXCollections.observableArrayList();
 
     @FXML
     public void initialize() {
 
+    }
+
+    public static void reloadEmploye() { reloadEmploye(null); }
+    private static void reloadEmploye( String q) {
+        try {
+            var list = (q == null || q.isBlank()) ? service.getAll() : service.search(q);
+            tableView.getItems().setAll(list);
+        } catch (Exception e) { DashboardController.showError(e); }
     }
 
     @FXML

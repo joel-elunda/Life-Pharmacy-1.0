@@ -17,10 +17,10 @@
     <top>
         <HBox alignment="CENTER_RIGHT" spacing="10">
          <ComboBox fx:id="comboResearch" editable="true" prefHeight="25.0" prefWidth="217.0" promptText="Rechercher un client..." />
-            <TextField fx:id="fieldRechercher" prefHeight="26.0" prefWidth="230.0" promptText="Rechercher client..." />
          <Button fx:id="searchButton" mnemonicParsing="false" onAction="#onSearch" prefHeight="25.0" prefWidth="95.0" text="Rechercher" />
-            <Button fx:id="importButton" onAction="#onImportExcel" text="Importer Excel" />
-            <Button fx:id="exportButton" onAction="#onExportExcel" text="Exporter Excel" />
+        <Button fx:id="refreshButton" style="-fx-background-color:#ffffff; -fx-text-fill:#009688;" text="Actualiser" />
+        <Button fx:id="importButton" onAction="#onImportExcel" text="Importer Excel" />
+        <Button fx:id="exportButton" onAction="#onExportExcel" text="Exporter Excel" />
          <padding>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
          </padding>

@@ -82,6 +82,10 @@ public class DashboardController implements Initializable {
         try {
             clientTable.setItems(FXCollections.observableArrayList(clientService.getAll()));
             productTable.setItems(FXCollections.observableArrayList(produitService.getAll()));
+            FournisseurController.tableView.setItems(FXCollections.observableArrayList(fournisseurService.getAll()));
+            FactureController.tableView.setItems(FXCollections.observableArrayList(factureService.getAll()));
+            EmployeController.tableView.setItems(FXCollections.observableArrayList(employeService.getAll()));
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -89,6 +93,9 @@ public class DashboardController implements Initializable {
         // ajoute ici toutes les méthodes de reload selon ce que tu as
         reloadClients();
         reloadProduits();
+        FournisseurController.reloadFournisseurs();
+        FactureController.reloadFactures();
+        EmployeController.reloadEmploye();
 
         Alert alert = new Alert(Alert.AlertType.INFORMATION, "Données mises à jour avec succès !");
         alert.showAndWait();
@@ -170,6 +177,7 @@ public class DashboardController implements Initializable {
             productTable.getItems().setAll(list);
         } catch (Exception e) { showError(e); }
     }
+
 
 
     // Ajout au panier
@@ -287,7 +295,7 @@ public class DashboardController implements Initializable {
     private void onLogout(){ /* Navigation login */ alert("Déconnexion…"); }
 
     private void alert(String msg){ new Alert(Alert.AlertType.INFORMATION, msg).showAndWait(); }
-    private void showError(Throwable t){ new Alert(Alert.AlertType.ERROR, t.getMessage()).showAndWait(); }
+    public static void showError(Throwable t){ new Alert(Alert.AlertType.ERROR, t.getMessage()).showAndWait(); }
 
     @Override
     public void initialize(java.net.URL location, java.util.ResourceBundle resources) {

@@ -25,7 +25,7 @@ public class FactureController implements Initializable {
     @FXML private TextField fieldModePaiement;
     @FXML private TextField fieldRechercher;
 
-    @FXML private TableView<Facture> tableView;
+    @FXML public static TableView<Facture> tableView;
     @FXML private TableColumn<Facture, Number> colId;
     @FXML private TableColumn<Facture, String> colClient;
     @FXML private TableColumn<Facture, String> colEmploye;
@@ -36,10 +36,19 @@ public class FactureController implements Initializable {
     @FXML private Button deleteButton;
     @FXML private Button searchButton;
 
-    private final FactureService service = new FactureService();
+    public static final FactureService service = new FactureService();
     private final ObservableList<Facture> data = FXCollections.observableArrayList();
 
     private ClientService clientService = new ClientService();
+
+
+    public static void reloadFactures() { reloadFactures(null); }
+    private static void reloadFactures( String q) {
+        try {
+            var list = (q == null || q.isBlank()) ? service.getAll() : service.search(q);
+            tableView.getItems().setAll(list);
+        } catch (Exception e) { DashboardController.showError(e); }
+    }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
