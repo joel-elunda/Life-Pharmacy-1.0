@@ -1,6 +1,8 @@
 package life.pharmacy.controllers;
 
+import javafx.collections.ObservableList;
 import javafx.fxml.Initializable;
+import life.pharmacy.models.Client;
 import life.pharmacy.models.Fournisseur;
 import life.pharmacy.services.FournisseurService;
 import javafx.collections.FXCollections;
@@ -26,7 +28,7 @@ public class FournisseurController implements Initializable {
     @FXML private TextField fieldEmail;
     @FXML private TextField fieldAdresse;
     @FXML private TextArea areaConditionsPaiement;
-    @FXML private TextField fieldRechercher;
+    @FXML private ComboBox<String> comboResearch;
 
     @FXML public static TableView<Fournisseur> tableView;
     @FXML private TableColumn<Fournisseur, Number> colId;
@@ -37,6 +39,7 @@ public class FournisseurController implements Initializable {
     @FXML private TableColumn<Fournisseur, String> colAdresse;
     @FXML private TableColumn<Fournisseur, String> colConditionsPaiement;
 
+    private final ObservableList<Fournisseur> data = FXCollections.observableArrayList();
     public static final FournisseurService service = new FournisseurService();
     private Fournisseur selected;
 
@@ -61,6 +64,39 @@ public class FournisseurController implements Initializable {
 
         refreshTable();
 
+        try {
+            comboResearch.setItems(FXCollections.observableArrayList(
+                    service.getAll().stream()
+                            .map(Fournisseur::getNom)
+                            .toList()
+            ));
+
+            // Quand on change la sélection → on affiche uniquement l’élément dans la table
+            comboResearch.getSelectionModel().selectedItemProperty().addListener((obs, old, selected) -> {
+                if (selected == null) return;
+                // Récupérer le nom (avant le pipe)
+                String nom = selected.split("\\|")[0].trim();
+                List<Fournisseur> found = null; // ta méthode retourne 0..n éléments
+                try {
+                    found = service.search(nom);
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+                data.setAll(found);
+                tableView.setItems(FXCollections.observableArrayList(data));
+                if (!found.isEmpty()) tableView.getSelectionModel().selectFirst();
+            });
+
+            // Remplir les champs quand on sélectionne une ligne (voir point 4, plus bas)
+            tableView.getSelectionModel().selectedItemProperty().addListener((o,ov,nv)->populateFieldsFromSelection(nv));
+
+            data.addAll(service.getAll());
+            tableView.setItems(data);
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
         tableView.setOnMouseClicked(this::handleTableClick);
     }
 
@@ -79,7 +115,6 @@ public class FournisseurController implements Initializable {
         fieldEmail.clear();
         fieldAdresse.clear();
         areaConditionsPaiement.clear();
-        fieldRechercher.clear();
         selected = null;
     }
 
@@ -145,29 +180,6 @@ public class FournisseurController implements Initializable {
             }
             refreshTable();
             clearFields();
-        }
-    }
-
-    @FXML
-    private void handleRechercher() {
-        String query = fieldRechercher.getText().trim();
-
-        if (query.isEmpty()) {
-            refreshTable();
-            return;
-        }
-
-        List<Fournisseur> resultats = null;
-        try {
-            resultats = service.search(query);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
-        if (resultats.isEmpty()) {
-            new Alert(Alert.AlertType.INFORMATION, "Aucun fournisseur trouvé pour : " + query).showAndWait();
-        } else {
-            tableView.setItems(FXCollections.observableArrayList(resultats));
         }
     }
 
@@ -260,5 +272,15 @@ public class FournisseurController implements Initializable {
             e.printStackTrace();
             new Alert(Alert.AlertType.ERROR, "Erreur lors de l'importation !").showAndWait();
         }
+    }
+
+    private void populateFieldsFromSelection(Fournisseur f) {
+        if (f == null) return;
+        fieldNom.setText(f.getNom());
+        fieldAdresse.setText(f.getAdresse());
+        fieldTelephone.setText(f.getTelephone());
+        fieldEmail.setText(f.getEmail());
+        fieldContact.setText(f.getContact());
+        areaConditionsPaiement.setText(f.getConditionsPaiement());
     }
 }

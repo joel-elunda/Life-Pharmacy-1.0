@@ -20,7 +20,7 @@ public class EmployeController implements Initializable {
     @FXML private TextField fieldLogin;
     @FXML private PasswordField fieldMotDePasseHash;
     @FXML private ListView<CheckBox> Permissions;
-    @FXML private TextField fieldRechercher;
+    @FXML private ComboBox<String> comboResearch;
 
     @FXML public static TableView<Employe> tableView;
     @FXML private TableColumn<Employe, Number> colId;
@@ -36,10 +36,17 @@ public class EmployeController implements Initializable {
     public static final EmployeService service = new EmployeService();
     private final ObservableList<Employe> data = FXCollections.observableArrayList();
 
-    @FXML
-    public void initialize() {
 
-    }
+     private void populateFieldsFromSelection(Employe e) {
+         if (e == null) return;
+         fiedlNomComplet.setText(e.getNomComplet());
+         comboRole.setValue(e.getRole());
+         fieldLogin.setText(e.getLogin());
+         fieldMotDePasseHash.setText(e.getMotDePasseHash());
+        for (CheckBox cb : Permissions.getItems()) {
+            cb.setSelected(e.getPermissions().contains(cb.getText()));
+        }
+     }
 
     public static void reloadEmploye() { reloadEmploye(null); }
     private static void reloadEmploye( String q) {
@@ -120,22 +127,6 @@ public class EmployeController implements Initializable {
     }
 
     @FXML
-    public void onSearch() {
-        String query = fieldRechercher.getText();
-        List<Employe> e = null;
-        try {
-            e = service.search(query);
-        } catch (SQLException ex) {
-            throw new RuntimeException(ex);
-        }
-        if (e != null) {
-            data.setAll(e);
-        } else {
-            showAlert("Aucun employé trouvé !");
-        }
-    }
-
-    @FXML
     public void onExportExcel() {
         service.exportToFile("employes.xlsx");
         showAlert("Exportation réussie !");
@@ -174,10 +165,36 @@ public class EmployeController implements Initializable {
 
 
         try {
+            comboResearch.setItems(FXCollections.observableArrayList(
+                    service.getAll().stream()
+                            .map(Employe::getNomComplet)
+                            .toList()
+            ));
+
+            // Quand on change la sélection → on affiche uniquement l’élément dans la table
+            comboResearch.getSelectionModel().selectedItemProperty().addListener((obs, old, selected) -> {
+                if (selected == null) return;
+                // Récupérer le nom (avant le pipe)
+                String nom = selected.split("\\|")[0].trim();
+                List<Employe> found = null; // ta méthode retourne 0..n éléments
+                try {
+                    found = service.search(nom);
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+                data.setAll(found);
+                tableView.setItems(FXCollections.observableArrayList(data));
+                if (!found.isEmpty()) tableView.getSelectionModel().selectFirst();
+            });
+
+            // Remplir les champs quand on sélectionne une ligne (voir point 4, plus bas)
+            tableView.getSelectionModel().selectedItemProperty().addListener((o,ov,nv)->populateFieldsFromSelection(nv));
+
             data.addAll(service.getAll());
+            tableView.setItems(data);
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        tableView.setItems(data);
     }
 }

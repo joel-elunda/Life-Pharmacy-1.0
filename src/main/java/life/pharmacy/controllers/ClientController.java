@@ -25,7 +25,6 @@ public class ClientController implements Initializable {
     @FXML private TextField fieldEmail;
     @FXML private TextArea areaConditionsMedicales;
     @FXML private TextArea areaAllergies;
-    @FXML private TextField fieldRechercher;
     @FXML private ComboBox<String> comboResearch;
 
     @FXML private TableView<Client> tableView;
@@ -113,21 +112,7 @@ public class ClientController implements Initializable {
         }
     }
 
-    @FXML
-    public void onSearch() {
-        String query = fieldRechercher.getText();
-        List<Client> c = null;
-        try {
-            c = service.search(query);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        if (c != null) {
-            data.setAll(c);
-        } else {
-            showAlert("Aucun client trouvé !");
-        }
-    }
+
 
     @FXML
     public void onExportExcel() {
@@ -200,18 +185,13 @@ public class ClientController implements Initializable {
             // Remplir les champs quand on sélectionne une ligne (voir point 4, plus bas)
             tableView.getSelectionModel().selectedItemProperty().addListener((o,ov,nv)->populateFieldsFromSelection(nv));
 
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
-
-        try {
             data.addAll(service.getAll());
+            tableView.setItems(data);
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        tableView.setItems(data);
+
     }
 
     private void populateFieldsFromSelection(Client c) {

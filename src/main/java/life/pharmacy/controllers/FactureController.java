@@ -16,6 +16,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.ResourceBundle;
 
+
 public class FactureController implements Initializable {
 
     @FXML private ComboBox<String> comboClient;
@@ -23,7 +24,7 @@ public class FactureController implements Initializable {
     @FXML private DatePicker dateDate;
     @FXML private TextField fieldMontantTotal;
     @FXML private TextField fieldModePaiement;
-    @FXML private TextField fieldRechercher;
+    @FXML private ComboBox<String> comboResearch;
 
     @FXML public static TableView<Facture> tableView;
     @FXML private TableColumn<Facture, Number> colId;
@@ -59,17 +60,52 @@ public class FactureController implements Initializable {
 
         try {
             comboClient.setItems(FXCollections.observableArrayList(
-                    clientService.getAll().stream().map(Client::getNomComplet).toList()));
+            clientService.getAll().stream().map(Client::getNomComplet).toList()));
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
 
         try {
+            comboResearch.setItems(FXCollections.observableArrayList(
+                    service.getAll().stream()
+                            .map(f ->   f.getClient().getNomComplet() )
+                            .toList()
+            ));
+
+            // Quand on change la sélection → on affiche uniquement l’élément dans la table
+            comboResearch.getSelectionModel().selectedItemProperty().addListener((obs, old, selected) -> {
+                if (selected == null) return;
+                // Récupérer le nom (avant le pipe)
+                String nom = selected.split("\\|")[0].trim();
+                List<Facture> found = null; // ta méthode retourne 0..n éléments
+                try {
+                    found = service.search(nom);
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+                data.setAll(found);
+                tableView.setItems(FXCollections.observableArrayList(data));
+                if (!found.isEmpty()) tableView.getSelectionModel().selectFirst();
+            });
+
+            // Remplir les champs quand on sélectionne une ligne (voir point 4, plus bas)
+            tableView.getSelectionModel().selectedItemProperty().addListener((o,ov,nv)->populateFieldsFromSelection(nv));
+
             data.addAll(service.getAll());
+            tableView.setItems(data);
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        tableView.setItems(data);
+    }
+
+    private void populateFieldsFromSelection(Facture f) {
+        if (f == null) return;
+        comboClient.setValue(f.getClient().getNomComplet());
+        comboEmploye.setValue(f.getEmploye().getNomComplet());
+        dateDate.setValue(f.getDate());
+        fieldMontantTotal.setText(String.valueOf(f.getMontantTotal()));
+        fieldModePaiement.setText(f.getModePaiement());
     }
 
     @FXML
@@ -132,22 +168,6 @@ public class FactureController implements Initializable {
             }
         } else {
             showAlert("Sélectionnez une facture à supprimer.");
-        }
-    }
-
-    @FXML
-    public void onSearch() {
-        String query = fieldRechercher.getText();
-        List<Facture> f = null;
-        try {
-            f = service.search(query);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        if (f != null) {
-            data.setAll(f);
-        } else {
-            showAlert("Aucune facture trouvée !");
         }
     }
 

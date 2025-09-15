@@ -5,6 +5,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import life.pharmacy.models.Client;
 import life.pharmacy.models.Produit;
 import life.pharmacy.services.ProduitService;
 
@@ -31,7 +32,7 @@ public class ProduitController implements Initializable {
     @FXML private TextField fieldNumeroLot;
     @FXML private TextField fieldStock;
     @FXML private TextField fieldSeuilAlerte;
-    @FXML private TextField fieldRechercher;
+    @FXML private ComboBox<String> comboResearch;
 
     @FXML private TableView<Produit> tableView;
     @FXML private TableColumn<Produit, Number> colId;
@@ -52,23 +53,24 @@ public class ProduitController implements Initializable {
     private final ProduitService service = new ProduitService();
     private final ObservableList<Produit> data = FXCollections.observableArrayList();
 
-
-    @FXML
-    public void initialize() {
-        colId.setCellValueFactory(cell -> cell.getValue().idProperty());
-        colNomCommercial.setCellValueFactory(cell -> cell.getValue().nomCommercialProperty());
-        colNomGenerique.setCellValueFactory(cell -> cell.getValue().nomGeneriqueProperty());
-        colForme.setCellValueFactory(cell -> cell.getValue().formeProperty());
-        colDosage.setCellValueFactory(cell -> cell.getValue().dosageProperty());
-        colPrixVente.setCellValueFactory(cell -> cell.getValue().prixVenteProperty());
-        colStock.setCellValueFactory(cell -> cell.getValue().stockProperty());
-
-        try {
-            data.addAll(service.getAll());
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        tableView.setItems(data);
+    private void populateFieldsFromSelection(Produit p) {
+        if (p == null) return;
+        fieldNomCommercial.setText(p.getNomCommercial());
+        fieldNomGenerique.setText(p.getNomGenerique());
+        comboForme.setValue(p.getForme());
+        fieldDosage.setText(p.getDosage());
+        fieldConditionnement.setText(p.getConditionnement());
+        fieldFabricant.setText(p.getFabricant());
+        fieldCodeBarres.setText(p.getCodeBarres());
+        fieldPrixVente.setText(String.valueOf(p.getPrixVente()));
+        fieldPrixAchat.setText(String.valueOf(p.getPrixAchat()));
+        fieldStatut.setText(p.getStatut());
+        comboCategorie.setValue(p.getCategorie());
+        checkPrescriptionRequise.setSelected(p.isPrescriptionRequise());
+        dataDateExpiration.setValue(p.getDateExpiration());
+        fieldNumeroLot.setText(p.getNumeroLot());
+        fieldStock.setText(String.valueOf(p.getStock()));
+        fieldSeuilAlerte.setText(String.valueOf(p.getSeuilAlerte()));
     }
 
     @FXML
@@ -155,22 +157,6 @@ public class ProduitController implements Initializable {
     }
 
     @FXML
-    public void onSearch() {
-        String query = fieldRechercher.getText();
-        List<Produit> p = null;
-        try {
-            p = service.search(query);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        if (p != null) {
-            data.setAll(p);
-        } else {
-            showAlert("Aucun produit trouvé !");
-        }
-    }
-
-    @FXML
     public void onExportExcel() {
         service.exportToFile("produits.xlsx");
         showAlert("Exportation réussie !");
@@ -223,10 +209,36 @@ public class ProduitController implements Initializable {
         colPrixAchat.setCellValueFactory(cell -> cell.getValue().prixAchatProperty());
 
         try {
+            comboResearch.setItems(FXCollections.observableArrayList(
+                    service.getAll().stream()
+                            .map(Produit::getNomCommercial)
+                            .toList()
+            ));
+
+            // Quand on change la sélection → on affiche uniquement l’élément dans la table
+            comboResearch.getSelectionModel().selectedItemProperty().addListener((obs, old, selected) -> {
+                if (selected == null) return;
+
+                String nom = selected.split("\\|")[0].trim();  // Récupérer le nom (avant le pipe)
+                List<Produit> found = null;                           // ta méthode retourne 0..n éléments
+                try {
+                    found = service.search(nom);
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+                data.setAll(found);
+                tableView.setItems(FXCollections.observableArrayList(data));
+                if (!found.isEmpty()) tableView.getSelectionModel().selectFirst();
+            });
+
+            // Remplir les champs quand on sélectionne une ligne (voir point 4, plus bas)
+            tableView.getSelectionModel().selectedItemProperty().addListener((o,ov,nv)->populateFieldsFromSelection(nv));
+
             data.addAll(service.getAll());
+            tableView.setItems(data);
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        tableView.setItems(data);
     }
 }
