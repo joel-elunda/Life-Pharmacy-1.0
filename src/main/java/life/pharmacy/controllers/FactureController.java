@@ -18,6 +18,9 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import static life.pharmacy.controllers.DashboardController.exportImportService;
+import static life.pharmacy.controllers.DashboardController.getStage;
+
 
 public class FactureController implements Initializable {
 
@@ -183,18 +186,13 @@ public class FactureController implements Initializable {
 
     @FXML
     public void onExportExcel() {
-        service.exportToFile("factures.xlsx");
+        exportImportService.exportFactures(getStage());
         showAlert("Exportation réussie !");
     }
 
     @FXML
     public void onImportExcel() {
-        service.importFromFile("factures.xlsx");
-        try {
-            data.setAll(service.getAll());
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        exportImportService.importFactures(getStage());
         showAlert("Importation réussie !");
     }
 

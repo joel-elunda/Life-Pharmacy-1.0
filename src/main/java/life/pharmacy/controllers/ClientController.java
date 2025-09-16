@@ -18,6 +18,9 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import static life.pharmacy.controllers.DashboardController.exportImportService;
+import static life.pharmacy.controllers.DashboardController.getStage;
+
 public class ClientController implements Initializable {
 
     @FXML private TextField fieldNom;
@@ -47,6 +50,7 @@ public class ClientController implements Initializable {
     private Client selected = null;
     private final ClientService service = new ClientService();
     private final ObservableList<Client> data = FXCollections.observableArrayList();
+
 
 
     @FXML
@@ -117,18 +121,13 @@ public class ClientController implements Initializable {
 
     @FXML
     public void onExportExcel() {
-        service.exportToFile("clients.xlsx");
+        exportImportService.exportClients(getStage());
         showAlert("Exportation réussie !");
     }
 
     @FXML
     public void onImportExcel() {
-        service.importFromFile("clients.xlsx");
-        try {
-            data.setAll(service.getAll());
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        exportImportService.importClients(getStage());
         showAlert("Importation réussie !");
     }
 

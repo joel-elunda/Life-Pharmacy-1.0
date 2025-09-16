@@ -21,13 +21,15 @@ public class LigneTransaction {
     }
 
 
-    public LigneTransaction(int id, int transactionId, int produitId, int quantite, double prixUnitaire) {
+    public LigneTransaction(int id, int transactionId, int produitId, String produitNom, int quantite, double prixUnitaire, String numeroOrdonnance) {
         this.id.set(id);
         this.transactionId.set(transactionId);
         this.produitId.set(produitId);
+        this.produitNom.set(produitNom);
         this.quantite.set(quantite);
         this.prixUnitaire.set(prixUnitaire);
         this.sousTotal.set(quantite * prixUnitaire); // Calcul du sous-total
+        this.numeroOrdonnance.set(numeroOrdonnance);
     }
 
     public int getId() { return id.get(); }
@@ -63,6 +65,7 @@ public class LigneTransaction {
     public StringProperty numeroOrdonnanceProperty() { return numeroOrdonnance; }
 
     public Produit getProduit(){ return produit.get(); }
+    public void setProduit(Produit p){ produit.set(p); }
     public ObjectProperty<Produit> produitProperty() { return produit; }
 
 

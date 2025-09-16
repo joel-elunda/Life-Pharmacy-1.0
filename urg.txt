@@ -1,35 +1,70 @@
-Bon je regarde où nous en sommes :
-ClientController, EmployeController, FactureController,
-FournisseurController, ProduitController et RecetteController.
+package life.pharmacy.controllers;
 
-Je te donne les propriétés de tous les controlleurs qui viennent des views et toi
-tu me génères l'implémentation entière des fonctionnalités des controllers :
-Ajouter, Modifier, Supprimer, Rechercher, Exporter sous Excel et Importer sous Excel.
+import javafx.fxml.FXML;
+import javafx.stage.Stage;
+import life.pharmacy.services.ExportImportService;
 
-Pour ClientController : fieldNom, dateDateNaissance, fieldAdresse, fieldTelephone, fieldEmail, areaConditionsMedicales, areaAllergies, fieldRechercher
-Pour ProduitController : fieldNomCommercial, fieldNomGenerique, comboForme, fieldDosage, fieldConditionnement, fieldFabricant, fieldCodeBarres, fieldRechercher, 
-fieldPrixVente, fieldPrixAchat, fieldStatut, comboCategorie, checkPrescriptionRequise, dataDateExpiration, fieldNumeroLot, fieldStock, fieldSeuilAlerte
-Pour EmployeController : fiedlNomComplet, comboRole, fieldLogin, fieldMotDePasseHash(mot de passe), Permissions(liste des cases à cocher), fieldRechercher
-Pour FactureController : comboClient (liste des noms des clients), comboEmploye (liste des noms des employés), dateDate, fieldMontantTotal, fieldModePaiement, fieldRechercher
-Pour FournisseurController : fieldNom, fieldContact, fieldTelephone, fieldEmail, fieldAdresse, areaConditionsPaiement, fieldRechercher
-pour RecetteController : fieldDate, fieldMontant, fieldPeriode
+public class DashboardController {
 
+    private ExportImportService exportImportService = new ExportImportService();
 
-field : Pour les TextFied
-area : Pour les TextArea
-check : pour les CheckBox
-combo : pour les ComboBox
-date : Pour les dates
+    private Stage getStage() {
+        return (Stage) rootPane.getScene().getWindow();
+    }
 
-boutons : addButton, editButton, deleteButton, searchButton
-fonctionnalités : ajouter, modifier, supprimer et rechercher
+    // Produits
+    @FXML private void onExportProduits() {
+        exportImportService.exportProduits(getStage());
+    }
+    @FXML private void onImportProduits() {
+        exportImportService.importProduits(getStage());
+    }
 
+    // Employés
+    @FXML private void onExportEmployes() {
+        exportImportService.exportEmployes(getStage());
+    }
+    @FXML private void onImportEmployes() {
+        exportImportService.importEmployes(getStage());
+    }
 
-Maintenant je t'explique, dans chaque view il y a un tableau avec les noms exactes des propriétés sauf que sur les tableaux les colonnes des propriétés leurs noms
-sont préfixés en "col".
-Ce que tu dois implémenter c'est très simple, on saisie les données dans les champs puis on les affiche dans le tableau une fois cliquer sur le bouton ajouter.
-pour modifier il suffit de cliquer un élément dans le tableau, et l'élément sera remplit dans les champs avec les noms-champs respectifs et sera modifier ensuite
-après avoir cliquer sur le bouton modifier. Et la suppression d'un élément affiche une boite de dialogue de confirmation de suppression après avoir sélectionner l'élément dans le tableau.
-On écrit un élément dans la barre de recherche et on l'affice dans le tableau si on l'a trouvé sinon une boite de dialogue nous signale que l'élément n'est pas trouvé après le clic sur le bouton rechercher.
+    // Clients
+    @FXML private void onExportClients() {
+        exportImportService.exportClients(getStage());
+    }
+    @FXML private void onImportClients() {
+        exportImportService.importClients(getStage());
+    }
 
-Génère le tout pour tous les controllers bloc par bloc et ne pose pas de questions.
+    // Fournisseurs
+    @FXML private void onExportFournisseurs() {
+        exportImportService.exportFournisseurs(getStage());
+    }
+    @FXML private void onImportFournisseurs() {
+        exportImportService.importFournisseurs(getStage());
+    }
+
+    // Factures
+    @FXML private void onExportFactures() {
+        exportImportService.exportFactures(getStage());
+    }
+    @FXML private void onImportFactures() {
+        exportImportService.importFactures(getStage());
+    }
+
+    // Transactions
+    @FXML private void onExportTransactions() {
+        exportImportService.exportTransactions(getStage());
+    }
+    @FXML private void onImportTransactions() {
+        exportImportService.importTransactions(getStage());
+    }
+
+    // Recettes
+    @FXML private void onExportRecettes() {
+        exportImportService.exportRecettes(getStage());
+    }
+    @FXML private void onImportRecettes() {
+        exportImportService.importRecettes(getStage());
+    }
+}

@@ -15,13 +15,16 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import static life.pharmacy.controllers.DashboardController.exportImportService;
+import static life.pharmacy.controllers.DashboardController.getStage;
+
 public class EmployeController implements Initializable {
 
     @FXML private TextField fiedlNomComplet;
     @FXML private ComboBox<String> comboRole;
     @FXML private TextField fieldLogin;
     @FXML private PasswordField fieldMotDePasseHash;
-    @FXML private ListView<CheckBox> checkPermissions;
+    @FXML private CheckBox checkPermissions;
     @FXML private ComboBox<String> comboResearch;
 
     @FXML public  TableView<Employe> tableView;
@@ -46,9 +49,8 @@ public class EmployeController implements Initializable {
             comboRole.setValue(selected.getRole());
             fieldLogin.setText(selected.getLogin());
             fieldMotDePasseHash.setText(selected.getMotDePasseHash());
-            for (CheckBox cb : checkPermissions.getItems()) {
-                cb.setSelected(selected.getPermissions().contains(cb.getText()));
-            }
+            if (checkPermissions.isSelected()) checkPermissions.setSelected(true);
+
         }
     }
 
@@ -58,10 +60,9 @@ public class EmployeController implements Initializable {
          comboRole.setValue(e.getRole());
          fieldLogin.setText(e.getLogin());
          fieldMotDePasseHash.setText(e.getMotDePasseHash());
-        for (CheckBox cb : checkPermissions.getItems()) {
-            cb.setSelected(e.getPermissions().contains(cb.getText()));
-        }
-}
+        if (checkPermissions.isSelected()) checkPermissions.setSelected(true);
+
+    }
 
     public void reloadEmploye() { reloadEmploye(null); }
     private void reloadEmploye( String q) {
@@ -74,16 +75,13 @@ public class EmployeController implements Initializable {
     @FXML
     public void onAdd() {
         StringBuilder perms = new StringBuilder();
-        for (CheckBox cb : checkPermissions.getItems()) {
-            if (cb.isSelected()) perms.append(cb.getText()).append(",");
-        }
         Employe e = new Employe(
                 service.getNextId(),
                 fiedlNomComplet.getText(),
                 comboRole.getValue(),
                 fieldLogin.getText(),
                 fieldMotDePasseHash.getText(),
-                perms.toString()
+                checkPermissions.getText()
         );
         try {
             service.add(e);
@@ -100,14 +98,11 @@ public class EmployeController implements Initializable {
         Employe selected = tableView.getSelectionModel().getSelectedItem();
         if (selected != null) {
             StringBuilder perms = new StringBuilder();
-            for (CheckBox cb : checkPermissions.getItems()) {
-                if (cb.isSelected()) perms.append(cb.getText()).append(",");
-            }
             selected.setNomComplet(fiedlNomComplet.getText());
             selected.setRole(comboRole.getValue());
             selected.setLogin(fieldLogin.getText());
             selected.setMotDePasseHash(fieldMotDePasseHash.getText());
-            selected.setPermissions(perms.toString());
+            selected.setPermissions(checkPermissions.getText());
 
             try {
                 service.update(selected);
@@ -143,18 +138,13 @@ public class EmployeController implements Initializable {
 
     @FXML
     public void onExportExcel() {
-        service.exportToFile("employes.xlsx");
+        exportImportService.exportEmployes(getStage());
         showAlert("Exportation réussie !");
     }
 
     @FXML
     public void onImportExcel() {
-        service.importFromFile("employes.xlsx");
-        try {
-            data.setAll(service.getAll());
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        exportImportService.importEmployes(getStage());
         showAlert("Importation réussie !");
     }
 
@@ -163,7 +153,7 @@ public class EmployeController implements Initializable {
         comboRole.setValue(null);
         fieldLogin.clear();
         fieldMotDePasseHash.clear();
-        for (CheckBox cb : checkPermissions.getItems()) cb.setSelected(false);
+        if (checkPermissions.isSelected()) checkPermissions.setSelected(true);
     }
 
     private void showAlert(String msg) {

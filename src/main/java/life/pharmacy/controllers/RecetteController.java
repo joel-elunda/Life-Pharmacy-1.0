@@ -14,6 +14,9 @@ import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import static life.pharmacy.controllers.DashboardController.exportImportService;
+import static life.pharmacy.controllers.DashboardController.getStage;
+
 public class RecetteController implements Initializable {
 
     @FXML private LineChart<String, Number> recetteChart;
@@ -33,6 +36,14 @@ public class RecetteController implements Initializable {
 
         recetteChart.getData().clear();
         recetteChart.getData().add(series);
+    }
+
+    // Recettes
+    @FXML private void onExportRecettes() {
+        exportImportService.exportRecettes(getStage());
+    }
+    @FXML private void onImportRecettes() {
+        exportImportService.importRecettes(getStage());
     }
 
     @Override

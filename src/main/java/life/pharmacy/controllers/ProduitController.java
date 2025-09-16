@@ -15,6 +15,9 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import static life.pharmacy.controllers.DashboardController.exportImportService;
+import static life.pharmacy.controllers.DashboardController.getStage;
+
 public class ProduitController implements Initializable {
 
     @FXML private TextField fieldNomCommercial;
@@ -159,18 +162,13 @@ public class ProduitController implements Initializable {
 
     @FXML
     public void onExportExcel() {
-        service.exportToFile("produits.xlsx");
+         exportImportService.exportProduits(getStage());
         showAlert("Exportation réussie !");
     }
 
     @FXML
     public void onImportExcel() {
-        service.importFromFile("produits.xlsx");
-        try {
-            data.setAll(service.getAll());
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        exportImportService.importProduits(getStage());
         showAlert("Importation réussie !");
     }
 
