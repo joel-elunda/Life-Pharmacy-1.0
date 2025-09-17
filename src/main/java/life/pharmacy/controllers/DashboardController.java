@@ -52,7 +52,7 @@ public class DashboardController implements Initializable {
     @FXML private Label currentUserLabel;
     @FXML private TextArea invoicePreview;
     @FXML private Button printButton, cancelButton;
-    @FXML private static Button logoutButton;
+    @FXML private Button logoutButton;
 
     private final ClientService clientService = new ClientService();
     private final ProduitService produitService = new ProduitService();
@@ -74,8 +74,14 @@ public class DashboardController implements Initializable {
     @FXML private Button refreshButton;
     @FXML private Button btnAddClient;
 
-    public static Stage getStage() {
-        return (Stage) logoutButton.getScene().getWindow();
+    private Stage stage;
+
+    public void setStage(Stage stage) {
+        this.stage = stage;
+    }
+
+    public Stage getStage() {
+        return stage;
     }
 
     @FXML

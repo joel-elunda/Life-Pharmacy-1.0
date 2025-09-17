@@ -27,9 +27,9 @@ public class ExportImportService {
         return fileChooser.showOpenDialog(stage);
     }
 
-    private void exportTable(Stage stage, String title, String sql, String sheetName, String[] cols) {
+    private boolean exportTable(Stage stage, String title, String sql, String sheetName, String[] cols) {
         File file = getSaveFile(stage, title);
-        if (file == null) return;
+        if (file == null) return false;
         try (Connection conn = DriverManager.getConnection(DB_URL);
              Statement st = conn.createStatement();
              ResultSet rs = st.executeQuery(sql);
@@ -53,14 +53,16 @@ public class ExportImportService {
                 wb.write(fos);
             }
             System.out.println(sheetName + " exportés !");
+            return true;
         } catch (Exception e) {
             e.printStackTrace();
+            return false;
         }
     }
 
-    private void importTable(Stage stage, String title, String insertSql, int colCount) {
+    private boolean importTable(Stage stage, String title, String insertSql, int colCount) {
         File file = getOpenFile(stage, title);
-        if (file == null) return;
+        if (file == null) return false;
         try (FileInputStream fis = new FileInputStream(file);
              Workbook wb = new XSSFWorkbook(fis);
              Connection conn = DriverManager.getConnection(DB_URL)) {
@@ -91,98 +93,100 @@ public class ExportImportService {
             }
             conn.commit();
             System.out.println(title + " importés !");
+            return true;
         } catch (Exception e) {
             e.printStackTrace();
+            return false;
         }
     }
 
     // ----------- PRODUITS -----------
-    public void exportProduits(Stage stage) {
-        exportTable(stage, "Exporter Produits",
+    public boolean exportProduits(Stage stage) {
+        return exportTable(stage, "Exporter Produits",
                 "SELECT * FROM produits",
                 "Produits",
                 new String[]{"id","nomCommercial","nomGenerique","forme","dosage","conditionnement","fabricant","codeBarres","prixVente","prixAchat","statut","categorie","prescriptionRequise","dateExpiration","numeroLot","stock","seuilAlerte"});
     }
-    public void importProduits(Stage stage) {
-        importTable(stage, "Importer Produits",
+    public boolean importProduits(Stage stage) {
+        return importTable(stage, "Importer Produits",
                 "INSERT INTO produits(nomCommercial,nomGenerique,forme,dosage,conditionnement,fabricant,codeBarres,prixVente,prixAchat,statut,categorie,prescriptionRequise,dateExpiration,numeroLot,stock,seuilAlerte) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
                 16);
     }
 
     // ----------- EMPLOYES -----------
-    public void exportEmployes(Stage stage) {
-        exportTable(stage, "Exporter Employés",
+    public boolean exportEmployes(Stage stage) {
+        return exportTable(stage, "Exporter Employés",
                 "SELECT * FROM employes",
                 "Employes",
                 new String[]{"id","nomComplet","role","login","motDePasseHash","permissions"});
     }
-    public void importEmployes(Stage stage) {
-        importTable(stage, "Importer Employés",
+    public boolean importEmployes(Stage stage) {
+        return importTable(stage, "Importer Employés",
                 "INSERT INTO employes(nomComplet,role,login,motDePasseHash,permissions) VALUES(?,?,?,?,?)",
                 5);
     }
 
     // ----------- CLIENTS -----------
-    public void exportClients(Stage stage) {
-        exportTable(stage, "Exporter Clients",
+    public boolean exportClients(Stage stage) {
+        return exportTable(stage, "Exporter Clients",
                 "SELECT * FROM clients",
                 "Clients",
                 new String[]{"id","nomComplet","dateNaissance","adresse","telephone","email","conditionsMedicales","allergies"});
     }
-    public void importClients(Stage stage) {
-        importTable(stage, "Importer Clients",
+    public boolean importClients(Stage stage) {
+        return importTable(stage, "Importer Clients",
                 "INSERT INTO clients(nomComplet,dateNaissance,adresse,telephone,email,conditionsMedicales,allergies) VALUES(?,?,?,?,?,?,?)",
                 7);
     }
 
     // ----------- FOURNISSEURS -----------
-    public void exportFournisseurs(Stage stage) {
-        exportTable(stage, "Exporter Fournisseurs",
+    public boolean exportFournisseurs(Stage stage) {
+        return exportTable(stage, "Exporter Fournisseurs",
                 "SELECT * FROM fournisseurs",
                 "Fournisseurs",
                 new String[]{"id","nom","contact","telephone","email","adresse","conditionsPaiement"});
     }
-    public void importFournisseurs(Stage stage) {
-        importTable(stage, "Importer Fournisseurs",
+    public boolean importFournisseurs(Stage stage) {
+        return importTable(stage, "Importer Fournisseurs",
                 "INSERT INTO fournisseurs(nom,contact,telephone,email,adresse,conditionsPaiement) VALUES(?,?,?,?,?,?)",
                 6);
     }
 
     // ----------- FACTURES -----------
-    public void exportFactures(Stage stage) {
-        exportTable(stage, "Exporter Factures",
+    public boolean exportFactures(Stage stage) {
+        return exportTable(stage, "Exporter Factures",
                 "SELECT * FROM factures",
                 "Factures",
                 new String[]{"id","clientId","employeId","date","montantTotal","modePaiement"});
     }
-    public void importFactures(Stage stage) {
-        importTable(stage, "Importer Factures",
+    public boolean importFactures(Stage stage) {
+        return importTable(stage, "Importer Factures",
                 "INSERT INTO factures(clientId,employeId,date,montantTotal,modePaiement) VALUES(?,?,?,?,?)",
                 5);
     }
 
     // ----------- TRANSACTIONS -----------
-    public void exportTransactions(Stage stage) {
-        exportTable(stage, "Exporter Transactions",
+    public boolean exportTransactions(Stage stage) {
+        return exportTable(stage, "Exporter Transactions",
                 "SELECT * FROM table_transactions",
                 "Transactions",
                 new String[]{"id","dateHeure","total","statutPaiement","methodePaiement","clientId","employeId"});
     }
-    public void importTransactions(Stage stage) {
-        importTable(stage, "Importer Transactions",
+    public boolean importTransactions(Stage stage) {
+        return importTable(stage, "Importer Transactions",
                 "INSERT INTO table_transactions(dateHeure,total,statutPaiement,methodePaiement,clientId,employeId) VALUES(?,?,?,?,?,?)",
                 6);
     }
 
     // ----------- RECETTES -----------
-    public void exportRecettes(Stage stage) {
-        exportTable(stage, "Exporter Recettes",
+    public boolean exportRecettes(Stage stage) {
+        return exportTable(stage, "Exporter Recettes",
                 "SELECT * FROM recettes",
                 "Recettes",
                 new String[]{"id","date","montant","periode"});
     }
-    public void importRecettes(Stage stage) {
-        importTable(stage, "Importer Recettes",
+    public boolean importRecettes(Stage stage) {
+        return importTable(stage, "Importer Recettes",
                 "INSERT INTO recettes(date,montant,periode) VALUES(?,?,?)",
                 3);
     }

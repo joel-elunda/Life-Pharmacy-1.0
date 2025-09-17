@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import static life.pharmacy.controllers.DashboardController.exportImportService;
-import static life.pharmacy.controllers.DashboardController.getStage;
 
 public class ClientController implements Initializable {
 
@@ -121,14 +120,14 @@ public class ClientController implements Initializable {
 
     @FXML
     public void onExportExcel() {
-        exportImportService.exportClients(getStage());
-        showAlert("Exportation réussie !");
+        if(exportImportService.exportClients(new DashboardController().getStage()))
+            showAlert("Exportation réussie !");
     }
 
     @FXML
     public void onImportExcel() {
-        exportImportService.importClients(getStage());
-        showAlert("Importation réussie !");
+        if(exportImportService.importClients(new DashboardController().getStage()))
+            showAlert("Importation réussie !");
     }
 
     private void handleTableClick(MouseEvent event) {

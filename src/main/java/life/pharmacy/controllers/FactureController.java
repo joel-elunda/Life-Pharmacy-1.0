@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import static life.pharmacy.controllers.DashboardController.exportImportService;
-import static life.pharmacy.controllers.DashboardController.getStage;
 
 
 public class FactureController implements Initializable {
@@ -36,6 +35,8 @@ public class FactureController implements Initializable {
     @FXML private TableColumn<Facture, String> colClient;
     @FXML private TableColumn<Facture, String> colEmploye;
     @FXML private TableColumn<Facture, Number> colMontantTotal;
+    @FXML private TableColumn<Facture, LocalDate> colDate;
+    @FXML private TableColumn<Facture, String> colModePaiement;
 
     @FXML private Button addButton;
     @FXML private Button editButton;
@@ -69,10 +70,11 @@ public class FactureController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         colId.setCellValueFactory(cell -> cell.getValue().idProperty());
-        colClient.setCellValueFactory(cell -> cell.getValue().clientProperty().asString());
-        colEmploye.setCellValueFactory(cell -> cell.getValue().employeProperty().asString());
+        colClient.setCellValueFactory(cell -> cell.getValue().clientProperty().getValue().nomCompletProperty());
+        colEmploye.setCellValueFactory(cell -> cell.getValue().employeProperty().getValue().nomCompletProperty());
         colMontantTotal.setCellValueFactory(cell -> cell.getValue().montantTotalProperty());
-
+        colDate.setCellValueFactory(cell -> cell.getValue().dateProperty());
+        colModePaiement.setCellValueFactory(cell-> cell.getValue().modePaiementProperty());
         tableView.setOnMouseClicked(this::handleTableClick);
 
         try {
@@ -186,14 +188,14 @@ public class FactureController implements Initializable {
 
     @FXML
     public void onExportExcel() {
-        exportImportService.exportFactures(getStage());
-        showAlert("Exportation réussie !");
+        if(exportImportService.exportFactures(new DashboardController().getStage()))
+            showAlert("Exportation réussie !");
     }
 
     @FXML
     public void onImportExcel() {
-        exportImportService.importFactures(getStage());
-        showAlert("Importation réussie !");
+        if(exportImportService.importFactures(new DashboardController().getStage()))
+            showAlert("Importation réussie !");
     }
 
     private void clearFields() {

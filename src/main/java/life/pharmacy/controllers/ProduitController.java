@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import static life.pharmacy.controllers.DashboardController.exportImportService;
-import static life.pharmacy.controllers.DashboardController.getStage;
 
 public class ProduitController implements Initializable {
 
@@ -162,14 +161,14 @@ public class ProduitController implements Initializable {
 
     @FXML
     public void onExportExcel() {
-         exportImportService.exportProduits(getStage());
-        showAlert("Exportation réussie !");
+         if (exportImportService.exportProduits(new DashboardController().getStage()))
+             showAlert("Exportation réussie !");
     }
 
     @FXML
     public void onImportExcel() {
-        exportImportService.importProduits(getStage());
-        showAlert("Importation réussie !");
+        if(exportImportService.importProduits(new DashboardController().getStage()))
+            showAlert("Importation réussie !");
     }
 
     private void clearFields() {

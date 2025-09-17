@@ -22,6 +22,8 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import static life.pharmacy.controllers.DashboardController.exportImportService;
+
 public class FournisseurController implements Initializable {
 
     private static final Logger log = LogManager.getLogger(FournisseurController.class);
@@ -227,80 +229,18 @@ public class FournisseurController implements Initializable {
     // === EXPORT EXCEL ===
     @FXML
     private void handleExportExcel() {
-        try (Workbook workbook = new XSSFWorkbook()) {
-            Sheet sheet = workbook.createSheet("Fournisseurs");
-
-            Row header = sheet.createRow(0);
-            header.createCell(0).setCellValue("ID");
-            header.createCell(1).setCellValue("Nom");
-            header.createCell(2).setCellValue("Contact");
-            header.createCell(3).setCellValue("Téléphone");
-            header.createCell(4).setCellValue("Email");
-            header.createCell(5).setCellValue("Adresse");
-            header.createCell(6).setCellValue("Conditions Paiement");
-
-            int rowNum = 1;
-            try {
-                for (Fournisseur f : service.getAll()) {
-                    Row row = sheet.createRow(rowNum++);
-                    row.createCell(0).setCellValue(f.getId());
-                    row.createCell(1).setCellValue(f.getNom());
-                    row.createCell(2).setCellValue(f.getContact());
-                    row.createCell(3).setCellValue(f.getTelephone());
-                    row.createCell(4).setCellValue(f.getEmail());
-                    row.createCell(5).setCellValue(f.getAdresse());
-                    row.createCell(6).setCellValue(f.getConditionsPaiement());
-                }
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-
-            try (FileOutputStream fos = new FileOutputStream("fournisseurs.xlsx")) {
-                workbook.write(fos);
-            }
-
-            new Alert(Alert.AlertType.INFORMATION, "Exportation réussie !").showAndWait();
-        } catch (IOException e) {
-            e.printStackTrace();
-            new Alert(Alert.AlertType.ERROR, "Erreur lors de l'exportation !").showAndWait();
-        }
+        if(exportImportService.exportFournisseurs(new DashboardController().getStage()))
+            showAlert("Exportation réussie!");
     }
 
-    // === IMPORT EXCEL ===
     @FXML
     private void handleImportExcel() {
-        try (FileInputStream fis = new FileInputStream("fournisseurs.xlsx");
-             Workbook workbook = new XSSFWorkbook(fis)) {
-            Sheet sheet = workbook.getSheetAt(0);
+         if(exportImportService.importFournisseurs(new DashboardController().getStage()))
+             showAlert("Importation réussie!");
+    }
 
-//            service.clear();
-
-            for (int i = 1; i <= sheet.getLastRowNum(); i++) {
-                Row row = sheet.getRow(i);
-                if (row != null) {
-                    Fournisseur f = new Fournisseur(
-                            (int) row.getCell(0).getNumericCellValue(),
-                            row.getCell(1).getStringCellValue(),
-                            row.getCell(2).getStringCellValue(),
-                            row.getCell(3).getStringCellValue(),
-                            row.getCell(4).getStringCellValue(),
-                            row.getCell(5).getStringCellValue(),
-                            row.getCell(6).getStringCellValue()
-                    );
-                    try {
-                        service.add(f);
-                    } catch (SQLException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-            }
-
-            refreshTable();
-            new Alert(Alert.AlertType.INFORMATION, "Importation réussie !").showAndWait();
-        } catch (IOException e) {
-            e.printStackTrace();
-            new Alert(Alert.AlertType.ERROR, "Erreur lors de l'importation !").showAndWait();
-        }
+    private void showAlert(String msg) {
+        new Alert(Alert.AlertType.INFORMATION, msg, ButtonType.OK).showAndWait();
     }
 
     private void populateFieldsFromSelection(Fournisseur f) {

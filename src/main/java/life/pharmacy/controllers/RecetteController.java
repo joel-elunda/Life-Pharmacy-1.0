@@ -5,7 +5,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import life.pharmacy.models.Recette;
 import life.pharmacy.services.RecetteService;
@@ -15,7 +17,6 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import static life.pharmacy.controllers.DashboardController.exportImportService;
-import static life.pharmacy.controllers.DashboardController.getStage;
 
 public class RecetteController implements Initializable {
 
@@ -40,11 +41,19 @@ public class RecetteController implements Initializable {
 
     // Recettes
     @FXML private void onExportRecettes() {
-        exportImportService.exportRecettes(getStage());
+        if(exportImportService.exportRecettes(new DashboardController().getStage()))
+            showAlert("Exportation réussie!");
     }
+
     @FXML private void onImportRecettes() {
-        exportImportService.importRecettes(getStage());
+        if(exportImportService.importRecettes(new DashboardController().getStage()))
+            showAlert("Importation réussie!");
     }
+
+    private void showAlert(String msg) {
+        new Alert(Alert.AlertType.INFORMATION, msg, ButtonType.OK).showAndWait();
+    }
+
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {

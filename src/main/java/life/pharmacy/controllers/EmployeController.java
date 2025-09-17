@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import static life.pharmacy.controllers.DashboardController.exportImportService;
-import static life.pharmacy.controllers.DashboardController.getStage;
 
 public class EmployeController implements Initializable {
 
@@ -138,14 +137,14 @@ public class EmployeController implements Initializable {
 
     @FXML
     public void onExportExcel() {
-        exportImportService.exportEmployes(getStage());
-        showAlert("Exportation réussie !");
+        if(exportImportService.exportEmployes(new DashboardController().getStage()))
+            showAlert("Exportation réussie !");
     }
 
     @FXML
     public void onImportExcel() {
-        exportImportService.importEmployes(getStage());
-        showAlert("Importation réussie !");
+        if(exportImportService.importEmployes(new DashboardController().getStage()))
+            showAlert("Importation réussie !");
     }
 
     private void clearFields() {

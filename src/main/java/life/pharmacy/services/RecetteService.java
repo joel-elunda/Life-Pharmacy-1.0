@@ -56,7 +56,7 @@ public class RecetteService {
             case "semaine" -> "SELECT strftime('%W', date) as semaine, SUM(montant) as montant FROM recettes GROUP BY semaine";
             case "mois" -> "SELECT strftime('%m-%Y', date) as mois, SUM(montant) as montant FROM recettes GROUP BY mois";
             case "annee" -> "SELECT strftime('%Y', date) as annee, SUM(montant) as montant FROM recettes GROUP BY annee";
-            default -> "SELECT date, montant FROM recette";
+            default -> "SELECT date, montant FROM recettes";
         };
 
         try (Connection conn = DriverManager.getConnection("jdbc:sqlite:pharmacy.db");

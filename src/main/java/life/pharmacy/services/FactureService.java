@@ -39,7 +39,7 @@ public class FactureService {
     public List<Facture> getAll() throws SQLException {
         List<Facture> list = new ArrayList<>();
         String sql = """
-            SELECT t.id, t.clientId, t.employeId, t.dateHeure, t.total, t.statutPaiement,
+            SELECT t.id, t.clientId, t.employeId, t.dateHeure, t.total, t.statutPaiement, t.methodePaiement,
                    c.nomComplet AS clientNom, e.nomComplet AS employeNom
             FROM table_transactions t
             LEFT JOIN clients c ON c.id=t.clientId
@@ -52,11 +52,13 @@ public class FactureService {
             while (rs.next()) {
                 Client cli = new Client(); cli.setId(rs.getInt("clientId")); cli.setNomComplet(rs.getString("clientNom"));
                 Employe emp = new Employe(); emp.setId(rs.getInt("employeId")); emp.setNomComplet(rs.getString("employeNom"));
+                LocalDateTime dateTime = LocalDateTime.parse(rs.getString("dateHeure"));
+                LocalDate date = dateTime.toLocalDate();
                 Facture f = new Facture(
                         rs.getInt("id"),
                         cli,
                         emp,
-                        rs.getTimestamp("dateHeure").toLocalDateTime().toLocalDate(),
+                        date,
                         rs.getDouble("total"),
                         rs.getString("methodePaiement")
                 );
