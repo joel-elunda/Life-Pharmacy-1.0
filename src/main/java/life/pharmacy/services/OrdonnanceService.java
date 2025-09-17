@@ -50,9 +50,6 @@ public class OrdonnanceService {
         }
     }
 
-    /*
-        *  public Ordonnance(int id, int patientId, String medecin, LocalDate dateEmission, LocalDate dateExpiration,
-                          String produitsPrescrits, String instructionsDosage, String statut, String numeroUnique) {*/
     public List<Ordonnance> getAll() throws SQLException {
         List<Ordonnance> list = new ArrayList<>();
         try (Connection conn = DriverManager.getConnection(DB_URL);
