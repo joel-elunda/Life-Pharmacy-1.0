@@ -15,6 +15,7 @@ import javafx.scene.control.*;
 import javafx.stage.Stage;
 import life.pharmacy.models.*;
 import life.pharmacy.services.*;
+import life.pharmacy.utils.ExportImportService;
 
 import java.sql.SQLException;
 import java.time.LocalDateTime;
@@ -80,6 +81,16 @@ public class DashboardController implements Initializable {
     @FXML private ToolBar toolBar;
 
     private Stage stage;
+
+
+    public void setUtilisateur(Employe user) {
+        if (!"Administrateur".equalsIgnoreCase(user.getRole())) {
+            facturesButton.setVisible(false);
+            emloyesButton.setVisible(false);
+            recettesButton.setVisible(false);
+        }
+    }
+
 
     public void setStage(Stage stage) {
         this.stage = stage;
@@ -267,6 +278,8 @@ public class DashboardController implements Initializable {
         currentUser.setNomComplet("Administrateur");
         currentUser.setRole("Administrateur");
         currentUserLabel.setText(currentUser.getNomComplet());
+
+        setUtilisateur(currentUser);
 
         // colonnes clients
         colClientId.setCellValueFactory(c -> c.getValue().idProperty());

@@ -4,10 +4,12 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import life.pharmacy.controllers.DashboardController;
 
 import java.io.IOException;
+import java.util.Objects;
 
 public class Launcher extends Application {
 
@@ -23,6 +25,7 @@ public class Launcher extends Application {
         Scene scene = new Scene(fxmlLoader.load(), 300, 400);
         stage.setResizable(false);
         stage.setTitle("Authentification - Life Pharmacy");
+        stage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/image/logo.png")))); // ton icône
         stage.setScene(scene);
         stage.show();
     }

@@ -1,4 +1,4 @@
-package life.pharmacy.services;
+package life.pharmacy.utils;
 
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
