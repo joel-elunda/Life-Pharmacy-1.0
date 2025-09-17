@@ -9,20 +9,21 @@
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.layout.BorderPane?>
 
-<BorderPane prefHeight="600" prefWidth="900" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="life.pharmacy.controllers.RecetteController">
+<BorderPane prefHeight="600" prefWidth="900" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="life.pharmacy.controllers.RecetteController">
 
     <top>
         <ToolBar style="-fx-background-color:#009688;">
             <Label style="-fx-text-fill:white; -fx-font-size:16px;" text="Statistiques des recettes" />
-            <ComboBox fx:id="filtrePeriode" prefWidth="200" promptText="Sélectionner période" />
-            <Button fx:id="refreshButton" onAction="#handleActualiser" text="Actualiser" />
-            <Button fx:id="printButton" onAction="#handleImprimer" text="Imprimer" />
-            <Button fx:id="exportButton" onAction="#onExportRecettes" text="Exporter Excel" />
+            <ComboBox fx:id="comboPeriode" prefWidth="200" promptText="Sélectionner période" />
+            <Button fx:id="btnActualiser" onAction="#handleActualiser" text="Actualiser" />
+            <Button fx:id="btnImprimer" onAction="#handleImprimer" text="Imprimer" />
+            <Button fx:id="btnExporter" onAction="#onExportRecettes" text="Exporter Excel" />
+         <Button fx:id="btnResetYear" mnemonicParsing="false" text="Réinitialiser l'année" />
         </ToolBar>
     </top>
 
     <center>
-        <LineChart fx:id="recetteChart" prefHeight="500" prefWidth="800">
+        <LineChart fx:id="chartRecettes" prefHeight="500" prefWidth="800">
             <xAxis>
                 <CategoryAxis label="Période" />
             </xAxis>
