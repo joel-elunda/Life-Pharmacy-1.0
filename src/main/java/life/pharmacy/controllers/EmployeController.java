@@ -1,6 +1,7 @@
 package life.pharmacy.controllers;
 
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.Initializable;
 import javafx.scene.input.MouseEvent;
 import life.pharmacy.models.Employe;
@@ -36,6 +37,7 @@ public class EmployeController implements Initializable {
     @FXML private Button editButton;
     @FXML private Button deleteButton;
     @FXML private Button searchButton;
+    @FXML private Button refreshButton;
 
     private Employe selected = null;
     public static final EmployeService service = new EmployeService();
@@ -166,7 +168,12 @@ public class EmployeController implements Initializable {
         colRole.setCellValueFactory(cell -> cell.getValue().roleProperty());
         colLogin.setCellValueFactory(cell -> cell.getValue().loginProperty());
 
+        comboRole.setItems(FXCollections.observableArrayList(
+                "Administrateur", "Pharmacien(ne)", "Gérant(e)", "Vendeur(se)"
+        ));
+
         tableView.setOnMouseClicked(this::handleTableClick);
+        reloadEmploye();
 
         try {
             comboResearch.setItems(FXCollections.observableArrayList(
@@ -224,5 +231,20 @@ public class EmployeController implements Initializable {
         } catch (SQLException e) {
             System.out.println(e);
         }
+    }
+
+    @FXML
+    private void handleRefresh(ActionEvent event) {
+
+        try {
+            this.tableView.setItems(FXCollections.observableArrayList(service.getAll()));
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        reloadEmploye();
+
+        Alert alert = new Alert(Alert.AlertType.INFORMATION, "Données mises à jour avec succès !");
+        alert.showAndWait();
     }
 }

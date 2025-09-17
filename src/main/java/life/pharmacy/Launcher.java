@@ -18,14 +18,15 @@ public class Launcher extends Application {
 
         fxmlDashboardLoader.load();
         DashboardController controller  = fxmlDashboardLoader.getController();
-        controller.setStage(stage); // injection du stage
+        controller.setStage(stage);
 
         Scene scene = new Scene(fxmlLoader.load(), 300, 400);
         stage.setResizable(false);
-        stage.setTitle("Se connecter - Life Pharmacy");
+        stage.setTitle("Authentification - Life Pharmacy");
         stage.setScene(scene);
         stage.show();
     }
+
 
     public static void main(String[] args) {
         Application.launch(Launcher.class, args);

@@ -19,7 +19,7 @@
         <HBox spacing="10">
             <ComboBox fx:id="comboResearch" editable="true" prefHeight="25.0" prefWidth="217.0" promptText="Rechercher un utilisateur..." />
             <Button fx:id="searchButton" onAction="#onSearch" text="Rechercher" />
-            <Button fx:id="refreshButton" text="Actualiser" />
+            <Button fx:id="refreshButton" onAction="#handleRefresh" text="Actualiser" />
             <Button fx:id="deleteButton" onAction="#onDelete" text="Supprimer" />
             <Button onAction="#onExportExcel" text="Exporter Excel" />
             <Button onAction="#onImportExcel" text="Importer Excel" />

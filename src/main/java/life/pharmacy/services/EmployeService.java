@@ -77,6 +77,25 @@ public class EmployeService {
         return list;
     }
 
+    public Employe getByLogin(String query) throws SQLException {
+        Employe employe = new Employe();
+        String sql = "SELECT id, nomComplet, role, login, motDePasseHash, permissions FROM employes WHERE login=?";
+        try(Connection conn = DriverManager.getConnection(DB_URL);
+            PreparedStatement pstmt = conn.prepareStatement(sql)){
+            pstmt.setString(1, query);
+            ResultSet rs = pstmt.executeQuery();
+            while(rs.next()) {
+                employe.setId(rs.getInt("id"));
+                employe.setNomComplet(rs.getString("nomComplet"));
+                employe.setRole(rs.getString("role"));
+                employe.setLogin(rs.getString("login"));
+                employe.setMotDePasseHash(rs.getString("motDePasseHash"));
+                employe.setPermissions(rs.getString("permissions"));
+            }
+        }
+        return employe;
+    }
+
     public List<Employe> search(String query) throws SQLException {
         List<Employe> list = new ArrayList<>();
         String sql = "SELECT * FROM employes WHERE nomComplet LIKE ? OR role LIKE ? OR login LIKE ?";

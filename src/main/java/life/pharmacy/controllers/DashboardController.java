@@ -8,6 +8,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -73,6 +74,10 @@ public class DashboardController implements Initializable {
 
     @FXML private Button refreshButton;
     @FXML private Button btnAddClient;
+    @FXML private Button facturesButton;
+    @FXML private Button emloyesButton;
+    @FXML private Button recettesButton;
+    @FXML private ToolBar toolBar;
 
     private Stage stage;
 
@@ -91,8 +96,7 @@ public class DashboardController implements Initializable {
 
     @FXML
     private void handleRefresh(ActionEvent event) {
-        //        chargerProduits();
-        //        chargerClients();
+
         try {
             clientTable.setItems(FXCollections.observableArrayList(clientService.getAll()));
             productTable.setItems(FXCollections.observableArrayList(produitService.getAll()));
@@ -232,18 +236,37 @@ public class DashboardController implements Initializable {
 
     @FXML private void onCancel(){ panier.clear(); updateTotalsAndPreview(); }
 
-    @FXML
-    private void onLogout(){ /* Navigation login */ alert("Déconnexion…"); }
-
     private void alert(String msg){ new Alert(Alert.AlertType.INFORMATION, msg).showAndWait(); }
     public static void showError(Throwable t){ new Alert(Alert.AlertType.ERROR, t.getMessage()).showAndWait(); }
+
+    String login;
+    public void setCurrentUserName(String u) {
+        this.login = u;
+    }
+
+    private String getLogin() {
+        return login;
+    }
+
+    public ToolBar getToolBar() {
+        return toolBar;
+    }
+
+    public Node[] removedNodes() {
+        return new Node[]{facturesButton, emloyesButton, recettesButton};
+    }
 
     @Override
     public void initialize(java.net.URL location, java.util.ResourceBundle resources) {
         // Initialization code here
-        System.out.println("Dashboard started...");
+        System.out.println("Tableau de bord lancé...");
+
         // user courant (exemple : admin)
-        currentUser = new Employe(); currentUser.setId(1); currentUser.setNomComplet("Admin"); currentUserLabel.setText(currentUser.getNomComplet());
+        currentUser = new Employe();
+        currentUser.setId(1);
+        currentUser.setNomComplet("Administrateur");
+        currentUser.setRole("Administrateur");
+        currentUserLabel.setText(currentUser.getNomComplet());
 
         // colonnes clients
         colClientId.setCellValueFactory(c -> c.getValue().idProperty());
@@ -258,8 +281,6 @@ public class DashboardController implements Initializable {
         colProdStock.setCellValueFactory(c -> c.getValue().stockProperty());
 
         // colonnes panier
-//        colCartProd.setCellValueFactory(c -> c.getValue().produitProperty().get().nomCommercialProperty());
-//
         colCartProd.setCellValueFactory(cellData -> {
             LigneTransaction lt = cellData.getValue();
             if (lt.getProduit() != null) {
