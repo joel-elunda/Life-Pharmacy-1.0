@@ -4,13 +4,17 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.print.PrinterJob;
+import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
 import life.pharmacy.models.Recette;
 import life.pharmacy.services.RecetteService;
+import org.apache.poi.ss.formula.functions.T;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,10 +35,13 @@ public class RecetteController implements Initializable {
     @FXML private Button btnExporter;
     @FXML private Button btnResetYear;
     @FXML private LineChart<String, Number> chartRecettes;
+    @FXML
+    private CategoryAxis xAxis;
+    @FXML
+    private NumberAxis yAxis;
 
     @FXML
     private Label lblTotal; // pour afficher le total de la période (optionnel)
-
 
     private final RecetteService service = new RecetteService();
 
@@ -52,7 +59,6 @@ public class RecetteController implements Initializable {
     private void showAlert(String msg) {
         new Alert(Alert.AlertType.INFORMATION, msg, ButtonType.OK).showAndWait();
     }
-
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -169,7 +175,12 @@ public class RecetteController implements Initializable {
     private void handleActualiser() {
         String periode = comboPeriode.getValue();
 
-        List<Recette> recettes = service.getByPeriode(periode);
+        List<Recette> recettes = null;
+        try {
+            recettes = service.getByPeriode(periode);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
 
         XYChart.Series<String, Number> series = new XYChart.Series<>();
         series.setName("Chiffre d’affaires");

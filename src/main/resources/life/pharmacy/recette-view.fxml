@@ -25,10 +25,10 @@
     <center>
         <LineChart fx:id="chartRecettes" prefHeight="500" prefWidth="800">
             <xAxis>
-                <CategoryAxis label="Période" />
+                <CategoryAxis fx:id="xAxis" label="Période" />
             </xAxis>
             <yAxis>
-                <NumberAxis label="Montant" />
+                <NumberAxis fx:id="yAxis" label="Montant" />
             </yAxis>
         </LineChart>
     </center>

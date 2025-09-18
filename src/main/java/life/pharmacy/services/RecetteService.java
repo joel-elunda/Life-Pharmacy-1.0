@@ -1,10 +1,5 @@
 package life.pharmacy.services;
 
-import javafx.fxml.FXML;
-import javafx.scene.chart.LineChart;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
 import life.pharmacy.config.DatabaseInitializer;
 import life.pharmacy.models.Recette;
 import org.apache.poi.ss.usermodel.Row;
@@ -240,33 +235,98 @@ public class RecetteService {
         }
     }
 
-    public List<Recette> getByPeriode(String periode) {
-        List<Recette> recettes = new ArrayList<>();
+//    public List<Recette> getByPeriode(String periode) {
+//        List<Recette> recettes = new ArrayList<>();
+//
+//        String query = switch (periode.toLowerCase()) {
+//            case "jour" -> "SELECT date, SUM(montant) as montant FROM recettes GROUP BY date";
+//            case "semaine" -> "SELECT strftime('%W', date) as semaine, SUM(montant) as montant FROM recettes GROUP BY semaine";
+//            case "mois" -> "SELECT strftime('%m-%Y', date) as mois, SUM(montant) as montant FROM recettes GROUP BY mois";
+//            case "annee" -> "SELECT strftime('%Y', date) as annee, SUM(montant) as montant FROM recettes GROUP BY annee";
+//            default -> "SELECT date, montant FROM recettes";
+//        };
+//
+//        try (Connection conn = DriverManager.getConnection("jdbc:sqlite:pharmacy.db");
+//             Statement stmt = conn.createStatement();
+//             ResultSet rs = stmt.executeQuery(query)) {
+//
+//            while (rs.next()) {
+//                Recette r = new Recette();
+//                r.setDate(LocalDate.parse(rs.getString(1)));   // attention : pour semaine/mois/annee → String
+//                r.setMontant(rs.getDouble(2));
+//                recettes.add(r);
+//            }
+//
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//
+//        return recettes;
+//    }
 
-        String query = switch (periode.toLowerCase()) {
-            case "jour" -> "SELECT date, SUM(montant) as montant FROM recettes GROUP BY date";
-            case "semaine" -> "SELECT strftime('%W', date) as semaine, SUM(montant) as montant FROM recettes GROUP BY semaine";
-            case "mois" -> "SELECT strftime('%m-%Y', date) as mois, SUM(montant) as montant FROM recettes GROUP BY mois";
-            case "annee" -> "SELECT strftime('%Y', date) as annee, SUM(montant) as montant FROM recettes GROUP BY annee";
-            default -> "SELECT date, montant FROM recettes";
-        };
+    public List<Recette> getByPeriode(String periode) throws SQLException {
+        List<Recette> list = new ArrayList<>();
+        String sql = "";
 
-        try (Connection conn = DriverManager.getConnection("jdbc:sqlite:pharmacy.db");
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(query)) {
-
-            while (rs.next()) {
-                Recette r = new Recette();
-                r.setDate(LocalDate.parse(rs.getString(1)));   // attention : pour semaine/mois/annee → String
-                r.setMontant(rs.getDouble(2));
-                recettes.add(r);
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
+        switch (periode.toLowerCase()) {
+            case "jour":
+                sql = """
+                SELECT strftime('%Y-%m-%d', dateHeure) as d, SUM(total) as montant
+                FROM table_transactions
+                GROUP BY d
+                ORDER BY d
+            """;
+                break;
+            case "semaine":
+                sql = """
+                SELECT strftime('%Y-%W', dateHeure) as d, SUM(total) as montant
+                FROM table_transactions
+                GROUP BY d
+                ORDER BY d
+            """;
+                break;
+            case "mois":
+                sql = """
+                SELECT strftime('%m', dateHeure) as d, SUM(total) as montant
+                FROM table_transactions
+                GROUP BY d
+                ORDER BY d
+            """;
+                break;
+            case "annee":
+                sql = """
+                SELECT strftime('%Y', dateHeure) as d, SUM(total) as montant
+                FROM table_transactions
+                GROUP BY d
+                ORDER BY d
+            """;
+                break;
         }
 
-        return recettes;
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             Statement st = conn.createStatement();
+             ResultSet rs = st.executeQuery(sql)) {
+            while (rs.next()) {
+                Recette r = new Recette(
+                        0,
+                        LocalDate.parse(rs.getString("d")),
+                        rs.getDouble("montant"),
+                        periode
+                );
+                list.add(r);
+
+                // Insertion automatique dans table recettes
+                try (PreparedStatement ps = conn.prepareStatement(
+                        "INSERT INTO recettes(date, montant, periode) VALUES(?,?,?)")) {
+                    ps.setString(1, rs.getString("d"));
+                    ps.setDouble(2, rs.getDouble("montant"));
+                    ps.setString(3, periode);
+                    ps.executeUpdate();
+                } catch (Exception ignore) {}
+            }
+        }
+        return list;
     }
+
 
 }
