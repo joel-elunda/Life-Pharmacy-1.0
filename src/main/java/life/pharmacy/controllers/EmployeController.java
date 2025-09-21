@@ -173,7 +173,6 @@ public class EmployeController implements Initializable {
         ));
 
         tableView.setOnMouseClicked(this::handleTableClick);
-        reloadEmploye();
 
         try {
             comboResearch.setItems(FXCollections.observableArrayList(
@@ -207,6 +206,8 @@ public class EmployeController implements Initializable {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+
+        reloadEmploye();
     }
 
     @FXML

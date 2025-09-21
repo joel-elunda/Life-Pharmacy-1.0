@@ -78,6 +78,7 @@ public class RecetteController implements Initializable {
 
         loadChart();
 
+        handleRefresh();
     }
 
     private Stage getStage() {
@@ -172,7 +173,7 @@ public class RecetteController implements Initializable {
     }
 
     @FXML
-    private void handleActualiser() {
+    private void handleRefresh() {
         String periode = comboPeriode.getValue();
 
         List<Recette> recettes = null;
@@ -194,7 +195,7 @@ public class RecetteController implements Initializable {
     }
 
     @FXML
-    private void handleImprimer() {
+    private void handlePrint() {
         PrinterJob job = PrinterJob.createPrinterJob();
         if (job != null && job.showPrintDialog(chartRecettes.getScene().getWindow())) {
             boolean success = job.printPage(chartRecettes);

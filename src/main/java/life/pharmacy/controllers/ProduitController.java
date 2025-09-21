@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import static life.pharmacy.controllers.DashboardController.exportImportService;
+import static life.pharmacy.controllers.DashboardController.showError;
 
 public class ProduitController implements Initializable {
 
@@ -240,6 +241,8 @@ public class ProduitController implements Initializable {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+
+        handleRefresh();
     }
 
     private void handleTableClick(MouseEvent event) {
@@ -286,5 +289,16 @@ public class ProduitController implements Initializable {
         } catch (SQLException e) {
             System.out.println(e);
         }
+    }
+
+    @FXML
+    private void handleRefresh() {
+        reloadProduits(null);
+    }
+    private void reloadProduits(String q) {
+        try {
+            var list = (q == null || q.isBlank()) ? service.getAll() : service.search(q);
+            tableView.getItems().setAll(list);
+        } catch (Exception e) { showError(e); }
     }
 }

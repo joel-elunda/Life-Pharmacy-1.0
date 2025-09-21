@@ -6,6 +6,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import life.pharmacy.Launcher;
 import life.pharmacy.config.DatabaseInitializer;
@@ -31,21 +32,36 @@ public class LoginController implements Initializable {
     private void onLogin() {
         String u = usernameField.getText().trim();
         String p = passwordField.getText();
+
         try {
-            if (authService.authenticate(u, p)) {
-                // ouvrir dashboard
-                var root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/life/pharmacy/dashboard-view.fxml")));
-                var stage = new Stage();
+            Employe loggedIn = authService.authenticate(u, p);
+
+            if (loggedIn != null) {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/life/pharmacy/dashboard-view.fxml"));
+                Parent root = loader.load();
+
+                // Récupérer le contrôleur
+                DashboardController dashboardController = loader.getController();
+                dashboardController.setCurrentUser(loggedIn);
+
+                Stage stage = new Stage();
                 stage.setTitle("Life Pharmacy — Tableau de bord");
-                var scene = new Scene((Parent) root);
-//                scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/theme.css")).toExternalForm());
-                stage.setScene(scene);
+                stage.setScene(new Scene(root));
+
+                // ✅ ajoute l’icône aussi pour le Dashboard
+                stage.getIcons().add(new Image(Objects.requireNonNull(
+                        getClass().getResourceAsStream("/image/logo.png"))));
+
                 stage.show();
+
+                // Fermer login
                 ((Stage) loginButton.getScene().getWindow()).close();
+
             } else {
                 new Alert(Alert.AlertType.ERROR, "Identifiants incorrects! Veuillez réessayer.").showAndWait();
             }
         } catch (Exception e) {
+            e.printStackTrace();
             new Alert(Alert.AlertType.ERROR, e.getMessage()).showAndWait();
         }
     }

@@ -49,7 +49,8 @@ public class FournisseurController implements Initializable {
     public static final FournisseurService service = new FournisseurService();
     private Fournisseur selected;
 
-    public void reloadFournisseurs() { reloadFournisseurs(null); }
+    @FXML
+    public void handleRefresh() { reloadFournisseurs(null); }
     private void reloadFournisseurs( String q) {
         try {
             var list = (q == null || q.isBlank()) ? service.getAll() : service.search(q);
@@ -67,8 +68,6 @@ public class FournisseurController implements Initializable {
         colEmail.setCellValueFactory(data -> data.getValue().emailProperty());
         colAdresse.setCellValueFactory(data -> data.getValue().adresseProperty());
         colConditionsPaiement.setCellValueFactory(data -> data.getValue().conditionsPaiementProperty());
-
-        refreshTable();
 
         try {
             comboResearch.setItems(FXCollections.observableArrayList(
@@ -104,6 +103,8 @@ public class FournisseurController implements Initializable {
         }
 
         tableView.setOnMouseClicked(this::handleTableClick);
+
+        refreshTable();
     }
 
     private void refreshTable() {

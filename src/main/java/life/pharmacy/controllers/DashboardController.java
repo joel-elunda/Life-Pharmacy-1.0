@@ -8,7 +8,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -17,7 +16,6 @@ import life.pharmacy.models.*;
 import life.pharmacy.services.*;
 import life.pharmacy.utils.ExportImportService;
 
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 
 public class DashboardController implements Initializable {
@@ -65,9 +63,9 @@ public class DashboardController implements Initializable {
     private final TransactionService transactionService = new TransactionService();
     private final LigneTransactionService ligneService = new LigneTransactionService();
 
-    private FournisseurController fournisseurController = new FournisseurController();
-    private FactureController factureController = new FactureController();
-    private EmployeController employeController = new EmployeController();
+    private FournisseurController fournisseurController;
+    private FactureController factureController;
+    private EmployeController employeController;
 
     private final ObservableList<LigneTransaction> panier = FXCollections.observableArrayList();
     private Employe currentUser;
@@ -76,21 +74,28 @@ public class DashboardController implements Initializable {
     @FXML private Button refreshButton;
     @FXML private Button btnAddClient;
     @FXML private Button facturesButton;
-    @FXML private Button emloyesButton;
+    @FXML private Button employesButton;
     @FXML private Button recettesButton;
     @FXML private ToolBar toolBar;
 
     private Stage stage;
 
 
-    public void setUtilisateur(Employe user) {
-        if (!"Administrateur".equalsIgnoreCase(user.getRole())) {
-            facturesButton.setVisible(false);
-            emloyesButton.setVisible(false);
-            recettesButton.setVisible(false);
+    public void setCurrentUser(Employe user) {
+        this.currentUser = user;
+        System.out.println("Connecté : " + user.getNomComplet() + " (" + user.getRole() + ")");
+
+        switch (user.getRole()) {
+            case "Administrateur":
+                // Admin → accès total
+                break;
+            case "Pharmacien(ne)", "Caissier(e)":
+                toolBar.getItems().removeAll(employesButton, recettesButton);
+                break;
+            default:
+                toolBar.getItems().removeAll(employesButton, recettesButton, facturesButton);
         }
     }
-
 
     public void setStage(Stage stage) {
         this.stage = stage;
@@ -107,27 +112,51 @@ public class DashboardController implements Initializable {
 
     @FXML
     private void handleRefresh(ActionEvent event) {
-
         try {
+
+            FXMLLoader fournisseurLoader = new FXMLLoader(getClass().getResource("/life/pharmacy/fournisseur-view.fxml"));
+            fournisseurLoader.load();
+            fournisseurController = fournisseurLoader.getController();
+
+            // Charger Factures
+            FXMLLoader factureLoader = new FXMLLoader(getClass().getResource("/life/pharmacy/facture-view.fxml"));
+            factureLoader.load();
+            factureController = factureLoader.getController();
+
+            // Charger Employés
+            FXMLLoader employeLoader = new FXMLLoader(getClass().getResource("/life/pharmacy/employe-view.fxml"));
+            employeLoader.load();
+            employeController = employeLoader.getController();
+
+            if (fournisseurController != null && fournisseurController.tableView != null) {
+                fournisseurController.tableView.setItems(FXCollections.observableArrayList(fournisseurService.getAll()));
+                fournisseurController.reloadFournisseurs();
+            }
+
+            if (factureController != null && factureController.tableView != null) {
+                factureController.tableView.setItems(FXCollections.observableArrayList(factureService.getAll()));
+                factureController.reloadFactures();
+            }
+
+            if (employeController != null && employeController.tableView != null) {
+                employeController.tableView.setItems(FXCollections.observableArrayList(employeService.getAll()));
+                employeController.reloadEmploye();
+            }
+
+            reloadClients();
+            reloadProduits();
+
+            new Alert(Alert.AlertType.INFORMATION, "Données mises à jour avec succès !").showAndWait();
+
             clientTable.setItems(FXCollections.observableArrayList(clientService.getAll()));
             productTable.setItems(FXCollections.observableArrayList(produitService.getAll()));
             fournisseurController.tableView.setItems(FXCollections.observableArrayList(fournisseurService.getAll()));
             factureController.tableView.setItems(FXCollections.observableArrayList(factureService.getAll()));
             employeController.tableView.setItems(FXCollections.observableArrayList(employeService.getAll()));
 
-        } catch (SQLException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
-        // ajoute ici toutes les méthodes de reload selon ce que tu as
-        reloadClients();
-        reloadProduits();
-        fournisseurController.reloadFournisseurs();
-        factureController.reloadFactures();
-        employeController.reloadEmploye();
-
-        Alert alert = new Alert(Alert.AlertType.INFORMATION, "Données mises à jour avec succès !");
-        alert.showAndWait();
     }
 
     // Ajout au panier
@@ -250,23 +279,6 @@ public class DashboardController implements Initializable {
     private void alert(String msg){ new Alert(Alert.AlertType.INFORMATION, msg).showAndWait(); }
     public static void showError(Throwable t){ new Alert(Alert.AlertType.ERROR, t.getMessage()).showAndWait(); }
 
-    String login;
-    public void setCurrentUserName(String u) {
-        this.login = u;
-    }
-
-    private String getLogin() {
-        return login;
-    }
-
-    public ToolBar getToolBar() {
-        return toolBar;
-    }
-
-    public Node[] removedNodes() {
-        return new Node[]{facturesButton, emloyesButton, recettesButton};
-    }
-
     @Override
     public void initialize(java.net.URL location, java.util.ResourceBundle resources) {
         // Initialization code here
@@ -278,8 +290,6 @@ public class DashboardController implements Initializable {
         currentUser.setNomComplet("Administrateur");
         currentUser.setRole("Administrateur");
         currentUserLabel.setText(currentUser.getNomComplet());
-
-        setUtilisateur(currentUser);
 
         // colonnes clients
         colClientId.setCellValueFactory(c -> c.getValue().idProperty());

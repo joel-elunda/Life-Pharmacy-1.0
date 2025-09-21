@@ -15,8 +15,8 @@
         <ToolBar style="-fx-background-color:#009688;">
             <Label style="-fx-text-fill:white; -fx-font-size:16px;" text="Statistiques des recettes" />
             <ComboBox fx:id="comboPeriode" prefWidth="200" promptText="Sélectionner période" />
-            <Button fx:id="btnActualiser" onAction="#handleActualiser" text="Actualiser" />
-            <Button fx:id="btnImprimer" onAction="#handleImprimer" text="Imprimer" />
+            <Button fx:id="btnActualiser" onAction="#handleRefresh" text="Actualiser" />
+            <Button fx:id="btnImprimer" onAction="#handlePrint" text="Imprimer" />
             <Button fx:id="btnExporter" onAction="#onExportRecettes" text="Exporter Excel" />
          <Button fx:id="btnResetYear" mnemonicParsing="false" text="Réinitialiser l'année" />
         </ToolBar>

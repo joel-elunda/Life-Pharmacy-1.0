@@ -22,7 +22,7 @@
             <Pane HBox.hgrow="ALWAYS" />
             <ComboBox fx:id="comboResearch" editable="true" prefHeight="25.0" prefWidth="217.0" promptText="Rechercher une facture..." />
             <Button onAction="#onSearch"  text="Rechercher" />
-            <Button fx:id="refreshButton" text="Actualiser" />
+            <Button fx:id="refreshButton" onAction="#handleRefresh" text="Actualiser" />
         </ToolBar>
     </top>
 

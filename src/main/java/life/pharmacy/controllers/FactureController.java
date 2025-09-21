@@ -59,7 +59,8 @@ public class FactureController implements Initializable {
         }
     }
 
-    public void reloadFactures() { reloadFactures(null); }
+    @FXML
+    public void handleRefresh() { reloadFactures(null); }
     private void reloadFactures( String q) {
         try {
             var list = (q == null || q.isBlank()) ? service.getAll() : service.search(q);
@@ -112,6 +113,8 @@ public class FactureController implements Initializable {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+
+        handleRefresh();
     }
 
     private void populateFieldsFromSelection(Facture f) {

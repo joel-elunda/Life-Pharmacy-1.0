@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import static life.pharmacy.controllers.DashboardController.exportImportService;
+import static life.pharmacy.controllers.DashboardController.showError;
 
 public class ClientController implements Initializable {
 
@@ -50,7 +51,16 @@ public class ClientController implements Initializable {
     private final ClientService service = new ClientService();
     private final ObservableList<Client> data = FXCollections.observableArrayList();
 
-
+    @FXML
+    private void handleRefresh() {
+        reloadClients(null);
+    }
+    private void reloadClients(String q) {
+        try {
+            var list = (q == null || q.isBlank()) ? service.getAll() : service.search(q);
+            tableView.getItems().setAll(list);
+        } catch (Exception e) { showError(e); }
+    }
 
     @FXML
     public void onAdd() {
@@ -170,9 +180,6 @@ public class ClientController implements Initializable {
 
         tableView.setOnMouseClicked(this::handleTableClick);
 
-//        filtrePeriode.setItems(FXCollections.observableArrayList(
-//                "Jour", "Semaine", "Mois", "Trimestre", "Semestre", "Année"
-//        ));
         try {
             comboResearch.setItems(FXCollections.observableArrayList(
                     service.getAll().stream()
@@ -206,6 +213,7 @@ public class ClientController implements Initializable {
             throw new RuntimeException(e);
         }
 
+        handleRefresh();
     }
 
     private void populateFieldsFromSelection(Client c) {
