@@ -8,7 +8,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -76,21 +75,30 @@ public class DashboardController implements Initializable {
     @FXML private Button refreshButton;
     @FXML private Button btnAddClient;
     @FXML private Button facturesButton;
-    @FXML private Button emloyesButton;
+    @FXML private Button employesButton;
     @FXML private Button recettesButton;
     @FXML private ToolBar toolBar;
 
     private Stage stage;
 
 
-    public void setUtilisateur(Employe user) {
-        if (!"Administrateur".equalsIgnoreCase(user.getRole())) {
-            facturesButton.setVisible(false);
-            emloyesButton.setVisible(false);
-            recettesButton.setVisible(false);
+    public void setCurrentUser(Employe user) {
+        this.currentUser = user;
+        System.out.println("Connecté : " + user.getNomComplet() + " (" + user.getRole() + ")");
+
+        // Masquer/désactiver selon rôle
+        boolean b = toolBar.getItems().removeAll(employesButton, recettesButton);
+        switch (user.getRole()) {
+            case "Administrateur":
+                // Admin → accès total
+                break;
+            case "Pharmacien(ne)", "Caissier(e)":
+                boolean b1 = b;
+                break;
+            default:
+                toolBar.getItems().removeAll(employesButton, recettesButton, facturesButton);
         }
     }
-
 
     public void setStage(Stage stage) {
         this.stage = stage;
@@ -250,23 +258,6 @@ public class DashboardController implements Initializable {
     private void alert(String msg){ new Alert(Alert.AlertType.INFORMATION, msg).showAndWait(); }
     public static void showError(Throwable t){ new Alert(Alert.AlertType.ERROR, t.getMessage()).showAndWait(); }
 
-    String login;
-    public void setCurrentUserName(String u) {
-        this.login = u;
-    }
-
-    private String getLogin() {
-        return login;
-    }
-
-    public ToolBar getToolBar() {
-        return toolBar;
-    }
-
-    public Node[] removedNodes() {
-        return new Node[]{facturesButton, emloyesButton, recettesButton};
-    }
-
     @Override
     public void initialize(java.net.URL location, java.util.ResourceBundle resources) {
         // Initialization code here
@@ -279,7 +270,7 @@ public class DashboardController implements Initializable {
         currentUser.setRole("Administrateur");
         currentUserLabel.setText(currentUser.getNomComplet());
 
-        setUtilisateur(currentUser);
+
 
         // colonnes clients
         colClientId.setCellValueFactory(c -> c.getValue().idProperty());
