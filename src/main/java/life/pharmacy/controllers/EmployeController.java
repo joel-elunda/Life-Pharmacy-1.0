@@ -85,6 +85,7 @@ public class EmployeController implements Initializable {
         try {
             if(service.ifExists(e)) {
                 new Alert(Alert.AlertType.ERROR, "Utilisateur déjà enregistré", ButtonType.CANCEL).showAndWait();
+                clearFields();
             } else {
                 service.add(e);
                 data.setAll(service.getAll());
@@ -168,6 +169,7 @@ public class EmployeController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         colId.setCellValueFactory(cell -> cell.getValue().idProperty());
+        colId.setVisible(false);
         colNom.setCellValueFactory(cell -> cell.getValue().nomCompletProperty());
         colRole.setCellValueFactory(cell -> cell.getValue().roleProperty());
         colLogin.setCellValueFactory(cell -> cell.getValue().loginProperty());

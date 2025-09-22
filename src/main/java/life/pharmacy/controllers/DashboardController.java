@@ -293,11 +293,13 @@ public class DashboardController implements Initializable {
 
         // colonnes clients
         colClientId.setCellValueFactory(c -> c.getValue().idProperty());
+        colClientId.setVisible(false);
         colClientNom.setCellValueFactory(c -> c.getValue().nomCompletProperty());
         colClientTel.setCellValueFactory(c -> c.getValue().telephoneProperty());
 
         // colonnes produits
         colProdId.setCellValueFactory(c -> c.getValue().idProperty());
+        colProdId.setVisible(false);
         colProdNom.setCellValueFactory(c -> c.getValue().nomCommercialProperty());
         colProdCategorie.setCellValueFactory(c -> c.getValue().categorieProperty());
         colProdPrix.setCellValueFactory(c -> c.getValue().prixVenteProperty());

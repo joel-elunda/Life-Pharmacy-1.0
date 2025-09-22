@@ -62,6 +62,7 @@ public class FournisseurController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         colId.setCellValueFactory(data -> data.getValue().idProperty());
+        colId.setVisible(false);
         colNom.setCellValueFactory(data -> data.getValue().nomProperty());
         colContact.setCellValueFactory(data -> data.getValue().contactProperty());
         colTelephone.setCellValueFactory(data -> data.getValue().telephoneProperty());
@@ -137,12 +138,18 @@ public class FournisseurController implements Initializable {
                 areaConditionsPaiement.getText()
         );
         try {
-            service.add(f);
+            if(service.ifExists(f)) {
+                new Alert(Alert.AlertType.ERROR, "Fournisseur déjà enregistré!", ButtonType.CANCEL).showAndWait();
+                clearFields();
+            } else {
+                service.add(f);
+                data.setAll(service.getAll());
+                refreshTable();
+                clearFields();
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        refreshTable();
-        clearFields();
     }
 
     @FXML

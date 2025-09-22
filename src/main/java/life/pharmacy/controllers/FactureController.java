@@ -71,6 +71,7 @@ public class FactureController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         colId.setCellValueFactory(cell -> cell.getValue().idProperty());
+        colId.setVisible(false);
         colClient.setCellValueFactory(cell -> cell.getValue().clientProperty().getValue().nomCompletProperty());
         colEmploye.setCellValueFactory(cell -> cell.getValue().employeProperty().getValue().nomCompletProperty());
         colMontantTotal.setCellValueFactory(cell -> cell.getValue().montantTotalProperty());

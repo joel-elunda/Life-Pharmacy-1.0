@@ -101,6 +101,7 @@ public class ProduitController implements Initializable {
         try {
             if(service.ifExists(p)) {
                 new Alert(Alert.AlertType.ERROR, "Produit déjà enregistré", ButtonType.CANCEL).showAndWait();
+                clearFields();
             } else {
                 service.add(p);
                 data.setAll(service.getAll());
@@ -111,8 +112,6 @@ public class ProduitController implements Initializable {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
-        clearFields();
     }
 
     @FXML
@@ -205,6 +204,7 @@ public class ProduitController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         colId.setCellValueFactory(cell -> cell.getValue().idProperty());
+        colId.setVisible(false);
         colNomCommercial.setCellValueFactory(cell -> cell.getValue().nomCommercialProperty());
         colNomGenerique.setCellValueFactory(cell -> cell.getValue().nomGeneriqueProperty());
         colForme.setCellValueFactory(cell -> cell.getValue().formeProperty());

@@ -77,6 +77,7 @@ public class ClientController implements Initializable {
         try {
             if(service.ifExists(c)) {
                 new Alert(Alert.AlertType.ERROR, "Client déjà enregistré", ButtonType.CANCEL).showAndWait();
+                clearFields();
             } else {
                 service.add(c);
                 data.setAll(service.getAll());
