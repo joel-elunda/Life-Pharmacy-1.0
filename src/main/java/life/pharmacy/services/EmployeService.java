@@ -125,4 +125,16 @@ public class EmployeService {
         }
     }
 
+    public boolean ifExists(Employe employe) {
+        try {
+            List<Employe> employes = getAll();
+            for(Employe e : employes) {
+                if (e.getNomComplet().equals(employe.getNomComplet()) || e.getLogin().equals(employe.getLogin()))
+                    return true;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return false;
+    }
 }

@@ -130,12 +130,12 @@ public class DashboardController implements Initializable {
 
             if (fournisseurController != null && fournisseurController.tableView != null) {
                 fournisseurController.tableView.setItems(FXCollections.observableArrayList(fournisseurService.getAll()));
-                fournisseurController.reloadFournisseurs();
+                fournisseurController.reloadFournisseurs(null);
             }
 
             if (factureController != null && factureController.tableView != null) {
                 factureController.tableView.setItems(FXCollections.observableArrayList(factureService.getAll()));
-                factureController.reloadFactures();
+                factureController.reloadFactures(null);
             }
 
             if (employeController != null && employeController.tableView != null) {

@@ -75,13 +75,17 @@ public class ClientController implements Initializable {
                 areaAllergies.getText()
         );
         try {
-            service.add(c);
-            data.setAll(service.getAll());
+            if(service.ifExists(c)) {
+                new Alert(Alert.AlertType.ERROR, "Client déjà enregistré", ButtonType.CANCEL).showAndWait();
+            } else {
+                service.add(c);
+                data.setAll(service.getAll());
+                clearFields();
+                tableView.refresh();
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
-        clearFields();
     }
 
     @FXML
@@ -123,6 +127,7 @@ public class ClientController implements Initializable {
                 }
 
             }
+            tableView.refresh();
         } else {
             showAlert("Sélectionnez un client à supprimer.");
         }
@@ -180,6 +185,8 @@ public class ClientController implements Initializable {
 
         tableView.setOnMouseClicked(this::handleTableClick);
 
+        colId.setVisible(false);
+
         try {
             comboResearch.setItems(FXCollections.observableArrayList(
                     service.getAll().stream()
@@ -213,7 +220,7 @@ public class ClientController implements Initializable {
             throw new RuntimeException(e);
         }
 
-        handleRefresh();
+        tableView.refresh();
     }
 
     private void populateFieldsFromSelection(Client c) {
@@ -252,7 +259,6 @@ public class ClientController implements Initializable {
             System.out.println(e);
         }
     }
-
 }
 
 

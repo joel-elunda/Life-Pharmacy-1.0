@@ -122,4 +122,18 @@ public class ClientService {
             throw new RuntimeException("Failed to fetch clients for ID generation", e);
         }
     }
+
+    public boolean ifExists(Client client) {
+        try {
+            List<Client> clients = getAll();
+            for (Client c : clients) {
+                if(c.getNomComplet().equals(client.getNomComplet()) ||  c.getEmail().equals(client.getEmail())  ||   c.getTelephone().equals(client.getTelephone()) ) {
+                    return true;
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return false;
+    }
 }

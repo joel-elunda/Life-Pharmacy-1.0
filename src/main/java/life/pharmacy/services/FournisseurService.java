@@ -94,4 +94,17 @@ public class FournisseurService {
         return list;
     }
 
+    public boolean ifExists(Fournisseur fournisseur) {
+        try{
+            List<Fournisseur> fournisseurs = getAll();
+            for(Fournisseur f : fournisseurs) {
+                if (f.getNom().equals(fournisseur.getNom()) || f.getTelephone().equals(fournisseur.getTelephone()))
+                    return true;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return false;
+    }
+
 }

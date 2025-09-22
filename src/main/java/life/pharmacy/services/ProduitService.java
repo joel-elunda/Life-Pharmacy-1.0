@@ -172,4 +172,17 @@ public class ProduitService {
             throw new RuntimeException("Failed to fetch products for ID generation", e);
         }
     }
+
+    public boolean ifExists(Produit produit) {
+        try{
+            List<Produit> produits = getAll();
+            for(Produit p : produits) {
+                if(p.getNomGenerique().equals(produit.getNomGenerique()) || p.getNomCommercial().equals(produit.getNomCommercial()))
+                    return true;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return false;
+    }
 }

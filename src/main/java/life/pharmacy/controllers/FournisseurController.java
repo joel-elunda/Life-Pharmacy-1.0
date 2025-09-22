@@ -51,7 +51,7 @@ public class FournisseurController implements Initializable {
 
     @FXML
     public void handleRefresh() { reloadFournisseurs(null); }
-    private void reloadFournisseurs( String q) {
+    public void reloadFournisseurs( String q) {
         try {
             var list = (q == null || q.isBlank()) ? service.getAll() : service.search(q);
             tableView.getItems().setAll(list);

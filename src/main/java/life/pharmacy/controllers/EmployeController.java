@@ -1,7 +1,6 @@
 package life.pharmacy.controllers;
 
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.Initializable;
 import javafx.scene.input.MouseEvent;
 import life.pharmacy.models.Employe;
@@ -75,7 +74,6 @@ public class EmployeController implements Initializable {
 
     @FXML
     public void onAdd() {
-        StringBuilder perms = new StringBuilder();
         Employe e = new Employe(
                 service.getNextId(),
                 fiedlNomComplet.getText(),
@@ -85,8 +83,14 @@ public class EmployeController implements Initializable {
                 checkPermissions.getText()
         );
         try {
-            service.add(e);
-            data.setAll(service.getAll());
+            if(service.ifExists(e)) {
+                new Alert(Alert.AlertType.ERROR, "Utilisateur déjà enregistré", ButtonType.CANCEL).showAndWait();
+            } else {
+                service.add(e);
+                data.setAll(service.getAll());
+                clearFields();
+                tableView.refresh();
+            }
         } catch (SQLException ex) {
             throw new RuntimeException(ex);
         }

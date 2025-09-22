@@ -99,8 +99,15 @@ public class ProduitController implements Initializable {
                 Integer.parseInt(fieldSeuilAlerte.getText())
         );
         try {
-            service.add(p);
-            data.setAll(service.getAll());
+            if(service.ifExists(p)) {
+                new Alert(Alert.AlertType.ERROR, "Produit déjà enregistré", ButtonType.CANCEL).showAndWait();
+            } else {
+                service.add(p);
+                data.setAll(service.getAll());
+                tableView.refresh();
+                clearFields();
+            }
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
