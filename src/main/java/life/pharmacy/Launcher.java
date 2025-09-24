@@ -2,7 +2,6 @@ package life.pharmacy;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
@@ -22,7 +21,7 @@ public class Launcher extends Application {
         DashboardController controller  = fxmlDashboardLoader.getController();
         controller.setStage(stage);
 
-        Scene scene = new Scene(fxmlLoader.load(), 350, 410);
+        Scene scene = new Scene(fxmlLoader.load(), 350, 430);
         stage.setResizable(false);
         stage.setTitle("Authentification - Life Pharmacy");
         stage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/image/logo.png")))); // ton icône

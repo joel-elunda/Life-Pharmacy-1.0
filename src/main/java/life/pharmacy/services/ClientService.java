@@ -22,12 +22,11 @@ public class ClientService {
     private static final String DB_URL = "jdbc:sqlite:pharmacy.db";
 
     public void add(Client c) throws SQLException {
-        String sql = "INSERT INTO clients (nomComplet, dateNaissance, adresse, telephone, email, conditionsMedicales, allergies) VALUES(?,?,?,?,?,?,?)";
+        String sql = "INSERT INTO clients (nomComplet, adresse, telephone, email, conditionsMedicales, allergies) VALUES(?,?,?,?,?,?)";
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, c.getNomComplet());
-            pstmt.setString(2, c.getDateNaissance().toString());
             pstmt.setString(3, c.getAdresse());
             pstmt.setString(4, c.getTelephone());
             pstmt.setString(5, c.getEmail());
@@ -38,11 +37,10 @@ public class ClientService {
     }
 
     public void update(Client c) throws SQLException {
-        String sql = "UPDATE clients SET nomComplet=?, dateNaissance=?, adresse=?, telephone=?, email=?, conditionsMedicales=?, allergies=? WHERE id=?";
+        String sql = "UPDATE clients SET nomComplet=?, adresse=?, telephone=?, email=?, conditionsMedicales=?, allergies=? WHERE id=?";
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, c.getNomComplet());
-            pstmt.setString(2, c.getDateNaissance().toString());
             pstmt.setString(3, c.getAdresse());
             pstmt.setString(4, c.getTelephone());
             pstmt.setString(5, c.getEmail());
@@ -72,7 +70,6 @@ public class ClientService {
                 Client c = new Client(
                         rs.getInt("id"),
                         rs.getString("nomComplet"),
-                        LocalDate.parse(rs.getString("dateNaissance")),
                         rs.getString("adresse"),
                         rs.getString("telephone"),
                         rs.getString("email"),
@@ -98,7 +95,6 @@ public class ClientService {
                 Client c = new Client(
                         rs.getInt("id"),
                         rs.getString("nomComplet"),
-                        LocalDate.parse(rs.getString("dateNaissance")),
                         rs.getString("adresse"),
                         rs.getString("telephone"),
                         rs.getString("email"),

@@ -21,19 +21,16 @@ import static life.pharmacy.controllers.DashboardController.showError;
 public class ProduitController implements Initializable {
 
     @FXML private TextField fieldNomCommercial;
-    @FXML private TextField fieldNomGenerique;
+    @FXML private TextArea areaDescription;
     @FXML private ComboBox<String> comboForme;
     @FXML private TextField fieldDosage;
     @FXML private TextField fieldConditionnement;
-    @FXML private TextField fieldFabricant;
-    @FXML private TextField fieldCodeBarres;
     @FXML private TextField fieldPrixVente;
     @FXML private TextField fieldPrixAchat;
     @FXML private TextField fieldStatut;
     @FXML private ComboBox<String> comboCategorie;
     @FXML private CheckBox checkPrescriptionRequise;
     @FXML private DatePicker dataDateExpiration;
-    @FXML private TextField fieldNumeroLot;
     @FXML private TextField fieldStock;
     @FXML private TextField fieldSeuilAlerte;
     @FXML private ComboBox<String> comboResearch;
@@ -41,7 +38,7 @@ public class ProduitController implements Initializable {
     @FXML private TableView<Produit> tableView;
     @FXML private TableColumn<Produit, Number> colId;
     @FXML private TableColumn<Produit, String> colNomCommercial;
-    @FXML private TableColumn<Produit, String> colNomGenerique;
+    @FXML private TableColumn<Produit, String> colDescription;
     @FXML private TableColumn<Produit, String> colForme;
     @FXML private TableColumn<Produit, String> colDosage;
     @FXML private TableColumn<Produit, Number> colPrixVente;
@@ -60,19 +57,16 @@ public class ProduitController implements Initializable {
     private void populateFieldsFromSelection(Produit p) {
         if (p == null) return;
         fieldNomCommercial.setText(p.getNomCommercial());
-        fieldNomGenerique.setText(p.getNomGenerique());
+        areaDescription.setText(p.getDescription());
         comboForme.setValue(p.getForme());
         fieldDosage.setText(p.getDosage());
         fieldConditionnement.setText(p.getConditionnement());
-        fieldFabricant.setText(p.getFabricant());
-        fieldCodeBarres.setText(p.getCodeBarres());
         fieldPrixVente.setText(String.valueOf(p.getPrixVente()));
         fieldPrixAchat.setText(String.valueOf(p.getPrixAchat()));
         fieldStatut.setText(p.getStatut());
         comboCategorie.setValue(p.getCategorie());
         checkPrescriptionRequise.setSelected(p.isPrescriptionRequise());
         dataDateExpiration.setValue(p.getDateExpiration());
-        fieldNumeroLot.setText(p.getNumeroLot());
         fieldStock.setText(String.valueOf(p.getStock()));
         fieldSeuilAlerte.setText(String.valueOf(p.getSeuilAlerte()));
     }
@@ -82,19 +76,16 @@ public class ProduitController implements Initializable {
         Produit p = new Produit(
                 service.getNextId(),
                 fieldNomCommercial.getText(),
-                fieldNomGenerique.getText(),
+                areaDescription.getText(),
                 comboForme.getValue(),
                 fieldDosage.getText(),
                 fieldConditionnement.getText(),
-                fieldFabricant.getText(),
-                fieldCodeBarres.getText(),
                 Double.parseDouble(fieldPrixVente.getText()),
                 Double.parseDouble(fieldPrixAchat.getText()),
                 fieldStatut.getText(),
                 comboCategorie.getValue(),
                 checkPrescriptionRequise.isSelected(),
                 dataDateExpiration.getValue(),
-                fieldNumeroLot.getText(),
                 Integer.parseInt(fieldStock.getText()),
                 Integer.parseInt(fieldSeuilAlerte.getText())
         );
@@ -119,19 +110,16 @@ public class ProduitController implements Initializable {
         Produit selected = tableView.getSelectionModel().getSelectedItem();
         if (selected != null) {
             selected.setNomCommercial(fieldNomCommercial.getText());
-            selected.setNomGenerique(fieldNomGenerique.getText());
+            selected.setDescription(areaDescription.getText());
             selected.setForme(comboForme.getValue());
             selected.setDosage(fieldDosage.getText());
             selected.setConditionnement(fieldConditionnement.getText());
-            selected.setFabricant(fieldFabricant.getText());
-            selected.setCodeBarres(fieldCodeBarres.getText());
             selected.setPrixVente(Double.parseDouble(fieldPrixVente.getText()));
             selected.setPrixAchat(Double.parseDouble(fieldPrixAchat.getText()));
             selected.setStatut(fieldStatut.getText());
             selected.setCategorie(comboCategorie.getValue());
             selected.setPrescriptionRequise(checkPrescriptionRequise.isSelected());
             selected.setDateExpiration(dataDateExpiration.getValue());
-            selected.setNumeroLot(fieldNumeroLot.getText());
             selected.setStock(Integer.parseInt(fieldStock.getText()));
             selected.setSeuilAlerte(Integer.parseInt(fieldSeuilAlerte.getText()));
 
@@ -182,19 +170,16 @@ public class ProduitController implements Initializable {
 
     private void clearFields() {
         fieldNomCommercial.clear();
-        fieldNomGenerique.clear();
+        areaDescription.clear();
         comboForme.setValue(null);
         fieldDosage.clear();
         fieldConditionnement.clear();
-        fieldFabricant.clear();
-        fieldCodeBarres.clear();
         fieldPrixVente.clear();
         fieldPrixAchat.clear();
         fieldStatut.clear();
         comboCategorie.setValue(null);
         checkPrescriptionRequise.setSelected(false);
         dataDateExpiration.setValue(null);
-        fieldNumeroLot.clear();
         fieldStock.clear();
         fieldSeuilAlerte.clear();
     }
@@ -208,7 +193,7 @@ public class ProduitController implements Initializable {
         colId.setCellValueFactory(cell -> cell.getValue().idProperty());
         colId.setVisible(false);
         colNomCommercial.setCellValueFactory(cell -> cell.getValue().nomCommercialProperty());
-        colNomGenerique.setCellValueFactory(cell -> cell.getValue().nomGeneriqueProperty());
+        colDescription.setCellValueFactory(cell -> cell.getValue().descriptionProperty());
         colForme.setCellValueFactory(cell -> cell.getValue().formeProperty());
         colDosage.setCellValueFactory(cell -> cell.getValue().dosageProperty());
         colStock.setCellValueFactory(cell -> cell.getValue().stockProperty());
@@ -258,19 +243,16 @@ public class ProduitController implements Initializable {
         Produit selected = tableView.getSelectionModel().getSelectedItem();
         if (selected != null) {
             fieldNomCommercial.setText(selected.getNomCommercial());
-            fieldNomGenerique.setText(selected.getNomGenerique());
+            areaDescription.setText(selected.getDescription());
             comboForme.setValue(selected.getForme());
             fieldDosage.setText(selected.getDosage());
             fieldConditionnement.setText(selected.getConditionnement());
-            fieldFabricant.setText(selected.getFabricant());
-            fieldCodeBarres.setText(selected.getCodeBarres());
             fieldPrixVente.setText(String.valueOf(selected.getPrixVente()));
             fieldPrixAchat.setText(String.valueOf(selected.getPrixAchat()));
             fieldStatut.setText(selected.getStatut());
             comboCategorie.setValue(selected.getCategorie());
             checkPrescriptionRequise.setSelected(selected.isPrescriptionRequise());
             dataDateExpiration.setValue(selected.getDateExpiration());
-            fieldNumeroLot.setText(selected.getNumeroLot());
             fieldStock.setText(String.valueOf(selected.getStock()));
             fieldSeuilAlerte.setText(String.valueOf(selected.getSeuilAlerte()));
         }
@@ -288,7 +270,7 @@ public class ProduitController implements Initializable {
             List<Produit> filtered = produits.stream()
                     .filter(p ->
                             p.getNomCommercial().toLowerCase().contains(query) ||
-                            p.getNomGenerique().toLowerCase().contains(query)
+                            p.getDescription().toLowerCase().contains(query)
                     )
                     .toList();
 

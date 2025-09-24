@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="410.0" prefWidth="350.0" style="-fx-background-color: #FFF;" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="life.pharmacy.controllers.LoginController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="430.0" prefWidth="350.0" style="-fx-background-color: #FFF;" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="life.pharmacy.controllers.LoginController">
    <children>
       <ImageView fitHeight="150.0" fitWidth="350.0" pickOnBounds="true" preserveRatio="true">
          <image>
@@ -50,9 +50,9 @@
             <Insets left="25.0" right="25.0" />
          </VBox.margin>
       </PasswordField>
-      <Button fx:id="loginButton" alignment="CENTER" defaultButton="true" mnemonicParsing="false" onAction="#onLogin" prefHeight="30.0" prefWidth="350.0" style="-fx-background-color: #36a128;" text="Se connecter" textFill="WHITE">
+      <Button fx:id="loginButton" alignment="CENTER" defaultButton="true" mnemonicParsing="false" onAction="#onLogin" prefHeight="30.0" prefWidth="300.0" style="-fx-background-color: #36a128;" text="Se connecter" textFill="WHITE">
          <VBox.margin>
-            <Insets left="70.0" right="70.0" top="20.0" />
+            <Insets left="25.0" right="25.0" top="20.0" />
          </VBox.margin>
       </Button>
    </children>

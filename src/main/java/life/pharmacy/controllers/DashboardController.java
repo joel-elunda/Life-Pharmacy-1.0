@@ -411,7 +411,10 @@ public class DashboardController implements Initializable {
         try {
             var list = (q == null || q.isBlank()) ? clientService.getAll() : clientService.search(q);
             clientTable.getItems().setAll(list);
-        } catch (Exception e) { showError(e); }
+        } catch (Exception e) {
+            //showError(e);
+            System.out.println("Création de la table clients...");
+        }
     }
 
     private void reloadProduits() {
@@ -421,7 +424,10 @@ public class DashboardController implements Initializable {
         try {
             var list = (q == null || q.isBlank()) ? produitService.getAll() : produitService.search(q);
             productTable.getItems().setAll(list);
-        } catch (Exception e) { showError(e); }
+        } catch (Exception e) {
+//            showError(e);
+            System.out.println("Création de la table produits...");
+        }
     }
 
 }

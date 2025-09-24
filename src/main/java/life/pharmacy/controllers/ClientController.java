@@ -24,7 +24,6 @@ import static life.pharmacy.controllers.DashboardController.showError;
 public class ClientController implements Initializable {
 
     @FXML private TextField fieldNom;
-    @FXML private DatePicker dateDateNaissance;
     @FXML private TextField fieldAdresse;
     @FXML private TextField fieldTelephone;
     @FXML private TextField fieldEmail;
@@ -38,7 +37,6 @@ public class ClientController implements Initializable {
     @FXML private TableColumn<Client, String> colTelephone;
     @FXML private TableColumn<Client, String> colEmail;
     @FXML private TableColumn<Client, String> colAdresse;
-    @FXML private TableColumn<Client, String> colDateNaissance;
     @FXML private TableColumn<Client, String> colConditionsMedicales;
     @FXML private TableColumn<Client, String> colAllergies;
 
@@ -67,7 +65,6 @@ public class ClientController implements Initializable {
         Client c = new Client(
                 service.getNextId(),
                 fieldNom.getText(),
-                dateDateNaissance.getValue(),
                 fieldAdresse.getText(),
                 fieldTelephone.getText(),
                 fieldEmail.getText(),
@@ -94,7 +91,6 @@ public class ClientController implements Initializable {
         Client selected = tableView.getSelectionModel().getSelectedItem();
         if (selected != null) {
             selected.setNomComplet(fieldNom.getText());
-            selected.setDateNaissance(dateDateNaissance.getValue());
             selected.setAdresse(fieldAdresse.getText());
             selected.setTelephone(fieldTelephone.getText());
             selected.setEmail(fieldEmail.getText());
@@ -150,7 +146,6 @@ public class ClientController implements Initializable {
         selected = tableView.getSelectionModel().getSelectedItem();
         if (selected != null) {
             fieldNom.setText(selected.getNomComplet());
-            dateDateNaissance.setValue(selected.getDateNaissance());
             fieldTelephone.setText(selected.getTelephone());
             fieldEmail.setText(selected.getEmail());
             fieldAdresse.setText(selected.getAdresse());
@@ -161,7 +156,6 @@ public class ClientController implements Initializable {
 
     private void clearFields() {
         fieldNom.clear();
-        dateDateNaissance.setValue(null);
         fieldAdresse.clear();
         fieldTelephone.clear();
         fieldEmail.clear();
@@ -180,7 +174,6 @@ public class ClientController implements Initializable {
         colTelephone.setCellValueFactory(cell -> cell.getValue().telephoneProperty());
         colEmail.setCellValueFactory(cell -> cell.getValue().emailProperty());
         colAdresse.setCellValueFactory(cell -> cell.getValue().adresseProperty());
-        colDateNaissance.setCellValueFactory(cell -> cell.getValue().dateNaissanceProperty().asString());
         colConditionsMedicales.setCellValueFactory(cell -> cell.getValue().conditionsMedicalesProperty());
         colAllergies.setCellValueFactory(cell -> cell.getValue().allergiesProperty());
 
@@ -227,7 +220,6 @@ public class ClientController implements Initializable {
     private void populateFieldsFromSelection(Client c) {
         if (c == null) return;
         fieldNom.setText(c.getNomComplet());
-        dateDateNaissance.setValue(c.getDateNaissance());
         fieldAdresse.setText(c.getAdresse());
         fieldTelephone.setText(c.getTelephone());
         fieldEmail.setText(c.getEmail());

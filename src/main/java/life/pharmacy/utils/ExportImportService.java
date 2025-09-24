@@ -105,11 +105,11 @@ public class ExportImportService {
         return exportTable(stage, "Exporter Produits",
                 "SELECT * FROM produits",
                 "Produits",
-                new String[]{"id","nomCommercial","nomGenerique","forme","dosage","conditionnement","fabricant","codeBarres","prixVente","prixAchat","statut","categorie","prescriptionRequise","dateExpiration","numeroLot","stock","seuilAlerte"});
+                new String[]{"id","nomCommercial","description","forme","dosage","conditionnement", "prixVente","prixAchat","statut","categorie","prescriptionRequise","dateExpiration", "stock","seuilAlerte"});
     }
     public boolean importProduits(Stage stage) {
         return importTable(stage, "Importer Produits",
-                "INSERT INTO produits(nomCommercial,nomGenerique,forme,dosage,conditionnement,fabricant,codeBarres,prixVente,prixAchat,statut,categorie,prescriptionRequise,dateExpiration,numeroLot,stock,seuilAlerte) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                "INSERT INTO produits(nomCommercial,description,forme,dosage,conditionnement,prixVente,prixAchat,statut,categorie,prescriptionRequise,dateExpiration,stock,seuilAlerte) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)",
                 16);
     }
 
@@ -131,11 +131,11 @@ public class ExportImportService {
         return exportTable(stage, "Exporter Clients",
                 "SELECT * FROM clients",
                 "Clients",
-                new String[]{"id","nomComplet","dateNaissance","adresse","telephone","email","conditionsMedicales","allergies"});
+                new String[]{"id","nomComplet","adresse","telephone","email","conditionsMedicales","allergies"});
     }
     public boolean importClients(Stage stage) {
         return importTable(stage, "Importer Clients",
-                "INSERT INTO clients(nomComplet,dateNaissance,adresse,telephone,email,conditionsMedicales,allergies) VALUES(?,?,?,?,?,?,?)",
+                "INSERT INTO clients(nomComplet,adresse,telephone,email,conditionsMedicales,allergies) VALUES(?,?,?,?,?,?)",
                 7);
     }
 

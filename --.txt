@@ -1,0 +1,3 @@
+1. Clients : dateNaissance
+2. Produits : nomGenerique, fabricant, codeBarres, numeroLot, 
+3. 

@@ -43,7 +43,6 @@ public class DatabaseInitializer {
                 CREATE TABLE IF NOT EXISTS clients (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     nomComplet TEXT NOT NULL,
-                    dateNaissance TEXT,
                     adresse TEXT,
                     telephone TEXT,
                     email TEXT,
@@ -70,19 +69,16 @@ public class DatabaseInitializer {
                 CREATE TABLE IF NOT EXISTS produits (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     nomCommercial TEXT NOT NULL,
-                    nomGenerique TEXT,
+                    description TEXT,
                     forme TEXT,
                     dosage TEXT,
                     conditionnement TEXT,
-                    fabricant TEXT,
-                    codeBarres TEXT UNIQUE,
                     prixVente REAL NOT NULL,
                     prixAchat REAL NOT NULL,
                     statut TEXT,
                     categorie TEXT,
                     prescriptionRequise INTEGER DEFAULT 0,
                     dateExpiration TEXT,
-                    numeroLot TEXT,
                     stock INTEGER DEFAULT 0,
                     seuilAlerte INTEGER DEFAULT 0
                 )
@@ -164,7 +160,7 @@ public class DatabaseInitializer {
                 // Ajout d’un admin par défaut si inexistant
                 stmt.execute("""
                 INSERT INTO employes (nomComplet, role, login, motDePasseHash, permissions)
-                SELECT 'Administrateur', 'Admin', 'admin', '@admin.2025', 'ALL'
+                SELECT 'Administrateur', 'Administrateur', 'admin', '@admin.2025', 'ALL'
                 WHERE NOT EXISTS (SELECT 1 FROM employes WHERE login = 'admin')
             """);
 

@@ -10,6 +10,7 @@
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
@@ -40,7 +41,7 @@
             <columns>
                 <TableColumn fx:id="colId" text="ID" />
                 <TableColumn fx:id="colNomCommercial" prefWidth="127.99999237060547" text="Nom commercial" />
-            <TableColumn fx:id="colNomGenerique" prefWidth="104.7999267578125" text="Nom générique" />
+            <TableColumn fx:id="colDescription" prefWidth="104.7999267578125" text="Description" />
                 <TableColumn fx:id="colCategorie" minWidth="0.0" prefWidth="91.0" text="Catégorie" />
                 <TableColumn fx:id="colStock" prefWidth="99.0" text="Stock" />
             <TableColumn fx:id="colDosage" prefWidth="64.0" text="Dosage" />
@@ -71,22 +72,18 @@
                   <Separator prefWidth="200.0" />
                   <Label text="Nom commercial :" />
                   <TextField fx:id="fieldNomCommercial" />
-                  <Label text="Nom générique (Facultatif) :" />
-                  <TextField fx:id="fieldNomGenerique" />
+                  <Label text="Description :" />
+                  <TextArea fx:id="areaDescription" prefHeight="47.0" prefWidth="298.0" />
                   <Label text="Forme :" />
                   <ComboBox fx:id="comboForme" editable="true" prefHeight="25.0" prefWidth="297.0" />
                   <Label text="Dosage :" />
                   <TextField fx:id="fieldDosage" />
                   <Label text="Conditionnement :" />
                   <TextField fx:id="fieldConditionnement" />
-                  <Label text="Fabricant (Facultatif) :" />
-                  <TextField fx:id="fieldFabricant" />
-                  <Label text="Code barre (Facultatif) : " />
-                  <TextField fx:id="fieldCodeBarres" />
                   <Label text="Prix de vente : " />
-                  <TextField fx:id="fieldPrixVente" promptText="10.000 CDF" />
+                  <TextField fx:id="fieldPrixVente" promptText="0 CDF" />
                   <Label text="Prix d'achat :" />
-                  <TextField fx:id="fieldPrixAchat" promptText="7.500 CDF" />
+                  <TextField fx:id="fieldPrixAchat" promptText="0 CDF" />
                   <Label text="Statut :" />
                   <TextField fx:id="fieldStatut" />
                   <Label text="Catégorie :" />
@@ -94,8 +91,6 @@
                   <CheckBox fx:id="checkPrescriptionRequise" mnemonicParsing="false" text="Prescription requise" />
                   <Label text="Date d'expiration :" />
                   <DatePicker fx:id="dataDateExpiration" />
-                  <Label text="Numéro du lot (Non obligatoire) :" />
-                  <TextField fx:id="fieldNumeroLot" />
                   <Label text="Quantité en stock :" />
                   <TextField fx:id="fieldStock" />
                   <Label text="Seuil alerte :" />

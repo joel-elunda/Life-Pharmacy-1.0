@@ -1,17 +1,7 @@
 package life.pharmacy.services;
 
-import life.pharmacy.models.Client;
 import life.pharmacy.models.Produit;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.sql.*;
-import java.sql.Date;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -23,18 +13,16 @@ public class ProduitService {
     private static final String DB_URL = "jdbc:sqlite:pharmacy.db";
 
     public void add(Produit p) throws SQLException {
-        String sql = "INSERT INTO produits(nomCommercial, nomGenerique, forme, dosage, conditionnement, fabricant, codeBarres, " +
-                "prixVente, prixAchat, statut, categorie, prescriptionRequise, dateExpiration, numeroLot, stock, seuilAlerte) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+        String sql = "INSERT INTO produits(nomCommercial, description, forme, dosage, conditionnement, " +
+                "prixVente, prixAchat, statut, categorie, prescriptionRequise, dateExpiration, stock, seuilAlerte) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)";
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, p.getNomCommercial());
-            ps.setString(2, p.getNomGenerique());
+            ps.setString(2, p.getDescription());
             ps.setString(3, p.getForme());
             ps.setString(4, p.getDosage());
             ps.setString(5, p.getConditionnement());
-            ps.setString(6, p.getFabricant());
-            ps.setString(7, p.getCodeBarres());
             ps.setDouble(8, p.getPrixVente());
             ps.setDouble(9, p.getPrixAchat());
             ps.setString(10, p.getStatut());
@@ -43,7 +31,6 @@ public class ProduitService {
             ps.setString(13,
                     p.getDateExpiration() != null ? p.getDateExpiration().toString() : null
             );
-            ps.setString(14, p.getNumeroLot());
             ps.setInt(15, p.getStock());
             ps.setInt(16, p.getSeuilAlerte());
 
@@ -52,16 +39,14 @@ public class ProduitService {
     }
 
     public void update(Produit p) throws SQLException {
-        String sql = "UPDATE produits SET nomCommercial=?, nomGenerique=?, forme=?, dosage=?, conditionnement=?, fabricant=?, codeBarres=?, prixVente=?, prixAchat=?, statut=?, categorie=?, prescriptionRequise=?, dateExpiration=?, numeroLot=?, stock=?, seuilAlerte=? WHERE id=?";
+        String sql = "UPDATE produits SET nomCommercial=?, description=?, forme=?, dosage=?, conditionnement=?, prixVente=?, prixAchat=?, statut=?, categorie=?, prescriptionRequise=?, dateExpiration=?, stock=?, seuilAlerte=? WHERE id=?";
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, p.getNomCommercial());
-            ps.setString(2, p.getNomGenerique());
+            ps.setString(2, p.getDescription());
             ps.setString(3, p.getForme());
             ps.setString(4, p.getDosage());
             ps.setString(5, p.getConditionnement());
-            ps.setString(6, p.getFabricant());
-            ps.setString(7, p.getCodeBarres());
             ps.setDouble(8, p.getPrixVente());
             ps.setDouble(9, p.getPrixAchat());
             ps.setString(10, p.getStatut());
@@ -70,7 +55,6 @@ public class ProduitService {
             ps.setString(13,
                     p.getDateExpiration() != null ? p.getDateExpiration().toString() : null
             );
-            ps.setString(14, p.getNumeroLot());
             ps.setInt(15, p.getStock());
             ps.setInt(16, p.getSeuilAlerte());
             ps.executeUpdate();
@@ -101,19 +85,16 @@ public class ProduitService {
                 list.add(new Produit(
                         rs.getInt("id"),
                         rs.getString("nomCommercial"),
-                        rs.getString("nomGenerique"),
+                        rs.getString("description"),
                         rs.getString("forme"),
                         rs.getString("dosage"),
                         rs.getString("conditionnement"),
-                        rs.getString("fabricant"),
-                        rs.getString("codeBarres"),
                         rs.getDouble("prixVente"),
                         rs.getDouble("prixAchat"),
                         rs.getString("statut"),
                         rs.getString("categorie"),
                         rs.getBoolean("prescriptionRequise"),
                         dateExp, // ← LocalDate
-                        rs.getString("numeroLot"),
                         rs.getInt("stock"),
                         rs.getInt("seuilAlerte")
                 ));
@@ -124,7 +105,7 @@ public class ProduitService {
 
     public List<Produit> search(String query) throws SQLException {
         List<Produit> list = new ArrayList<>();
-        String sql = "SELECT * FROM produits WHERE nomCommercial LIKE ? OR nomGenerique LIKE ? OR categorie LIKE ?";
+        String sql = "SELECT * FROM produits WHERE nomCommercial LIKE ?  OR categorie LIKE ?";
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, "%" + query + "%");
@@ -140,19 +121,16 @@ public class ProduitService {
                 list.add(new Produit(
                         rs.getInt("id"),
                         rs.getString("nomCommercial"),
-                        rs.getString("nomGenerique"),
+                        rs.getString("description"),
                         rs.getString("forme"),
                         rs.getString("dosage"),
                         rs.getString("conditionnement"),
-                        rs.getString("fabricant"),
-                        rs.getString("codeBarres"),
                         rs.getDouble("prixVente"),
                         rs.getDouble("prixAchat"),
                         rs.getString("statut"),
                         rs.getString("categorie"),
                         rs.getBoolean("prescriptionRequise"),
                         dateExp, // ← LocalDate
-                        rs.getString("numeroLot"),
                         rs.getInt("stock"),
                         rs.getInt("seuilAlerte")
                 ));
@@ -177,7 +155,7 @@ public class ProduitService {
         try{
             List<Produit> produits = getAll();
             for(Produit p : produits) {
-                if(p.getNomGenerique().equals(produit.getNomGenerique()) || p.getNomCommercial().equals(produit.getNomCommercial()))
+                if(p.getNomCommercial().equals(produit.getNomCommercial()))
                     return true;
             }
         } catch (SQLException e) {
