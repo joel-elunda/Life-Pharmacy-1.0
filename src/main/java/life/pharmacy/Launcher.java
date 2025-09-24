@@ -22,7 +22,7 @@ public class Launcher extends Application {
         DashboardController controller  = fxmlDashboardLoader.getController();
         controller.setStage(stage);
 
-        Scene scene = new Scene(fxmlLoader.load(), 300, 400);
+        Scene scene = new Scene(fxmlLoader.load(), 350, 410);
         stage.setResizable(false);
         stage.setTitle("Authentification - Life Pharmacy");
         stage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/image/logo.png")))); // ton icône

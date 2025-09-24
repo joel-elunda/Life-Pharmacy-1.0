@@ -176,6 +176,8 @@ public class ProduitController implements Initializable {
     public void onImportExcel() {
         if(exportImportService.importProduits(new DashboardController().getStage()))
             showAlert("Importation réussie !");
+        else
+            new Alert(Alert.AlertType.ERROR, "Erreur lors de l'importation, importation échouée!, \nVeuiller vérifier l'intégrité des données!", ButtonType.CANCEL).showAndWait();
     }
 
     private void clearFields() {

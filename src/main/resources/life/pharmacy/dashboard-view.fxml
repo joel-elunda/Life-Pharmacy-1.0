@@ -99,7 +99,7 @@
                         </HBox>
                         <TextArea fx:id="invoicePreview" prefHeight="160" wrapText="true" />
                         <HBox alignment="CENTER_RIGHT" spacing="10">
-                            <Button fx:id="printButton" onAction="#onPrintAndSave" text="Imprimer / Enregistrer" />
+                            <Button fx:id="printButton" onAction="#onPrintAndSave" style="-fx-background-color: #24b21a;" text="Imprimer / Enregistrer" textFill="WHITE" />
                             <Button fx:id="cancelButton" text="Annuler" />
                         </HBox>
                         <padding><Insets bottom="5" left="5" right="5" top="5" /></padding>

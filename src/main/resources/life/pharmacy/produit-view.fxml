@@ -6,19 +6,27 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<BorderPane prefHeight="699.0" prefWidth="1137.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="life.pharmacy.controllers.ProduitController">
+<BorderPane prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="life.pharmacy.controllers.ProduitController">
     <top>
         <HBox alignment="CENTER_RIGHT" spacing="10">
+         <Label prefHeight="23.0" prefWidth="294.0" text="Gestion des produits ">
+            <font>
+               <Font name="Calibri Light" size="20.0" />
+            </font>
+         </Label>
             <ComboBox fx:id="comboResearch" editable="true" prefHeight="25.0" prefWidth="217.0" promptText="Rechercher un produit..." />
             <Button fx:id="searchButton" mnemonicParsing="false" onAction="#onSearch" text="Rechercher" />
-            <Button fx:id="refreshButton" onAction="#handleRefresh"  text="Actualiser" />
+            <Button fx:id="refreshButton" onAction="#handleRefresh" text="Actualiser" />
             <Button onAction="#onImportExcel" text="Importer Excel" />
             <Button onAction="#onExportExcel" text="Exporter Excel" />
          <padding>
@@ -45,42 +53,66 @@
 
     <bottom>
         <HBox alignment="CENTER_LEFT" spacing="10">
-            <Button fx:id="deleteButton" onAction="#onDelete" text="Supprimer" />
+            <Button fx:id="deleteButton" onAction="#onDelete" style="-fx-background-color: #F00;" text="Supprimer" textFill="WHITE" />
          <padding>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
          </padding>
         </HBox>
     </bottom>
    <right>
-      <VBox prefHeight="628.0" prefWidth="286.0" spacing="7.0" BorderPane.alignment="CENTER">
-         <padding>
-            <Insets bottom="7.0" left="7.0" right="7.0" top="7.0" />
-         </padding>
-         <children>
-            <Label text="Produit" />
-            <TextField fx:id="fieldNomCommercial" promptText="Nom commercial" />
-            <TextField fx:id="fieldNomGenerique" promptText="Nom générique" />
-            <ComboBox fx:id="comboForme" editable="true" prefWidth="150.0" promptText="Forme" />
-            <TextField fx:id="fieldDosage" promptText="Dosage" />
-            <TextField fx:id="fieldConditionnement" promptText="Conditionnement" />
-            <TextField fx:id="fieldFabricant" promptText="Fabricant" />
-            <TextField fx:id="fieldCodeBarres" promptText="Code barre" />
-            <TextField fx:id="fieldPrixVente" promptText="Prix de vente" />
-            <TextField fx:id="fieldPrixAchat" promptText="Prix d'achat" />
-            <TextField fx:id="fieldStatut" promptText="Statut" />
-            <ComboBox fx:id="comboCategorie" editable="true" prefWidth="150.0" promptText="Catégorie" />
-            <CheckBox fx:id="checkPrescriptionRequise" mnemonicParsing="false" text="Prescription requise" />
-            <DatePicker fx:id="dataDateExpiration" promptText="Date d'expiration" />
-            <TextField fx:id="fieldNumeroLot" promptText="Numéro du lot" />
-            <TextField fx:id="fieldStock" promptText="Stock" />
-            <TextField fx:id="fieldSeuilAlerte" promptText="Seuil alerte" />
-            <HBox alignment="CENTER" spacing="20.0">
+      <ScrollPane prefHeight="530.0" prefWidth="326.0" BorderPane.alignment="CENTER">
+         <content>
+            <VBox prefHeight="628.0" prefWidth="312.0" spacing="5.0">
+               <padding>
+                  <Insets bottom="7.0" left="7.0" right="7.0" top="7.0" />
+               </padding>
                <children>
-                     <Button fx:id="addButton" onAction="#onAdd" prefHeight="25.0" prefWidth="90.0" text="Ajouter" />
-                     <Button fx:id="editButton" onAction="#onEdit" prefHeight="25.0" prefWidth="90.0" text="Modifier" />
+                  <Label text="Produit" />
+                  <Separator prefWidth="200.0" />
+                  <Label text="Nom commercial :" />
+                  <TextField fx:id="fieldNomCommercial" />
+                  <Label text="Nom générique (Facultatif) :" />
+                  <TextField fx:id="fieldNomGenerique" />
+                  <Label text="Forme :" />
+                  <ComboBox fx:id="comboForme" editable="true" prefHeight="25.0" prefWidth="297.0" />
+                  <Label text="Dosage :" />
+                  <TextField fx:id="fieldDosage" />
+                  <Label text="Conditionnement :" />
+                  <TextField fx:id="fieldConditionnement" />
+                  <Label text="Fabricant (Facultatif) :" />
+                  <TextField fx:id="fieldFabricant" />
+                  <Label text="Code barre (Facultatif) : " />
+                  <TextField fx:id="fieldCodeBarres" />
+                  <Label text="Prix de vente : " />
+                  <TextField fx:id="fieldPrixVente" promptText="10.000 CDF" />
+                  <Label text="Prix d'achat :" />
+                  <TextField fx:id="fieldPrixAchat" promptText="7.500 CDF" />
+                  <Label text="Statut :" />
+                  <TextField fx:id="fieldStatut" />
+                  <Label text="Catégorie :" />
+                  <ComboBox fx:id="comboCategorie" editable="true" prefWidth="150.0" />
+                  <CheckBox fx:id="checkPrescriptionRequise" mnemonicParsing="false" text="Prescription requise" />
+                  <Label text="Date d'expiration :" />
+                  <DatePicker fx:id="dataDateExpiration" />
+                  <Label text="Numéro du lot (Non obligatoire) :" />
+                  <TextField fx:id="fieldNumeroLot" />
+                  <Label text="Quantité en stock :" />
+                  <TextField fx:id="fieldStock" />
+                  <Label text="Seuil alerte :" />
+                  <TextField fx:id="fieldSeuilAlerte" />
+                  <HBox alignment="CENTER" spacing="20.0">
+                     <children>
+                           <Button fx:id="addButton" onAction="#onAdd" prefHeight="25.0" prefWidth="90.0" style="-fx-background-color: #24b21a;" text="Ajouter" textFill="WHITE">
+                           <font>
+                              <Font name="Calibri Light" size="12.0" />
+                           </font>
+                        </Button>
+                           <Button fx:id="editButton" onAction="#onEdit" prefHeight="25.0" prefWidth="90.0" text="Modifier" />
+                     </children>
+                  </HBox>
                </children>
-            </HBox>
-         </children>
-      </VBox>
+            </VBox>
+         </content>
+      </ScrollPane>
    </right>
 </BorderPane>

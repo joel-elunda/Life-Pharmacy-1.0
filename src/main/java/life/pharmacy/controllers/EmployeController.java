@@ -23,7 +23,6 @@ public class EmployeController implements Initializable {
     @FXML private ComboBox<String> comboRole;
     @FXML private TextField fieldLogin;
     @FXML private PasswordField fieldMotDePasseHash;
-    @FXML private CheckBox checkPermissions;
     @FXML private ComboBox<String> comboResearch;
 
     @FXML public  TableView<Employe> tableView;
@@ -49,8 +48,6 @@ public class EmployeController implements Initializable {
             comboRole.setValue(selected.getRole());
             fieldLogin.setText(selected.getLogin());
             fieldMotDePasseHash.setText(selected.getMotDePasseHash());
-            if (checkPermissions.isSelected()) checkPermissions.setSelected(true);
-
         }
     }
 
@@ -60,7 +57,6 @@ public class EmployeController implements Initializable {
          comboRole.setValue(e.getRole());
          fieldLogin.setText(e.getLogin());
          fieldMotDePasseHash.setText(e.getMotDePasseHash());
-        if (checkPermissions.isSelected()) checkPermissions.setSelected(true);
 
     }
 
@@ -80,7 +76,7 @@ public class EmployeController implements Initializable {
                 comboRole.getValue(),
                 fieldLogin.getText(),
                 fieldMotDePasseHash.getText(),
-                checkPermissions.getText()
+                ""
         );
         try {
             if(service.ifExists(e)) {
@@ -108,7 +104,6 @@ public class EmployeController implements Initializable {
             selected.setRole(comboRole.getValue());
             selected.setLogin(fieldLogin.getText());
             selected.setMotDePasseHash(fieldMotDePasseHash.getText());
-            selected.setPermissions(checkPermissions.getText());
 
             try {
                 service.update(selected);
@@ -159,7 +154,6 @@ public class EmployeController implements Initializable {
         comboRole.setValue(null);
         fieldLogin.clear();
         fieldMotDePasseHash.clear();
-        if (checkPermissions.isSelected()) checkPermissions.setSelected(true);
     }
 
     private void showAlert(String msg) {
