@@ -8,14 +8,11 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
-import life.pharmacy.Launcher;
 import life.pharmacy.config.DatabaseInitializer;
 import life.pharmacy.models.Employe;
 import life.pharmacy.services.AuthService;
-import life.pharmacy.services.EmployeService;
 
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
@@ -45,6 +42,7 @@ public class LoginController implements Initializable {
                 dashboardController.setCurrentUser(loggedIn);
 
                 Stage stage = new Stage();
+                stage.setMaximized(true);
                 stage.setTitle("Life Pharmacy — Tableau de bord");
                 stage.setScene(new Scene(root));
 

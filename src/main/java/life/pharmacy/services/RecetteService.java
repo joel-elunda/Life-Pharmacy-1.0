@@ -19,7 +19,6 @@ import java.util.Map;
 
 public class RecetteService {
 
-    private List<Recette> recettes = new ArrayList<>();
     private static final String DB_URL = "jdbc:sqlite:pharmacy.db";
 
     public void add(Recette r) {
@@ -234,35 +233,6 @@ public class RecetteService {
             ps.executeUpdate();
         }
     }
-
-//    public List<Recette> getByPeriode(String periode) {
-//        List<Recette> recettes = new ArrayList<>();
-//
-//        String query = switch (periode.toLowerCase()) {
-//            case "jour" -> "SELECT date, SUM(montant) as montant FROM recettes GROUP BY date";
-//            case "semaine" -> "SELECT strftime('%W', date) as semaine, SUM(montant) as montant FROM recettes GROUP BY semaine";
-//            case "mois" -> "SELECT strftime('%m-%Y', date) as mois, SUM(montant) as montant FROM recettes GROUP BY mois";
-//            case "annee" -> "SELECT strftime('%Y', date) as annee, SUM(montant) as montant FROM recettes GROUP BY annee";
-//            default -> "SELECT date, montant FROM recettes";
-//        };
-//
-//        try (Connection conn = DriverManager.getConnection("jdbc:sqlite:pharmacy.db");
-//             Statement stmt = conn.createStatement();
-//             ResultSet rs = stmt.executeQuery(query)) {
-//
-//            while (rs.next()) {
-//                Recette r = new Recette();
-//                r.setDate(LocalDate.parse(rs.getString(1)));   // attention : pour semaine/mois/annee → String
-//                r.setMontant(rs.getDouble(2));
-//                recettes.add(r);
-//            }
-//
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-//
-//        return recettes;
-//    }
 
     public List<Recette> getByPeriode(String periode) throws SQLException {
         List<Recette> list = new ArrayList<>();

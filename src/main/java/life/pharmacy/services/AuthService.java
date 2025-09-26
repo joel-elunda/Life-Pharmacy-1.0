@@ -5,7 +5,6 @@ import life.pharmacy.models.Employe;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.sql.*;
-import java.time.LocalDateTime;
 
 public class AuthService {
     private static final String DB_URL = "jdbc:sqlite:pharmacy.db";

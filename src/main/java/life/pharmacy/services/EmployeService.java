@@ -1,17 +1,12 @@
 package life.pharmacy.services;
 
-
-
 import life.pharmacy.models.Employe;
-
-
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class EmployeService {
     private static final String DB_URL = "jdbc:sqlite:pharmacy.db";
-    private List<Employe> employes = new ArrayList<>();
 
     public void add(Employe e) throws SQLException {
         String sql = "INSERT INTO employes (nomComplet, role, login, motDePasseHash, permissions) VALUES(?,?,?,?,?)";

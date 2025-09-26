@@ -54,6 +54,13 @@ public class DashboardController implements Initializable {
     @FXML private Button printButton, cancelButton;
     @FXML private Button logoutButton;
 
+    @FXML private Button refreshButton;
+    @FXML private Button btnAddClient;
+    @FXML private Button facturesButton;
+    @FXML private Button employesButton;
+    @FXML private Button recettesButton;
+    @FXML private ToolBar toolBar;
+
     private final ClientService clientService = new ClientService();
     private final ProduitService produitService = new ProduitService();
     private final FactureService factureService = new FactureService();
@@ -71,15 +78,9 @@ public class DashboardController implements Initializable {
     private Employe currentUser;
     public static ExportImportService exportImportService = new ExportImportService();
 
-    @FXML private Button refreshButton;
-    @FXML private Button btnAddClient;
-    @FXML private Button facturesButton;
-    @FXML private Button employesButton;
-    @FXML private Button recettesButton;
-    @FXML private ToolBar toolBar;
+
 
     private Stage stage;
-
 
     public void setCurrentUser(Employe user) {
         this.currentUser = user;

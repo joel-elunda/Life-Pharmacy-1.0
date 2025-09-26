@@ -1,15 +1,6 @@
 package life.pharmacy.services;
 
 import life.pharmacy.models.*;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -17,8 +8,6 @@ import java.util.*;
 
 public class FactureService {
     private static final String DB_URL = "jdbc:sqlite:pharmacy.db";
-    private List<Facture> factures = new ArrayList<>();
-
 
     public void add(Facture f) throws SQLException {
 

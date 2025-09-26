@@ -110,7 +110,7 @@ public class ExportImportService {
     public boolean importProduits(Stage stage) {
         return importTable(stage, "Importer Produits",
                 "INSERT INTO produits(nomCommercial,description,forme,dosage,conditionnement,prixVente,prixAchat,statut,categorie,prescriptionRequise,dateExpiration,stock,seuilAlerte) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)",
-                16);
+                13);
     }
 
     // ----------- EMPLOYES -----------
@@ -136,7 +136,7 @@ public class ExportImportService {
     public boolean importClients(Stage stage) {
         return importTable(stage, "Importer Clients",
                 "INSERT INTO clients(nomComplet,adresse,telephone,email,conditionsMedicales,allergies) VALUES(?,?,?,?,?,?)",
-                7);
+                6);
     }
 
     // ----------- FOURNISSEURS -----------

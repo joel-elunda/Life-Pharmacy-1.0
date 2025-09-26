@@ -8,8 +8,6 @@ import java.util.*;
 
 public class ProduitService {
 
-    private final List<Produit> produits = new ArrayList<>();
-
     private static final String DB_URL = "jdbc:sqlite:pharmacy.db";
 
     public void add(Produit p) throws SQLException {
@@ -23,16 +21,16 @@ public class ProduitService {
             ps.setString(3, p.getForme());
             ps.setString(4, p.getDosage());
             ps.setString(5, p.getConditionnement());
-            ps.setDouble(8, p.getPrixVente());
-            ps.setDouble(9, p.getPrixAchat());
-            ps.setString(10, p.getStatut());
-            ps.setString(11, p.getCategorie());
-            ps.setBoolean(12, p.isPrescriptionRequise());
-            ps.setString(13,
+            ps.setDouble(6, p.getPrixVente());
+            ps.setDouble(7, p.getPrixAchat());
+            ps.setString(8, p.getStatut());
+            ps.setString(9, p.getCategorie());
+            ps.setBoolean(10, p.isPrescriptionRequise());
+            ps.setString(11,
                     p.getDateExpiration() != null ? p.getDateExpiration().toString() : null
             );
-            ps.setInt(15, p.getStock());
-            ps.setInt(16, p.getSeuilAlerte());
+            ps.setInt(12, p.getStock());
+            ps.setInt(13, p.getSeuilAlerte());
 
             ps.executeUpdate();
         }
@@ -47,16 +45,16 @@ public class ProduitService {
             ps.setString(3, p.getForme());
             ps.setString(4, p.getDosage());
             ps.setString(5, p.getConditionnement());
-            ps.setDouble(8, p.getPrixVente());
-            ps.setDouble(9, p.getPrixAchat());
-            ps.setString(10, p.getStatut());
-            ps.setString(11, p.getCategorie());
-            ps.setBoolean(12, p.isPrescriptionRequise());
-            ps.setString(13,
+            ps.setDouble(6, p.getPrixVente());
+            ps.setDouble(7, p.getPrixAchat());
+            ps.setString(8, p.getStatut());
+            ps.setString(9, p.getCategorie());
+            ps.setBoolean(10, p.isPrescriptionRequise());
+            ps.setString(11,
                     p.getDateExpiration() != null ? p.getDateExpiration().toString() : null
             );
-            ps.setInt(15, p.getStock());
-            ps.setInt(16, p.getSeuilAlerte());
+            ps.setInt(12, p.getStock());
+            ps.setInt(13, p.getSeuilAlerte());
             ps.executeUpdate();
         }
     }

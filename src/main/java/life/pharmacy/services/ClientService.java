@@ -1,23 +1,11 @@
 package life.pharmacy.services;
 
 import life.pharmacy.models.Client;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.sql.*;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ClientService {
-
-    private final List<Client> clients = new ArrayList<>();
-
 
     private static final String DB_URL = "jdbc:sqlite:pharmacy.db";
 
@@ -27,11 +15,11 @@ public class ClientService {
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, c.getNomComplet());
-            pstmt.setString(3, c.getAdresse());
-            pstmt.setString(4, c.getTelephone());
-            pstmt.setString(5, c.getEmail());
-            pstmt.setString(6, c.getConditionsMedicales());
-            pstmt.setString(7, c.getAllergies());
+            pstmt.setString(2, c.getAdresse());
+            pstmt.setString(3, c.getTelephone());
+            pstmt.setString(4, c.getEmail());
+            pstmt.setString(5, c.getConditionsMedicales());
+            pstmt.setString(6, c.getAllergies());
             pstmt.executeUpdate();
         }
     }
@@ -41,11 +29,11 @@ public class ClientService {
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, c.getNomComplet());
-            pstmt.setString(3, c.getAdresse());
-            pstmt.setString(4, c.getTelephone());
-            pstmt.setString(5, c.getEmail());
-            pstmt.setString(6, c.getConditionsMedicales());
-            pstmt.setString(7, c.getAllergies());
+            pstmt.setString(2, c.getAdresse());
+            pstmt.setString(3, c.getTelephone());
+            pstmt.setString(4, c.getEmail());
+            pstmt.setString(5, c.getConditionsMedicales());
+            pstmt.setString(6, c.getAllergies());
             pstmt.setInt(8, c.getId());
             pstmt.executeUpdate();
         }
