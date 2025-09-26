@@ -1,6 +1,8 @@
 package life.pharmacy.services;
 
 import life.pharmacy.models.Produit;
+import life.pharmacy.utils.DateUtils;
+
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -78,7 +80,9 @@ public class ProduitService {
                 LocalDate dateExp = null;
                 if (dateStr != null && !dateStr.isBlank()) {
                     // parse "YYYY-MM-DD"
-                    dateExp = LocalDate.parse(dateStr, DateTimeFormatter.ISO_LOCAL_DATE);
+//                    dateStr = dateStr.trim();
+//                    dateExp = LocalDate.parse(dateStr, DateTimeFormatter.ISO_LOCAL_DATE);
+                    dateExp = DateUtils.parseExcelDate(dateStr);
                 }
                 list.add(new Produit(
                         rs.getInt("id"),
@@ -114,7 +118,8 @@ public class ProduitService {
                 LocalDate dateExp = null;
                 if (dateStr != null && !dateStr.isBlank()) {
                     // parse "YYYY-MM-DD"
-                    dateExp = LocalDate.parse(dateStr, DateTimeFormatter.ISO_LOCAL_DATE);
+//                    dateExp = LocalDate.parse(dateStr, DateTimeFormatter.ISO_LOCAL_DATE);
+                    dateExp = DateUtils.parseExcelDate(dateStr);
                 }
                 list.add(new Produit(
                         rs.getInt("id"),
