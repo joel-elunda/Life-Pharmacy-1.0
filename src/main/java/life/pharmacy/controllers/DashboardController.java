@@ -197,6 +197,9 @@ public class DashboardController implements Initializable {
         totalLabel.setText(String.format("%.2f", total));
 
         Client cli = clientTable.getSelectionModel().getSelectedItem();
+        if (cli == null) {
+            cli = new Client(0, "Anonyme", "", "", "", "", "");
+        }
 
         StringBuilder sb = new StringBuilder();
         sb.append("FACTURE\n");
@@ -233,6 +236,11 @@ public class DashboardController implements Initializable {
 
         String mode = paymentCombo.getValue();
         Client cli = clientTable.getSelectionModel().getSelectedItem(); // peut être null (vente anonyme)
+
+        if (cli == null) {
+            cli = new Client(0, "Anonyme", "", "", "", "Aucune", "Aucune");
+        }
+
         double total = panier.stream().mapToDouble(LigneTransaction::getSousTotal).sum();
 
         // Impression simple (aperçu texte) : PrinterJob optionnel — ici on enregistre surtout

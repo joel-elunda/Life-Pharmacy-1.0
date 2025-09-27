@@ -1,6 +1,6 @@
 package life.pharmacy.controllers;
 
-import javafx.collections.FXCollections;
+
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.print.PrinterJob;
@@ -11,10 +11,10 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.util.StringConverter;
+
 import life.pharmacy.models.Recette;
 import life.pharmacy.services.RecetteService;
-import org.apache.poi.ss.formula.functions.T;
+
 
 import java.io.File;
 import java.io.IOException;

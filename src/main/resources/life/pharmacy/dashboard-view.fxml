@@ -50,9 +50,9 @@
                             <columns>
                                 <TableColumn fx:id="colProdId" prefWidth="60" text="ID" />
                                 <TableColumn fx:id="colProdNom" prefWidth="180" text="Désignation" />
-                                <TableColumn fx:id="colProdCategorie" prefWidth="120" text="Catégorie" />
                                 <TableColumn fx:id="colProdPrix" prefWidth="90" text="Prix" />
                                 <TableColumn fx:id="colProdStock" prefWidth="80" text="Stock" />
+                                <TableColumn fx:id="colProdCategorie" prefWidth="120" text="Catégorie" />
                             </columns>
                         </TableView>
 

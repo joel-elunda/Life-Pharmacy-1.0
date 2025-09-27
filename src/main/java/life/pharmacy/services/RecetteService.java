@@ -2,6 +2,7 @@ package life.pharmacy.services;
 
 import life.pharmacy.config.DatabaseInitializer;
 import life.pharmacy.models.Recette;
+import life.pharmacy.utils.DateUtils;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -277,9 +278,12 @@ public class RecetteService {
              Statement st = conn.createStatement();
              ResultSet rs = st.executeQuery(sql)) {
             while (rs.next()) {
+                String dateStr = rs.getString("d");
+                LocalDate date = DateUtils.parseExcelDate(dateStr);
+
                 Recette r = new Recette(
                         0,
-                        LocalDate.parse(rs.getString("d")),
+                        date,
                         rs.getDouble("montant"),
                         periode
                 );
